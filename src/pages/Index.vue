@@ -44,10 +44,8 @@
     </div>
     <div class="q-pa-md q-gutter-sm">
       <q-dialog v-model="persistent" transition-show="scale" transition-hide="scale">
-        <q-card style="width: 385px; height: 320px;">
-          <q-card-section>
-            <v-quagga :onDetected="logIt" :readerSize="readerSize" :readerTypes="readerTypes"></v-quagga>
-          </q-card-section>
+        <q-card style="width: 352px; height: 288px;" class="q-pa-none">
+          <v-quagga class="full-width" :onDetected="logIt" :readerSize="readerSize" :readerTypes="readerTypes"></v-quagga>
         </q-card>
       </q-dialog>
     </div>
@@ -132,10 +130,6 @@ export default {
        * @type {Boolean} status card
        */
       card: false,
-      readerSize: {
-        width: 640,
-        height: 480
-      },
       detecteds: []
     }
   },
