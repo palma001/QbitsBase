@@ -46,7 +46,7 @@
       <q-dialog v-model="persistent" transition-show="scale" transition-hide="scale">
         <q-card style="width: 385px; height: 320px;">
           <q-card-section>
-            <v-quagga :onDetected="logIt" :readerSize="readerSize" :readerTypes="['ean_reader']"></v-quagga>
+            <v-quagga :onDetected="logIt" :readerSize="readerSize" :readerTypes="readerTypes"></v-quagga>
           </q-card-section>
         </q-card>
       </q-dialog>
@@ -103,6 +103,17 @@
 export default {
   data () {
     return {
+      readerTypes: [
+        'code_128_reader',
+        'ean_reader',
+        'ean_8_reader',
+        'code_39_reader',
+        'code_39_vin_reader',
+        'codabar_reader',
+        'upc_reader',
+        'upc_e_reader',
+        'i2of5_reader'
+      ],
       persistent: false,
       /**
        * all products
@@ -169,8 +180,8 @@ export default {
      * Call scanner
      *
      */
-
     captureImage () {
+      console.log(this.$q.platform, 'hola')
       if (this.validateDivice('mobile')) {
         cordova.plugins.barcodeScanner.scan(
           (result) => { this.getOneProduct(result.text) },
