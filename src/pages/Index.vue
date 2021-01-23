@@ -182,14 +182,14 @@ export default {
      */
     captureImage () {
       console.log(this.$q.platform, 'hola')
-      if (this.validateDivice('mobile')) {
-        cordova.plugins.barcodeScanner.scan(
-          (result) => { this.getOneProduct(result.text) },
-          (error) => { alert('No se pudo escanear: ' + error) }
-        )
-      } else {
-        this.persistent = true
-      }
+      this.persistent = true
+      // if (this.validateDivice('mobile')) {
+      //   cordova.plugins.barcodeScanner.scan(
+      //     (result) => { this.getOneProduct(result.text) },
+      //     (error) => { alert('No se pudo escanear: ' + error) }
+      //   )
+      // } else {
+      // }
     },
     logIt (data) {
       this.getOneProduct(data.codeResult.code)
