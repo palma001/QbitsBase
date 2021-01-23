@@ -43,7 +43,7 @@
       </div>
     </div>
     <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="persistent" persistent transition-show="scale" transition-hide="scale">
+      <q-dialog v-model="persistent" transition-show="scale" transition-hide="scale">
         <q-card style="width: 385px; height: 320px;">
           <q-card-section>
             <v-quagga :onDetected="logIt" :readerSize="readerSize" :readerTypes="['ean_reader']"></v-quagga>

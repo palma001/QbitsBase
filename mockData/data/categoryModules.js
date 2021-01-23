@@ -6,12 +6,12 @@ export const categoryModules = [
   //   devices: ['mobile', 'desktop']
   // },
   {
-    name: 'billing',
+    name: 'business',
     icon: 'all_inbox',
     modules: [
       {
-        name: 'billing',
-        route: 'billing',
+        name: 'products',
+        route: 'products',
         icon: 'receipt',
         devices: ['mobile', 'desktop']
       }

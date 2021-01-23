@@ -22,7 +22,8 @@ export default {
     desactive: 'desactivar',
     error: 'algo salio mal!',
     code: 'Código',
-    sucursales: 'sucursales'
+    sucursales: 'sucursales',
+    business: 'empresa'
   },
 
   // users
