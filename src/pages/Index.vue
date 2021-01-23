@@ -42,6 +42,15 @@
         </q-card>
       </div>
     </div>
+    <div class="q-pa-md q-gutter-sm">
+      <q-dialog v-model="persistent" persistent transition-show="scale" transition-hide="scale">
+        <q-card style="width: 385px; height: 320px;">
+          <q-card-section>
+            <v-quagga :onDetected="logIt" :readerSize="readerSize" :readerTypes="['ean_reader']"></v-quagga>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+    </div>
     <q-dialog v-model="card">
       <q-card class="my-card" v-if="productScaner">
         <q-img src="https://cdn.quasar.dev/img/chicken-salad.jpg" />
@@ -83,7 +92,7 @@
     </q-dialog>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab color="purple" icon="keyboard_arrow_up" direction="up" label="Opciones" label-position="left" external-label>
-        <q-fab-action color="amber" v-if="validateDivice('mobile')"  @click="captureImage" icon="qr_code" glossy label="Scanner" label-position="left" external-label/>
+        <q-fab-action color="amber"  @click="captureImage" icon="qr_code" glossy label="Scanner" label-position="left" external-label/>
       </q-fab>
     </q-page-sticky>
   </div>
@@ -94,6 +103,7 @@
 export default {
   data () {
     return {
+      persistent: false,
       /**
        * all products
        * @type {Array} all products
@@ -110,7 +120,12 @@ export default {
        * Status Card product
        * @type {Boolean} status card
        */
-      card: false
+      card: false,
+      readerSize: {
+        width: 640,
+        height: 480
+      },
+      detecteds: []
     }
   },
   created () {
@@ -138,13 +153,14 @@ export default {
     getOneProduct (data) {
       if (data) {
         this.productScaner = this.allProducts.filter(element => {
-          return Number(element.code) === Number(data.text)
+          return Number(element.code) === Number(data)
         })[0]
 
         if (!this.productScaner) {
           alert('Producto no encontrado')
         } else {
           this.card = true
+          this.persistent = false
         }
       }
     },
@@ -155,10 +171,18 @@ export default {
      */
 
     captureImage () {
-      cordova.plugins.barcodeScanner.scan(
-        (result) => { this.getOneProduct(result) },
-        (error) => { alert('No se pudo escanear: ' + error) }
-      )
+      if (this.validateDivice('mobile')) {
+        cordova.plugins.barcodeScanner.scan(
+          (result) => { this.getOneProduct(result.text) },
+          (error) => { alert('No se pudo escanear: ' + error) }
+        )
+      } else {
+        this.persistent = true
+      }
+    },
+    logIt (data) {
+      this.getOneProduct(data.codeResult.code)
+      console.log('detected', data.codeResult.code)
     },
     /**
      * Validate divice

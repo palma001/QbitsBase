@@ -1,6 +1,6 @@
 export const products = [
   {
-    code: 5901234123457,
+    code: '0138055651547',
     name: 'Harina',
     brand: 'Polar',
     description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci aspernatur ullam consequuntur voluptatum nulla minima accusantium deleniti eius qui,aut ea vel, laborum ad maxime aliquid asperiores velit voluptatem magnam?',

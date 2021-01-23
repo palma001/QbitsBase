@@ -7,20 +7,26 @@ const routes = [
     component: () => import('pages/Login.vue')
   },
   {
-    path: '/',
-    beforeEnter: validationSession,
+    path: '',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
         path: '',
-        name: '',
-        component: () => import('pages/Index.vue')
+        component: () => import('pages/Index.vue'),
+        name: 'products'
       },
       {
         path: '/products',
         component: () => import('pages/Index.vue'),
         name: 'products'
-      },
+      }
+    ]
+  },
+  {
+    path: '/',
+    beforeEnter: validationSession,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
       {
         path: '/business',
         name: 'business',

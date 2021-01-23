@@ -25,7 +25,8 @@ module.exports = function (/* ctx */) {
       // 'socket',
       'vee-validate',
       'apollo',
-      'graphql'
+      'graphql',
+      'vquagga'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

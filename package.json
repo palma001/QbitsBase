@@ -26,6 +26,7 @@
     "vee-validate": "^2.0.0",
     "vue-apollo": "^3.0.5",
     "vue-i18n": "^8.0.0",
+    "vue-quaggajs": "^1.0.12",
     "vue-socket.io": "^3.0.10"
   },
   "devDependencies": {
