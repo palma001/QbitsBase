@@ -1,8 +1,8 @@
 {
-  "name": "Monte verde",
+  "name": "MonteVerde",
   "version": "0.0.1",
   "description": "software accounting software",
-  "productName": "Monte verde",
+  "productName": "MonteVerde",
   "author": "Luis Palma <palmaluis1997@gmail.com>",
   "private": true,
   "scripts": {
