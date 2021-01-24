@@ -44,15 +44,18 @@
     </div>
     <div class="q-pa-md q-gutter-sm">
       <q-dialog v-model="persistent" transition-show="scale" transition-hide="scale">
-        <q-card style="width: 352px; height: 288px;" class="q-pa-none">
-          <v-quagga class="full-width" :onDetected="logIt" :readerSize="readerSize" :readerTypes="readerTypes"></v-quagga>
+        <q-card style="width: 352px; height: 360px;" class="q-pa-none">
+          <q-card-section class="q-pl-xs q-pr-xs">
+            <q-select dense behavior="menu" v-model="scanner" :options="options" label="Tipo de scanner" />
+          </q-card-section>
+          <qrcode-stream style="width: 100% !important; height: 80% !important;" @decode="onDecode" v-if="scanner === 'Qr'"></qrcode-stream>
+          <v-quagga v-else class="full-width" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
         </q-card>
       </q-dialog>
     </div>
     <q-dialog v-model="card">
       <q-card class="my-card" v-if="productScaner">
         <q-img src="https://cdn.quasar.dev/img/chicken-salad.jpg" />
-
         <q-card-section>
           <q-btn
             fab
@@ -101,6 +104,10 @@
 export default {
   data () {
     return {
+      scanner: 'Barra',
+      options: [
+        'Barra', 'Qr'
+      ],
       readerTypes: [
         'code_128_reader',
         'ean_reader',
@@ -137,6 +144,9 @@ export default {
     this.getAllProducts()
   },
   methods: {
+    onDecode (decodedString) {
+      console.log(decodedString)
+    },
     /**
      * Get all products
      *
