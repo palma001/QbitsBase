@@ -1,6 +1,6 @@
 export const products = [
   {
-    code: '0138055651547',
+    code: 138055651547,
     name: 'Harina',
     brand: 'Polar',
     description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci aspernatur ullam consequuntur voluptatum nulla minima accusantium deleniti eius qui,aut ea vel, laborum ad maxime aliquid asperiores velit voluptatem magnam?',
@@ -8,7 +8,7 @@ export const products = [
     sub_category: 'alimentos'
   },
   {
-    code: 9788492808274,
+    code: 9788492808275,
     name: 'Leche',
     brand: 'Los andes',
     description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci aspernatur ullam consequuntur voluptatum nulla minima accusantium deleniti eius qui,aut ea vel, laborum ad maxime aliquid asperiores velit voluptatem magnam?',
@@ -16,7 +16,7 @@ export const products = [
     sub_category: 'liquido'
   },
   {
-    code: 123456789,
+    code: 1234567890,
     name: 'Atún',
     brand: 'Polar',
     description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci aspernatur ullam consequuntur voluptatum nulla minima accusantium deleniti eius qui,aut ea vel, laborum ad maxime aliquid asperiores velit voluptatem magnam?',
@@ -40,7 +40,7 @@ export const products = [
     sub_category: 'liquido'
   },
   {
-    code: 123456789,
+    code: 1234567891,
     name: 'Chica',
     brand: 'Los Andes',
     description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Adipisci aspernatur ullam consequuntur voluptatum nulla minima accusantium deleniti eius qui,aut ea vel, laborum ad maxime aliquid asperiores velit voluptatem magnam?',
