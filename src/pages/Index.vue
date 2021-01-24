@@ -48,7 +48,7 @@
           <q-card-section class="q-pl-xs q-pr-xs">
             <q-select dense behavior="menu" v-model="scanner" :options="options" label="Tipo de scanner" />
           </q-card-section>
-          <qrcode-stream style="width: 100% !important; height: 80% !important;" @decode="onDecode" v-if="scanner === 'Qr'"></qrcode-stream>
+          <qrcode-stream style="width: 100% !important; height: 80% !important;" @decode="getOneProduct" v-if="scanner === 'Qr'"></qrcode-stream>
           <v-quagga v-else class="full-width" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
         </q-card>
       </q-dialog>
