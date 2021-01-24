@@ -27,7 +27,8 @@ module.exports = function (/* ctx */) {
       'apollo',
       'graphql',
       'vquagga',
-      'vqrbarcode'
+      'vqrbarcode',
+      'vbarcode'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

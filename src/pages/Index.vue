@@ -11,10 +11,9 @@
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 q-mt-md q-pa-sm" v-for="product in allProducts" :key="product.id">
         <q-card class="my-card">
           <q-card-section horizontal>
-            <q-img
-              class="col-5"
-              src="https://cdn.quasar.dev/img/parallax1.jpg"
-            />
+            <barcode :value="product.code">
+              Show this if the rendering fails.
+            </barcode>
             <q-card-section>
               <q-btn
                 fab
@@ -100,8 +99,11 @@
 </template>
 
 <script>
-
+import VueBarcode from 'vue-barcode'
 export default {
+  components: {
+    barcode: VueBarcode
+  },
   data () {
     return {
       scanner: 'Barra',
@@ -172,7 +174,7 @@ export default {
         })[0]
 
         if (!this.productScaner) {
-          alert('Producto no encontrado')
+          alert('Producto no encontrado ' + data)
         } else {
           this.card = true
           this.persistent = false
