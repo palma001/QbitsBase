@@ -21,7 +21,7 @@ const routes = [
         name: 'products'
       },
       {
-        path: '/geolocaion',
+        path: '/geolocation',
         component: () => import('pages/Geolocation.vue'),
         name: 'geolocation'
       }
