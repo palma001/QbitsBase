@@ -19,6 +19,11 @@ const routes = [
         path: '/products',
         component: () => import('pages/Index.vue'),
         name: 'products'
+      },
+      {
+        path: '/geolocaion',
+        component: () => import('pages/Geolocation.vue'),
+        name: 'geolocation'
       }
     ]
   },

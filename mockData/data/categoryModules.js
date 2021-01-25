@@ -14,6 +14,12 @@ export const categoryModules = [
         route: 'products',
         icon: 'receipt',
         devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'geolocation',
+        route: 'geolocation',
+        icon: 'map',
+        devices: ['mobile', 'desktop']
       }
     ]
   }

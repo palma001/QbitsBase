@@ -28,7 +28,9 @@ module.exports = function (/* ctx */) {
       'graphql',
       'vquagga',
       'vqrbarcode',
-      'vbarcode'
+      'vbarcode',
+      'google-maps',
+      'geolocation'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

@@ -50,7 +50,8 @@ export default {
     category_module: 'Categoria',
     listModule: 'lista de modulos',
     'branch-offices': 'sucursales',
-    billing: 'facturar'
+    billing: 'facturar',
+    geolocation: 'geolocalización'
   },
 
   // permissions
