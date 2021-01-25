@@ -143,29 +143,29 @@ module.exports = function (/* ctx */) {
         theme_color: '#027be3',
         icons: [
           {
-            src: 'icons/icon-128x128.png',
+            src: 'icons/Monteverde.svg',
             sizes: '128x128',
-            type: 'image/png'
+            type: 'image/svg'
           },
           {
-            src: 'icons/icon-192x192.png',
+            src: 'icons/Monteverde.svg',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/svg'
           },
           {
-            src: 'icons/icon-256x256.png',
+            src: 'icons/Monteverde.svg',
             sizes: '256x256',
-            type: 'image/png'
+            type: 'image/svg'
           },
           {
-            src: 'icons/icon-384x384.png',
+            src: 'icons/Monteverde.svg',
             sizes: '384x384',
-            type: 'image/png'
+            type: 'image/svg'
           },
           {
-            src: 'icons/icon-512x512.png',
+            src: 'icons/Monteverde.svg',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/svg'
           }
         ]
       }
