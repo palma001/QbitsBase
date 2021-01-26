@@ -2,7 +2,7 @@ import { users } from './data/users'
 import { products } from './data/products'
 import { modules } from './data/modules'
 import { permissions } from './data/permissions'
-import { business } from './data/business'
+import { facturas } from './data/facturas'
 import { branchOffice } from './data/branchOffice'
 import { roles } from './data/roles'
 import { categoryModules } from './data/categoryModules'
@@ -83,15 +83,15 @@ const mockData = {
           }, 2000)
         })
       }
-      case 'business': {
+      case 'facturas': {
         return new Promise((resolve, reject) => {
           setTimeout(() => {
             resolve({
               response: {
                 data: {
-                  content: business,
+                  content: facturas,
                   metadata: {
-                    totalElements: business.length,
+                    totalElements: facturas.length,
                     number: params, // server data
                     size: 3 // server data
                   }
@@ -164,6 +164,29 @@ const mockData = {
                   content: authorizations,
                   metadata: {
                     totalElements: authorizations.length,
+                    number: params, // server data
+                    size: 3 // server data
+                  }
+                }
+              }
+            })
+          }, 2000)
+        })
+      }
+    }
+  },
+
+  getOneData (data, params) {
+    switch (data) {
+      case 'facturas': {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve({
+              response: {
+                data: {
+                  content: facturas.filter((data) => Number(data.codigo) === Number(params))[0],
+                  metadata: {
+                    totalElements: facturas.length,
                     number: params, // server data
                     size: 3 // server data
                   }
