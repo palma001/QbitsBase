@@ -177,12 +177,12 @@ export default {
        *
        * @type {Bollean} status menu
        */
-      leftDrawerOpen: false
+      leftDrawerOpen: true
     }
   },
-  // created () {
-  //   this.loadingPage()
-  // },
+  created () {
+    this.loadingPage()
+  },
   computed: {
     /**
      * Getters Vuex
@@ -215,17 +215,17 @@ export default {
     /**
      * Loading aplications
      */
-    // loadingPage () {
-    //   this.$q.dark.set(SessionStorage.getItem('dark'))
-    //   const sucursaelSelected = SessionStorage.getItem('sucursalSelected')
-    //   if (sucursaelSelected) {
-    //     SessionStorage.set('sucursalSelected', sucursaelSelected)
-    //     this.labelDrown = sucursaelSelected.nombre_sucursal
-    //   } else {
-    //     this.labelDrown = this.sucursales[0].nombre_sucursal
-    //     SessionStorage.set('sucursalSelected', this.sucursales[0])
-    //   }
-    // },
+    loadingPage () {
+      this.$q.dark.set(SessionStorage.getItem('dark'))
+      // const sucursaelSelected = SessionStorage.getItem('sucursalSelected')
+      // if (sucursaelSelected) {
+      //   SessionStorage.set('sucursalSelected', sucursaelSelected)
+      //   this.labelDrown = sucursaelSelected.nombre_sucursal
+      // } else {
+      //   this.labelDrown = this.sucursales[0].nombre_sucursal
+      //   SessionStorage.set('sucursalSelected', this.sucursales[0])
+      // }
+    },
     /**
      * Change route
      * @param  {String} data name route

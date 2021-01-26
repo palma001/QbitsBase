@@ -12,18 +12,28 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import('pages/Index.vue'),
+        component: () => import('pages/EmpaquesEmpleado.vue'),
         name: ''
       },
       {
-        path: '/products',
-        component: () => import('pages/Index.vue'),
-        name: 'products'
+        path: '/empaques-empleado',
+        component: () => import('pages/EmpaquesEmpleado.vue'),
+        name: 'empaques-empleado'
+      },
+      {
+        path: '/empaques-transporte',
+        component: () => import('pages/EmpaquesTransporte.vue'),
+        name: 'empaques-transporte'
       },
       {
         path: '/geolocation',
         component: () => import('pages/Geolocation.vue'),
         name: 'geolocation'
+      },
+      {
+        path: '/factura',
+        component: () => import('pages/Factura.vue'),
+        name: 'factura'
       }
     ]
   },

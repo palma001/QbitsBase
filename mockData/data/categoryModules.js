@@ -1,24 +1,41 @@
 export const categoryModules = [
-  // {
-  //   name: 'products',
-  //   route: 'products',
-  //   icon: '',
-  //   devices: ['mobile', 'desktop']
-  // },
   {
-    name: 'business',
+    name: 'empleado',
     icon: 'all_inbox',
     modules: [
       {
-        name: 'products',
-        route: 'products',
-        icon: 'receipt',
+        name: 'embalar',
+        route: 'factura',
+        icon: 'map',
         devices: ['mobile', 'desktop']
       },
       {
-        name: 'geolocation',
-        route: 'geolocation',
-        icon: 'map',
+        name: 'listaEmpaques',
+        route: 'empaques-empleado',
+        icon: 'receipt',
+        devices: ['mobile', 'desktop']
+      }
+      // {
+      //   name: 'geolocation',
+      //   route: 'geolocation',
+      //   icon: 'map',
+      //   devices: ['mobile', 'desktop']
+      // }
+    ]
+  },
+  // {
+  //   name: 'administracion',
+  //   icon: 'all_inbox',
+  //   modules: []
+  // },
+  {
+    name: 'transporte',
+    icon: 'all_inbox',
+    modules: [
+      {
+        name: 'listaEmpaques',
+        route: 'empaques-transporte',
+        icon: 'receipt',
         devices: ['mobile', 'desktop']
       }
     ]
