@@ -17,7 +17,21 @@
         :data="data"
         :columns="columns"
         row-key="name"
-      />
+      >
+        <template v-slot:body="props">
+          <q-tr :props="props" :class="props.row.cantidad === props.row.cantidad_embalado ? 'bg-teal' : ''">
+            <q-td key="name" :props="props">
+              {{ props.row.name }}
+            </q-td>
+            <q-td key="cantidad" :props="props">
+              {{ props.row.cantidad }}
+            </q-td>
+            <q-td key="cantidad_embalado" :props="props">
+              {{ props.row.cantidad_embalado }}
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
     </div>
   </div>
 </template>
@@ -57,8 +71,21 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'cantidad', align: 'center', label: 'Cantidad producto', field: 'cantidad', sortable: true },
-        { name: 'fat', label: 'Cantidad embalado', field: 'fat', sortable: true }
+        {
+          name: 'cantidad',
+          align: 'center',
+          label: 'Cantidad producto',
+          field: 'cantidad',
+          sortable: true
+          // classes: row => row.cantidad === row.fat ? 'bg-teal' : ''
+        },
+        {
+          name: 'cantidad_embalado',
+          label: 'Cantidad embalado',
+          field: 'cantidad_embalado',
+          sortable: true
+          // classes: row => row.cantidad === row.fat ? 'bg-teal' : ''
+        }
       ],
       /**
        * Data de la tabla de los productos de la factura
@@ -68,17 +95,17 @@ export default {
         {
           name: 'Frozen Yogurt',
           cantidad: 159,
-          fat: 6.0
+          cantidad_embalado: 159
         },
         {
           name: 'Ice cream sandwich',
           cantidad: 237,
-          fat: 9.0
+          cantidad_embalado: 9.0
         },
         {
           name: 'Eclair',
           cantidad: 262,
-          fat: 16.0
+          cantidad_embalado: 16.0
         }
       ]
     }
