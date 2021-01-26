@@ -1,14 +1,14 @@
 <template>
   <div class="q-pa-md row">
-    <div class="col-12 row">
-      <div class="col-3">
-        <q-input style="width:200px" v-model="codigo_factura" label="Código Factura" />
+    <div class="col-12 row justify-between">
+      <div class="col-sm-3 col-xs-3">
+        <q-input filled dense v-model="codigo_factura" label="Código Factura" />
       </div>
-      <div class="col-3">
-        <q-select style="width:200px" v-model="tipo_empaque" :options="options" label="Tipos de Empaque" />
+      <div class="col-sm-3 col-xs-3">
+        <q-select filled dense v-model="tipo_empaque" :options="options" label="Tipos de Empaque" />
       </div>
-      <div class="col-3">
-        <q-btn color="teal" text-color="white" label="Finalizar Empaque" class="q-mt-md"/>
+      <div class="col-sm-5 col-xs-5">
+        <q-btn color="teal" text-color="white" label="Finalizar Empaque" size="15px"/>
       </div>
     </div>
     <div class="col-12 q-mt-md">
