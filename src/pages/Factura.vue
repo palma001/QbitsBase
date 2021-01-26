@@ -8,7 +8,7 @@
           v-model="codigo_factura"
           label="Código Factura"
           @keyup.enter="obtenerFactura"
-          :disable="factura ? true : false"
+          :disable="factura.length === 0 ? false : true"
         />
       </div>
       <div class="col-sm-3 col-xs-12">
@@ -18,10 +18,10 @@
         <q-btn color="teal" text-color="white" label="Finalizar Empaque" size="15px"/>
       </div>
     </div>
-    <div class="col-12 q-mt-md" v-if="factura">
+    <div class="col-12 q-mt-md" v-if="factura.length > 0">
       <q-table
         title="Productos"
-        :data="factura.detalles"
+        :data="factura"
         :columns="columns"
         row-key="name"
       >
@@ -49,7 +49,7 @@ export default {
     return {
       barcode: '',
       codeDisable: false,
-      factura: null,
+      factura: [],
       /**
        * Código de la factura
        * @type {String} código de la factura
@@ -127,7 +127,7 @@ export default {
     getCode (e) {
       const code = (e.keyCode ? e.keyCode : e.which)
       if (code === 13) {
-        if (this.factura) {
+        if (this.factura.length > 0) {
           this.obtenerProducto(this.barcode)
         }
         this.barcode = ''
@@ -140,17 +140,31 @@ export default {
      */
     async obtenerFactura () {
       const { response } = await this.$mockData.getOneData('facturas', this.codigo_factura)
-      this.factura = response.data.content
+      this.factura = response.data.content.detalles.map(product => {
+        product.cantidad_embalado = 0
+        return product
+      })
     },
     /**
      * Obtener producto
      * @param {String} codigo codigo del producto
      */
     obtenerProducto (codigo) {
-      console.log(codigo)
-      const producto = this.factura.detalles.filter(val => Number(val.codigo) === Number(codigo))
-      this.factura.detalles.push(producto[0])
-      console.log(producto[0])
+      const factura = this.factura.filter(row => Number(row.codigo) === Number(codigo))
+      if (factura.length > 0) {
+        this.factura.map(product => {
+          if (Number(product.codigo) === Number(codigo)) {
+            if (product.cantidad > product.cantidad_embalado) {
+              product.cantidad_embalado += 1
+              return product
+            } else {
+              alert('Producto supero el limite')
+            }
+          }
+        })
+      } else {
+        alert('Producto no encontrado')
+      }
     }
   }
 }
