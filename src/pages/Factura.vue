@@ -1,13 +1,13 @@
 <template>
   <div class="q-pa-md row">
-    <div class="col-12 row justify-between">
-      <div class="col-sm-3 col-xs-3">
+    <div class="col-12 row justify-between q-gutter-y-sm">
+      <div class="col-sm-3 col-xs-12">
         <q-input filled dense v-model="codigo_factura" label="Código Factura" />
       </div>
-      <div class="col-sm-3 col-xs-3">
+      <div class="col-sm-3 col-xs-12">
         <q-select filled dense v-model="tipo_empaque" :options="options" label="Tipos de Empaque" />
       </div>
-      <div class="col-sm-5 col-xs-5">
+      <div class="col-sm-5 col-xs-12">
         <q-btn color="teal" text-color="white" label="Finalizar Empaque" size="15px"/>
       </div>
     </div>

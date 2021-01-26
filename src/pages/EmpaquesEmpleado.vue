@@ -1,13 +1,13 @@
 <template>
   <div class="q-pa-md q-gutter-y-md row">
-    <div class="col-12 row q-gutter-x-md">
-      <div class="col-sm-2 col-xs-2 col-md-1 col-lg-1 col-xl-1 q-mt-sm">
+    <div class="col-12 row q-gutter-sm">
+      <div class="col-sm-2 col-xs-12 col-md-1 col-lg-1 col-xl-1 q-mt-md">
         Filtrar por:
       </div>
-      <div class="col-sm-4 col-xs-4">
+      <div class="col-sm-4 col-xs-12">
         <q-input v-model="desde" filled type="date" dense/>
       </div>
-      <div class="col-sm-4 col-xs-4">
+      <div class="col-sm-4 col-xs-12">
         <q-input v-model="hasta" filled type="date" dense/>
       </div>
     </div>
