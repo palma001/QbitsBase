@@ -1,21 +1,34 @@
 <template>
   <div class="q-pa-md row">
-    <div class="col-12 row justify-between q-gutter-y-sm">
+    <div class="col-12 row q-gutter-sm">
       <div class="col-sm-3 col-xs-12">
         <q-input
           filled
           dense
-          v-model="codigo_factura"
+          autofocus
           label="Código Factura"
-          @keyup.enter="obtenerFactura"
+          v-model="codigoFactura"
           :disable="factura.length === 0 ? false : true"
-        />
+          @keyup.enter="obtenerFactura"
+        >
+          <template v-slot:append>
+            <q-spinner
+              v-if="loadingFactura"
+              color="primary"
+              :thickness="2"
+            />
+            <q-icon name="search" v-else/>
+          </template>
+        </q-input>
       </div>
-      <div class="col-sm-3 col-xs-12">
-        <q-select filled dense v-model="tipo_empaque" :options="options" label="Tipos de Empaque" />
+      <div class="col-sm-2 col-xs-12">
+        <q-select filled dense v-model="tipoEmpaque" :options="listaTipoEmpaque" label="Tipos de Empaque" />
       </div>
-      <div class="col-sm-5 col-xs-12">
-        <q-btn color="teal" text-color="white" label="Finalizar Empaque" size="15px"/>
+      <div class="col-sm-2 col-xs-12">
+        <q-select filled dense v-model="tipoEntrega" :options="listaTipoEntrega" label="Tipos de Entrega" />
+      </div>
+      <div class="col-sm-4 col-xs-12">
+        <q-btn color="teal" text-color="white" label="Finalizar Empaque" size="15px" @click="finalizarEntrega"/>
       </div>
     </div>
     <div class="col-12 q-mt-md" v-if="factura.length > 0">
@@ -35,6 +48,9 @@
             </q-td>
             <q-td key="cantidad_embalado" :props="props">
               {{ props.row.cantidad_embalado }}
+              <q-popup-edit v-model="props.row.cantidad_embalado" title="Editar cantidad embalado">
+                <q-input type="number" v-model="props.row.cantidad_embalado" dense autofocus counter />
+              </q-popup-edit>
             </q-td>
           </q-tr>
         </template>
@@ -44,28 +60,42 @@
 </template>
 
 <script>
+import { mixins } from '../mixins'
 export default {
+  mixins: [mixins.containerMixin],
   data () {
     return {
       barcode: '',
-      codeDisable: false,
+      loadingFactura: false,
       factura: [],
       /**
        * Código de la factura
        * @type {String} código de la factura
        */
-      codigo_factura: null,
+      codigoFactura: null,
       /**
        * Valor del tipo de empaque
        * @type {String} tipo de empaque
        */
-      tipo_empaque: null,
+      tipoEmpaque: null,
+      /**
+       * Valor del tipo de entrega del empaque
+       * @type {String} tipo de entrega del empaque
+       */
+      tipoEntrega: null,
       /**
        * Tipos de empaque
        * @type {Array} datos de los tipo de empaque
        */
-      options: [
+      listaTipoEmpaque: [
         'CAJA', 'BOLSA', 'SOBRE'
+      ],
+      /**
+       * Tipos de entrega
+       * @type {Array} datos de los tipo de entrega
+       */
+      listaTipoEntrega: [
+        'Delivery', 'Tienda'
       ],
       /**
        * Columnas de la tabla de los productos de la factura
@@ -119,11 +149,30 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('keyup', event => {
-      this.getCode(event)
-    })
+    // window.addEventListener('keyup', event => {
+    //   this.getCode(event)
+    // })
   },
   methods: {
+    finalizarEntrega () {
+      this.factura.forEach(element => {
+        if (Number(element.cantidad) > Number(element.cantidad_embalado)) {
+          this.notify(
+            this,
+            `el producto ${element.nombre_producto} no tiene la cantidad embalada correcta`,
+            'negative',
+            'warining'
+          )
+        } else if (Number(element.cantidad) < Number(element.cantidad_embalado)) {
+          this.notify(
+            this,
+            `el producto ${element.nombre_producto} supera la cantidad en la factura`,
+            'negative',
+            'warining'
+          )
+        }
+      })
+    },
     getCode (e) {
       const code = (e.keyCode ? e.keyCode : e.which)
       if (code === 13) {
@@ -139,11 +188,18 @@ export default {
      * Obtener factura
      */
     async obtenerFactura () {
-      const { response } = await this.$mockData.getOneData('facturas', this.codigo_factura)
-      this.factura = response.data.content.detalles.map(product => {
-        product.cantidad_embalado = 0
-        return product
-      })
+      try {
+        this.loadingFactura = true
+        const { response } = await this.$mockData.getOneData('facturas', this.codigoFactura)
+        this.factura = response.data.content.detalles.map(product => {
+          product.cantidad_embalado = 0
+          return product
+        })
+        this.loadingFactura = false
+      } catch (error) {
+        this.notify(this, 'Factura no encontrada', 'negative', 'warning')
+        this.loadingFactura = false
+      }
     },
     /**
      * Obtener producto
