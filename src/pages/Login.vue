@@ -18,12 +18,13 @@
             <div class="text-h6">Iniciar sesión</div>
           </q-card-section>
           <q-card-section>
-            <q-select outlined dense v-model="rol" :options="listaRoles" label="Usuario" />
+            <q-select outlined dense v-model="rol" :options="listaRoles" label="Tipo de usuario" />
             <q-input
-              class="q-mt-md"
+              class="q-mt-lg"
               color="primary"
+              v-if="rol === 'Usuario'"
               v-model="username"
-              label="Correo"
+              label="Usuario"
               ref="username"
               name="username"
               outlined
@@ -46,8 +47,15 @@
               dense
               @keyup.enter.native="login"
               :rules="[val => !!val || 'El campo es requerido.']">
-              <template v-slot:prepend>
-                <q-icon name="lock"/>
+              <template v-slot:append v-if="rol === 'Empleado'">
+                <q-btn
+                  color="teal"
+                  text-color="white"
+                  size="xs"
+                  icon="qr_code"
+                  round
+                  @click="scanner = !scanner"
+                />
               </template>
             </q-input>
           </q-card-section>
@@ -72,16 +80,22 @@
           </q-card-actions>
         </q-card>
       </div>
+      <b-scanner :show="scanner" @eventScanner="eventScanner"/>
     </div>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
 import { ACTIONS } from '../store/module-login/name.js'
+import BScanner from '../components/BScanner.vue'
 export default {
+  components: {
+    BScanner
+  },
   data () {
     return {
       rol: 'Usuario',
+      scanner: false,
       listaRoles: ['Empleado', 'Usuario'],
       /**
          * Email User
@@ -109,6 +123,9 @@ export default {
      */
     errorValidation (field) {
       return this.errors.has(field) ? 'is-danger' : null
+    },
+    eventScanner (code) {
+      console.log(code)
     },
     /**
      * Login app

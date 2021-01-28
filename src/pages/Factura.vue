@@ -118,7 +118,7 @@ export default {
       scanner: 'Barra',
       /**
        * Data de los tipos de scanner
-       * @type {String} Data de los tipos de scanner
+       * @type {Array} Data de los tipos de scanner
        */
       options: [
         'Barra', 'Qr'
