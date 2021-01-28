@@ -34,9 +34,9 @@
     <div class="col-12 q-mt-md" v-if="factura.length > 0">
       <q-table
         title="Productos"
+        row-key="name"
         :data="factura"
         :columns="columns"
-        row-key="name"
       >
         <template v-slot:body="props">
           <q-tr :props="props" :class="props.row.cantidad === props.row.cantidad_embalado ? 'bg-teal' : ''">
@@ -65,7 +65,7 @@
           label="Scanner"
           label-position="left"
           external-label
-          @click="abrirModal"
+          @click="persistent = true"
         />
       </q-fab>
     </q-page-sticky>
@@ -82,19 +82,6 @@
         <v-quagga v-else class="full-width" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="scannerProductos" transition-show="scale" transition-hide="scale">
-      <q-card style="width: 352px; height: 336px;" class="q-pa-none">
-        <q-card-section class="q-pa-xs">
-          <q-select dense behavior="menu" v-model="scanner" :options="options" label="Tipo de scanner" />
-        </q-card-section>
-        <qrcode-stream
-          style="width: 100% !important; height: 288px; !important;"
-          @decode="obtenerProducto"
-          v-if="scanner === 'Qr'"
-        />
-        <v-quagga v-else class="full-width" :onDetected="logItProducto" :readerTypes="readerTypes"></v-quagga>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
@@ -104,15 +91,42 @@ export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
+      /**
+       * Código de barra
+       * @type {String} código de barra
+       */
       barcode: '',
+      /**
+       * Loading factura
+       * @type {Boolean} Loading factura
+       */
       loadingFactura: false,
+      /**
+       * Estado del componente dialog
+       * @type {String} Estado del componente dialog
+       */
       persistent: false,
-      scannerProductos: false,
+      /**
+       * Productos de la factura
+       * @type {Array} Productos de la factura
+       */
       factura: [],
+      /**
+       * Tipo de scanner
+       * @type {String} Tipo de scanner
+       */
       scanner: 'Barra',
+      /**
+       * Data de los tipos de scanner
+       * @type {String} Data de los tipos de scanner
+       */
       options: [
         'Barra', 'Qr'
       ],
+      /**
+       * Tipo de codigo de barra
+       * @type {String} Tipo de codigo de barra
+       */
       readerTypes: [
         'code_128_reader',
         'ean_reader',
@@ -180,43 +194,18 @@ export default {
           sortable: true
           // classes: row => row.cantidad === row.fat ? 'bg-teal' : ''
         }
-      ],
-      /**
-       * Data de la tabla de los productos de la factura
-       * @type {Array} data de la tabla
-       */
-      data: [
-        {
-          name: 'Frozen Yogurt',
-          cantidad: 159,
-          cantidad_embalado: 159
-        },
-        {
-          name: 'Ice cream sandwich',
-          cantidad: 237,
-          cantidad_embalado: 9.0
-        },
-        {
-          name: 'Eclair',
-          cantidad: 262,
-          cantidad_embalado: 16.0
-        }
       ]
     }
   },
-  mounted () {
-    // window.addEventListener('keyup', event => {
-    //   this.getCode(event)
-    // })
-  },
+  // mounted () {
+  //   window.addEventListener('keyup', event => {
+  //     this.getCode(event)
+  //   })
+  // },
   methods: {
-    abrirModal () {
-      if (this.factura.length <= 0) {
-        this.persistent = true
-      } else {
-        this.scannerProductos = true
-      }
-    },
+    /**
+     * Finalizar embalaje
+     */
     finalizarEntrega () {
       this.factura.forEach(element => {
         if (Number(element.cantidad) > Number(element.cantidad_embalado)) {
@@ -236,42 +225,50 @@ export default {
         }
       })
     },
-    getCode (e) {
-      const code = (e.keyCode ? e.keyCode : e.which)
-      if (code === 13) {
-        if (this.factura.length > 0) {
-          this.obtenerProducto(this.barcode)
-        }
-        this.barcode = ''
-      } else {
-        this.barcode += e.key
-      }
-    },
-    logIt (data) {
-      this.obtenerFactura(data.codeResult.code)
-    },
-    logItProducto (data) {
-      this.obtenerProducto(data.codeResult.code)
-    },
+    // getCode (e) {
+    //   const code = (e.keyCode ? e.keyCode : e.which)
+    //   if (code === 13) {
+    //     if (this.factura.length > 0) {
+    //       this.obtenerProducto(this.barcode)
+    //     }
+    //     this.barcode = ''
+    //   } else {
+    //     this.barcode += e.key
+    //   }
+    // },
     /**
-     * Obtener factura
+     * Obtiene el codigo de barra o Qr
+     * @param {String} data codigo de barra o Qr
      */
-    async obtenerFactura (code) {
-      this.codigoFactura = code ?? this.codigoFactura
-      try {
-        this.loadingFactura = true
-        const { response } = await this.$mockData.getOneData('facturas', this.codigoFactura)
-        this.factura = response.data.content.detalles.map(product => {
-          product.cantidad_embalado = 0
-          return product
-        })
-        this.loadingFactura = false
-        this.persistent = false
-      } catch (error) {
-        this.notify(this, 'Factura no encontrada', 'negative', 'warning')
-        this.factura = []
-        this.loadingFactura = false
+    logIt (data) {
+      if (this.factura.length <= 0) {
+        this.obtenerFactura(data.codeResult.code)
+      } else {
+        this.obtenerProducto(data.codeResult.code)
       }
+    },
+
+    /**
+     * Obtiene la factura
+     * @param {String} code codigo de barra o Qr de la factura
+     */
+    obtenerFactura (code) {
+      this.codigoFactura = typeof code === 'string' ? code : this.codigoFactura
+      this.loadingFactura = true
+      this.$mockData.getOneData('facturas', this.codigoFactura)
+        .then(({ response }) => {
+          this.factura = response.data.content.detalles.map(product => {
+            product.cantidad_embalado = 0
+            return product
+          })
+          this.loadingFactura = false
+          this.persistent = false
+        })
+        .catch(() => {
+          this.notify(this, 'Factura no encontrada', 'negative', 'warning')
+          this.factura = []
+          this.loadingFactura = false
+        })
     },
     /**
      * Obtener producto
@@ -291,7 +288,7 @@ export default {
           }
         })
       } else {
-        alert('Producto no encontrado ' + codigo)
+        this.notify(this, 'Producto no encontrada', 'negative', 'warning')
       }
     }
   }
