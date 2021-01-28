@@ -8,7 +8,7 @@
       <div class="col-12">
         <q-card flat class="my-card q-pa-none" style="background-color: transparent !important;">
           <q-card-section class="text-center q-pa-none">
-            <img src="icons/Monteverde.svg" class="img">
+            <img src="icons/Monteverde-svg.svg" class="img">
           </q-card-section>
         </q-card>
       </div>
@@ -147,6 +147,6 @@ export default {
 </script>
 <style>
   .img {
-    width: 150px;
+    width: 300px;
   }
 </style>
