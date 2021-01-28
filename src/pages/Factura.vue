@@ -56,6 +56,45 @@
         </template>
       </q-table>
     </div>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-fab color="purple" icon="keyboard_arrow_up" direction="up" label="Opciones" label-position="left" external-label>
+        <q-fab-action
+          color="amber"
+          icon="qr_code"
+          glossy
+          label="Scanner"
+          label-position="left"
+          external-label
+          @click="abrirModal"
+        />
+      </q-fab>
+    </q-page-sticky>
+    <q-dialog v-model="persistent" transition-show="scale" transition-hide="scale">
+      <q-card style="width: 352px; height: 336px;" class="q-pa-none">
+        <q-card-section class="q-pa-xs">
+          <q-select dense behavior="menu" v-model="scanner" :options="options" label="Tipo de scanner" />
+        </q-card-section>
+        <qrcode-stream
+          style="width: 100% !important; height: 288px; !important;"
+          @decode="obtenerFactura"
+          v-if="scanner === 'Qr'"
+        />
+        <v-quagga v-else class="full-width" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="scannerProductos" transition-show="scale" transition-hide="scale">
+      <q-card style="width: 352px; height: 336px;" class="q-pa-none">
+        <q-card-section class="q-pa-xs">
+          <q-select dense behavior="menu" v-model="scanner" :options="options" label="Tipo de scanner" />
+        </q-card-section>
+        <qrcode-stream
+          style="width: 100% !important; height: 288px; !important;"
+          @decode="obtenerProducto"
+          v-if="scanner === 'Qr'"
+        />
+        <v-quagga v-else class="full-width" :onDetected="logItProducto" :readerTypes="readerTypes"></v-quagga>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -67,7 +106,24 @@ export default {
     return {
       barcode: '',
       loadingFactura: false,
+      persistent: false,
+      scannerProductos: false,
       factura: [],
+      scanner: 'Barra',
+      options: [
+        'Barra', 'Qr'
+      ],
+      readerTypes: [
+        'code_128_reader',
+        'ean_reader',
+        'ean_8_reader',
+        'code_39_reader',
+        'code_39_vin_reader',
+        'codabar_reader',
+        'upc_reader',
+        'upc_e_reader',
+        'i2of5_reader'
+      ],
       /**
        * Código de la factura
        * @type {String} código de la factura
@@ -154,6 +210,13 @@ export default {
     // })
   },
   methods: {
+    abrirModal () {
+      if (this.factura.length <= 0) {
+        this.persistent = true
+      } else {
+        this.scannerProductos = true
+      }
+    },
     finalizarEntrega () {
       this.factura.forEach(element => {
         if (Number(element.cantidad) > Number(element.cantidad_embalado)) {
@@ -184,10 +247,17 @@ export default {
         this.barcode += e.key
       }
     },
+    logIt (data) {
+      this.obtenerFactura(data.codeResult.code)
+    },
+    logItProducto (data) {
+      this.obtenerProducto(data.codeResult.code)
+    },
     /**
      * Obtener factura
      */
-    async obtenerFactura () {
+    async obtenerFactura (code) {
+      this.codigoFactura = code ?? this.codigoFactura
       try {
         this.loadingFactura = true
         const { response } = await this.$mockData.getOneData('facturas', this.codigoFactura)
@@ -196,8 +266,10 @@ export default {
           return product
         })
         this.loadingFactura = false
+        this.persistent = false
       } catch (error) {
         this.notify(this, 'Factura no encontrada', 'negative', 'warning')
+        this.factura = []
         this.loadingFactura = false
       }
     },
@@ -219,7 +291,7 @@ export default {
           }
         })
       } else {
-        alert('Producto no encontrado')
+        alert('Producto no encontrado ' + codigo)
       }
     }
   }

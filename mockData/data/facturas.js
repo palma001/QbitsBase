@@ -1,6 +1,6 @@
 export const facturas = [
   {
-    codigo: 13123213,
+    codigo: 138055651546,
     detalles: [
       {
         codigo: 13123213,
@@ -20,20 +20,20 @@ export const facturas = [
     ]
   },
   {
-    codigo: 12345678,
+    codigo: 138055651547,
     detalles: [
       {
-        codigo: 13123215,
+        codigo: 1234567891,
         nombre_producto: 'harina de trigo',
         cantidad: 10
       },
       {
-        codigo: 13123216,
+        codigo: 1234567890,
         nombre_producto: 'cocacola',
         cantidad: 10
       },
       {
-        codigo: 13123217,
+        codigo: 9788492808274,
         nombre_producto: 'harina',
         cantidad: 10
       }
