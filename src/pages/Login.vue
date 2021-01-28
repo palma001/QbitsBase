@@ -4,7 +4,7 @@
       <div class="col-md-5 col-xl-4 col-lg-5 col-sm-10 col-xs-10 offset-sm-2 offset-lg-1 offset-xl-2 offset-md-1" style="position: relative;">
       </div>
     </div> -->
-    <div class="row justify-center">
+    <div class="row justify-center q-mt-xl">
       <div class="col-12">
         <q-card flat class="my-card q-pa-none" style="background-color: transparent !important;">
           <q-card-section class="text-center q-pa-none">
