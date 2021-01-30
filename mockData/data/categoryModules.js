@@ -5,13 +5,13 @@ export const categoryModules = [
     modules: [
       {
         name: 'embalar',
-        route: 'factura',
+        route: 'Factura',
         icon: 'map',
         devices: ['mobile', 'desktop']
       },
       {
         name: 'listaEmpaques',
-        route: 'empaques-empleado',
+        route: 'EmpaquesEmpleado',
         icon: 'receipt',
         devices: ['mobile', 'desktop']
       }
@@ -34,7 +34,19 @@ export const categoryModules = [
     modules: [
       {
         name: 'listaEmpaques',
-        route: 'empaques-transporte',
+        route: 'EmpaquesTransporte',
+        icon: 'receipt',
+        devices: ['mobile', 'desktop']
+      }
+    ]
+  },
+  {
+    name: 'cliente',
+    icon: 'users',
+    modules: [
+      {
+        name: 'listaEmpaques',
+        route: 'EmpaquesCliente',
         icon: 'receipt',
         devices: ['mobile', 'desktop']
       }

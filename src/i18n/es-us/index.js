@@ -5,7 +5,8 @@ export default {
     transporte: 'transporte',
     darkMode: 'modo oscuro',
     active: 'habilitado',
-    desactive: 'deshabilitado'
+    desactive: 'deshabilitado',
+    cliente: 'cliente'
   },
   // modules
   modules: {

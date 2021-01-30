@@ -18,22 +18,27 @@ const routes = [
       {
         path: '/empaques-empleado',
         component: () => import('pages/EmpaquesEmpleado.vue'),
-        name: 'empaques-empleado'
+        name: 'EmpaquesEmpleado'
       },
       {
         path: '/empaques-transporte',
         component: () => import('pages/EmpaquesTransporte.vue'),
-        name: 'empaques-transporte'
+        name: 'EmpaquesTransporte'
       },
       {
         path: '/geolocation',
         component: () => import('pages/Geolocation.vue'),
-        name: 'geolocation'
+        name: 'Geolocation'
       },
       {
         path: '/factura',
-        component: () => import('pages/Factura.vue'),
-        name: 'factura'
+        component: () => import('pages/Embalar.vue'),
+        name: 'Factura'
+      },
+      {
+        path: '/empaques-cliente',
+        component: () => import('pages/EmpaquesCliente.vue'),
+        name: 'EmpaquesCliente'
       }
     ]
   },

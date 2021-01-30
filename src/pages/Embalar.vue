@@ -82,6 +82,9 @@
         <v-quagga v-else class="full-width" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
       </q-card>
     </q-dialog>
+    <div>
+      <h2>{{ response }}</h2>
+    </div>
   </div>
 </template>
 
@@ -91,6 +94,7 @@ export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
+      response: '',
       /**
        * Código de barra
        * @type {String} código de barra
@@ -197,12 +201,21 @@ export default {
       ]
     }
   },
+  // created () {
+  //   this.api()
+  // },
   // mounted () {
   //   window.addEventListener('keyup', event => {
   //     this.getCode(event)
   //   })
   // },
   methods: {
+    api () {
+      this.$services.getData(['api', 'helloworld'])
+        .then(({ res }) => {
+          this.response = res.data
+        })
+    },
     /**
      * Finalizar embalaje
      */
@@ -294,7 +307,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

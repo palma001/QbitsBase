@@ -35,13 +35,32 @@
         </template>
       </q-table>
     </div>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-fab color="purple" icon="keyboard_arrow_up" direction="up" label="Opciones" label-position="left" external-label>
+        <q-fab-action
+          color="amber"
+          icon="qr_code"
+          glossy
+          label="Scanner"
+          label-position="left"
+          external-label
+          @click="scanner = !scanner"
+        />
+      </q-fab>
+    </q-page-sticky>
+    <b-scanner :show="scanner" @eventScanner="eventScanner"/>
   </div>
 </template>
 
 <script>
+import BScanner from '../components/BScanner.vue'
 export default {
+  components: {
+    BScanner
+  },
   data () {
     return {
+      scanner: false,
       /**
        * Valor de la fecha del empaques
        * @type {String} fecha desde del empaque
@@ -99,6 +118,11 @@ export default {
           fecha: '-'
         }
       ]
+    }
+  },
+  methods: {
+    eventScanner (data) {
+      console.log(data)
     }
   }
 }
