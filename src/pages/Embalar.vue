@@ -79,7 +79,7 @@
           @decode="obtenerFactura"
           v-if="scanner === 'Qr'"
         />
-        <v-quagga v-else class="full-width" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
+        <v-quagga v-else class="full-width" :frequency="0" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
       </q-card>
     </q-dialog>
     <div>
@@ -133,14 +133,7 @@ export default {
        */
       readerTypes: [
         'code_128_reader',
-        'ean_reader',
-        'ean_8_reader',
-        'code_39_reader',
-        'code_39_vin_reader',
-        'codabar_reader',
-        'upc_reader',
-        'upc_e_reader',
-        'i2of5_reader'
+        'ean_reader'
       ],
       /**
        * Código de la factura
@@ -278,7 +271,7 @@ export default {
           this.persistent = false
         })
         .catch(() => {
-          this.notify(this, 'Factura no encontrada', 'negative', 'warning')
+          this.notify(this, 'Factura no encontrada' + code, 'negative', 'warning')
           this.factura = []
           this.loadingFactura = false
         })
