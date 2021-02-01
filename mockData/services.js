@@ -184,12 +184,26 @@ const mockData = {
             resolve({
               response: {
                 data: {
-                  content: facturas.filter((data) => Number(data.codigo) === Number(params))[0],
+                  content: facturas.filter((element) => Number(element.codigo) === Number(params.codigo))[0],
                   metadata: {
                     totalElements: facturas.length,
                     number: params, // server data
                     size: 3 // server data
                   }
+                }
+              }
+            })
+          }, 2000)
+        })
+      }
+      case 'auth': {
+        console.log(users, params)
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve({
+              response: {
+                data: {
+                  content: users.filter((element) => element.usuario === params.usuario && element.password === params.password)[0]
                 }
               }
             })

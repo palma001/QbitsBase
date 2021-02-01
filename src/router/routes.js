@@ -1,14 +1,15 @@
-// import { validationSession, validationNotSession } from './validations-router'
+import { validationSession, validationNotSession } from './validations-router'
 const routes = [
   {
     path: '/login',
     name: 'login',
-    // beforeEnter: validationNotSession,
+    beforeEnter: validationNotSession,
     component: () => import('pages/Login.vue')
   },
   {
     path: '',
     component: () => import('layouts/MainLayout.vue'),
+    beforeEnter: validationSession,
     children: [
       {
         path: '',
@@ -31,9 +32,9 @@ const routes = [
         name: 'Geolocation'
       },
       {
-        path: '/factura',
+        path: '/embalar',
         component: () => import('pages/Embalar.vue'),
-        name: 'Factura'
+        name: 'Embalar'
       },
       {
         path: '/empaques-cliente',

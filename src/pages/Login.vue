@@ -18,12 +18,10 @@
             <div class="text-h6">Iniciar sesión</div>
           </q-card-section>
           <q-card-section>
-            <q-select outlined dense v-model="rol" :options="listaRoles" label="Tipo de usuario" />
             <q-input
               class="q-mt-lg"
               color="primary"
-              v-if="rol === 'Usuario'"
-              v-model="username"
+              v-model="usuario"
               label="Usuario"
               ref="username"
               name="username"
@@ -32,7 +30,7 @@
               @keyup.enter.native="login"
               :rules="[val => !!val || 'El campo es requerido.']">
               <template v-slot:prepend>
-                <q-icon name="email" />
+                <q-icon name="account_circle" />
               </template>
             </q-input>
             <q-input
@@ -47,7 +45,10 @@
               dense
               @keyup.enter.native="login"
               :rules="[val => !!val || 'El campo es requerido.']">
-              <template v-slot:append v-if="rol === 'Empleado'">
+              <template v-slot:prepend>
+                <q-icon name="lock" />
+              </template>
+              <template v-slot:append>
                 <q-btn
                   color="teal"
                   text-color="white"
@@ -101,7 +102,7 @@ export default {
          * Email User
          * @type {String}
          */
-      username: '',
+      usuario: '',
       /**
          * Password User
          * @type {String}
@@ -133,12 +134,11 @@ export default {
     async login () {
       this.$refs.username.validate()
       this.$refs.password.validate()
-      this.$router.push('/')
-      // if (this.$refs.username.hasError || this.$refs.password.hasError) {
-      //   this.formHasError = true
-      // } else {
-      //   await this[ACTIONS.LOGIN]({ self: this })
-      // }
+      if (this.$refs.username.hasError || this.$refs.password.hasError) {
+        this.formHasError = true
+      } else {
+        await this[ACTIONS.LOGIN]({ self: this })
+      }
     },
 
     ...mapActions([ACTIONS.LOGIN])

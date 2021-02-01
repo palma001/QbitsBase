@@ -1,10 +1,13 @@
 <template>
-  <div class="q-pa-xs" v-if="coordinates">
+  <div class="q-pa-md" v-if="coordinates">
+    <p class="text-h5">
+      Localización de los transportes
+    </p>
     <gmap-map
       :center="this.coordinates"
       :zoom="12"
       map-type-id="roadmap"
-      style="width: 100%; height: 550px"
+      style="width: 100%; height: 480px"
     >
       <gmap-marker
         :position="this.coordinates"

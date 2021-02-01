@@ -12,15 +12,6 @@
         />
         <q-separator dark vertical inset />
         <q-toolbar-title>{{ titleApp }}</q-toolbar-title>
-        <b-dropdown
-          icon="store"
-          class="q-mr-sm"
-          labelItem="nombre_sucursal"
-          tooltip="sucursales"
-          :label="labelDrown"
-          :dataItem="sucursales"
-          @selected="sucursaelSelected"
-        />
         <q-separator dark vertical inset />
         <q-btn
           flat
@@ -41,7 +32,7 @@
                     </div>
                     <div class="column">
                       <div class="text-subtitle1 text-primary q-mt-sm q-mb-xs q-ml-sm">
-                        {{ GET_USER ? GET_USER.full_name : '' }}
+                        {{ GET_USER ? GET_USER.usuario : '' }}
                       </div>
                     </div>
                   </div>
@@ -50,7 +41,7 @@
               <q-expansion-item expand-separator
                 class="text-primary"
                 icon="people_alt"
-                :label="GET_USER ? GET_USER.email : ''">
+                :label="GET_USER ? `${GET_USER.first_name} ${GET_USER.last_name}` : ''">
                 <q-item clickable @click="darkMode">
                   <q-item-section avatar>
                     <q-icon name="chrome_reader_mode">
@@ -83,19 +74,28 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen"
-      bordered>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      bordered
+    >
       <q-expansion-item
         expand-separator
-        v-for="category_module in data"
+        v-for="category_module in dataMenu"
         :key="category_module.id"
         :icon="category_module.icon"
-        :label="ucwords($t(`template.${category_module.name}`))">
-        <div v-for="list in category_module.modules"
-          :key="list.id">
-          <q-list v-for="(divice, index) in list.devices"
-            :key="index">
-            <q-item v-if="validateDivice(divice)"
+        :default-opened="category_module.open"
+        :label="ucwords($t(`template.${category_module.name}`))"
+      >
+        <div
+          v-for="list in category_module.modules"
+          :key="list.id"
+        >
+          <q-list
+            v-for="(divice, index) in list.devices"
+            :key="index"
+          >
+            <q-item
+              v-if="validateDivice(divice) && validateRole(list.access)"
               clickable
               v-ripple
               class="q-ml-lg"
@@ -127,14 +127,10 @@
 import { mixins } from '../mixins'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
-import BDropdown from '../components/BDropdown'
 import { SessionStorage } from 'quasar'
 export default {
   name: 'LayoutComponent',
   mixins: [mixins.containerMixin],
-  components: {
-    BDropdown
-  },
   props: {
 
     /**
@@ -169,6 +165,7 @@ export default {
   data () {
     return {
       labelDrown: null,
+      dataMenu: [],
       active: true,
       visible: false,
       sucursales: SessionStorage.getItem('sucursales'),
@@ -178,6 +175,15 @@ export default {
        * @type {Bollean} status menu
        */
       leftDrawerOpen: true
+    }
+  },
+  watch: {
+    data (value) {
+      this.dataMenu = value.filter(element => {
+        return element.modules.filter(module => {
+          return this.validateRole(module.access)
+        }).length > 0
+      })
     }
   },
   created () {
@@ -190,20 +196,19 @@ export default {
     ...mapGetters([GETTERS.GET_USER])
   },
   methods: {
+    validateRole (access) {
+      const user = this[GETTERS.GET_USER]
+      if (access && user) {
+        return access.filter(element => {
+          return element === user.rol.name
+        })[0]
+      }
+    },
     /**
      * Emit event logout
      */
     logout () {
       this.$emit('logout')
-    },
-    /**
-     * Sucursal lected
-     * @param {Object} data sucursal selected
-     */
-    sucursaelSelected (data) {
-      SessionStorage.set('sucursalSelected', data)
-      this.labelDrown = data.nombre_sucursal
-      this.$root.$emit('sucursal', data)
     },
     /**
      * Dark mode aplication
@@ -217,14 +222,6 @@ export default {
      */
     loadingPage () {
       this.$q.dark.set(SessionStorage.getItem('dark'))
-      // const sucursaelSelected = SessionStorage.getItem('sucursalSelected')
-      // if (sucursaelSelected) {
-      //   SessionStorage.set('sucursalSelected', sucursaelSelected)
-      //   this.labelDrown = sucursaelSelected.nombre_sucursal
-      // } else {
-      //   this.labelDrown = this.sucursales[0].nombre_sucursal
-      //   SessionStorage.set('sucursalSelected', this.sucursales[0])
-      // }
     },
     /**
      * Change route

@@ -6,7 +6,8 @@ export default {
     darkMode: 'modo oscuro',
     active: 'habilitado',
     desactive: 'deshabilitado',
-    cliente: 'cliente'
+    cliente: 'cliente',
+    organization: 'organización'
   },
   // modules
   modules: {

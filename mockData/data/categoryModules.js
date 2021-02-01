@@ -1,65 +1,35 @@
 export const categoryModules = [
   {
-    name: 'empleado',
+    name: 'organization',
     icon: 'all_inbox',
+    open: true,
     modules: [
       {
-        name: 'embalar',
-        route: 'Factura',
+        name: 'geolocation',
+        route: 'Geolocation',
         icon: 'map',
+        access: ['admin'],
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'embalar',
+        route: 'Embalar',
+        icon: 'map',
+        access: ['empacador'],
         devices: ['mobile', 'desktop']
       },
       {
         name: 'listaEmpaques',
         route: 'EmpaquesEmpleado',
         icon: 'receipt',
+        access: ['empacador', 'admin'],
         devices: ['mobile', 'desktop']
-      }
-      // {
-      //   name: 'geolocation',
-      //   route: 'geolocation',
-      //   icon: 'map',
-      //   devices: ['mobile', 'desktop']
-      // }
-    ]
-  },
-  // {
-  //   name: 'administracion',
-  //   icon: 'all_inbox',
-  //   modules: []
-  // },
-  {
-    name: 'transporte',
-    icon: 'all_inbox',
-    modules: [
-      {
-        name: 'listaEmpaques',
-        route: 'EmpaquesTransporte',
-        icon: 'receipt',
-        devices: ['mobile', 'desktop']
-      }
-    ]
-  },
-  {
-    name: 'cliente',
-    icon: 'users',
-    modules: [
+      },
       {
         name: 'listaEmpaques',
         route: 'EmpaquesCliente',
         icon: 'receipt',
-        devices: ['mobile', 'desktop']
-      }
-    ]
-  },
-  {
-    name: 'administracion',
-    icon: 'users',
-    modules: [
-      {
-        name: 'listaEmpaques',
-        route: 'listaEmpaques',
-        icon: 'receipt',
+        access: ['cliente'],
         devices: ['mobile', 'desktop']
       }
     ]
