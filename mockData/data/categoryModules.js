@@ -51,6 +51,18 @@ export const categoryModules = [
         devices: ['mobile', 'desktop']
       }
     ]
+  },
+  {
+    name: 'administracion',
+    icon: 'users',
+    modules: [
+      {
+        name: 'listaEmpaques',
+        route: 'listaEmpaques',
+        icon: 'receipt',
+        devices: ['mobile', 'desktop']
+      }
+    ]
   }
   // {
   //   name: 'organization',
