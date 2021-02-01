@@ -14,10 +14,14 @@
     <div class="col-12">
       <q-table
         title="Empaques"
+        row-key="name"
         :data="data"
         :columns="columns"
-        row-key="name"
+        :loading="loadingTable"
       >
+        <template v-slot:loading>
+          <q-inner-loading showing color="primary" />
+        </template>
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="codigo" :props="props">
@@ -28,8 +32,8 @@
                 {{ props.row.estado }}
               </q-badge>
             </q-td>
-            <q-td key="fecha" :props="props">
-              {{ props.row.fecha }}
+            <q-td key="fecha_entrega" :props="props">
+              {{ props.row.fecha_entrega }}
             </q-td>
             <q-td key="detalles" :props="props">
               <q-btn size="sm"
@@ -86,6 +90,14 @@
                 class="text-white text-center"
               >
                 <q-tab-panel name="mails">
+                  <!-- <div class="row">
+                    <div class="col-4">
+                      fecha de emision : {{ oneFactura.fecha_emision }}
+                    </div>
+                    <div class="col-4">
+                      fecha de emision : {{ oneFactura.fecha_empaque }}
+                    </div>
+                  </div> -->
                   <q-table
                     title="Productos"
                     row-key="name"
@@ -126,6 +138,8 @@
 export default {
   data () {
     return {
+      oneFactura: null,
+      loadingTable: false,
       /**
        * Productos del empaque
        * @type {Array} productos del empaque
@@ -141,22 +155,29 @@ export default {
           required: true,
           label: 'Nombre del producto',
           align: 'left',
+          field: 'nombre_producto',
           sortable: true
         },
         {
           name: 'cantidad',
-          align: 'center',
           label: 'Cantidad producto',
           field: 'cantidad',
+          align: 'right',
           sortable: true
-          // classes: row => row.cantidad === row.fat ? 'bg-teal' : ''
         },
         {
-          name: 'cantidad_embalado',
-          label: 'Cantidad embalado',
-          field: 'cantidad_embalado',
+          name: 'precio',
+          label: 'Precio unidad',
+          field: 'precio',
+          align: 'right',
           sortable: true
-          // classes: row => row.cantidad === row.fat ? 'bg-teal' : ''
+        },
+        {
+          name: 'Subtotal',
+          label: 'subtotal',
+          field: 'subtotal',
+          align: 'right',
+          sortable: true
         }
       ],
       /**
@@ -222,9 +243,9 @@ export default {
           sortable: true
         },
         {
-          name: 'fecha',
+          name: 'fecha_entrega',
           label: 'Fecha de entrega',
-          field: 'fecha',
+          field: 'fecha_entrega',
           sortable: true
         },
         {
@@ -237,28 +258,33 @@ export default {
        * Data de la tabla
        * @type {Array} data de la tabla
        */
-      data: [
-        {
-          codigo: 9823982938,
-          estado: 'entregado',
-          fecha: '26/01/2021'
-        },
-        {
-          codigo: 7627362763,
-          estado: 'en ruta',
-          fecha: '-'
-        },
-        {
-          codigo: 8327483274,
-          estado: 'en ruta',
-          fecha: '-'
-        }
-      ]
+      data: []
     }
   },
+  created () {
+    this.obteneractura()
+  },
   methods: {
+    /**
+     * Obtiene todas las facturas del cliente
+     */
+    obteneractura () {
+      this.loadingTable = true
+      this.$mockData.getData('facturas')
+        .then(({ response }) => {
+          this.data = response.data.content
+          this.loadingTable = false
+          console.log(response)
+        })
+    },
+    /**
+     * Abrir detalles de la factura
+     * @param {Object} data detalle de la factura
+     */
     viewDetails (data) {
       this.detallesFactura = true
+      this.oneFactura = data
+      this.productos = data.detalles
       console.log(data)
     }
   }
