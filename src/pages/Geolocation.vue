@@ -4,18 +4,18 @@
       :center="{ lat: initialPosition.lat, lng: initialPosition.lng }"
       :zoom="10"
       map-type-id="terrain"
-      style="width: 100%; height: 90%"
+      style="width: 100%; height: 400px"
     >
       <!-- check if icon link in makers payload then display -->
       <gmap-marker
         :key="index"
-        v-for="(m, index) in markers"
         :position="m.position"
         :clickable="true"
         :draggable="false"
-        @click="center = m.position"
         :icon="m.icon"
         :title="m.userName"
+        v-for="(m, index) in markers"
+        @click="center = m.position"
       />
     </gmap-map>
 
@@ -75,7 +75,7 @@ export default {
       console.log(
         'Received a ' + presenceMsg.action + ' from ' + presenceMsg.clientId
       )
-      channel.presence.get(members => {
+      channel.presence.get((e, members) => {
         console.log(members)
         self.markers = members.map(mem => {
           if (JSON.stringify(self.userlocation) === JSON.stringify(mem.data)) {
@@ -99,8 +99,10 @@ export default {
   },
   methods: {
     location () {
+      this.gettingLocation = true
       this.$getLocation(this.options)
         .then(coordinates => {
+          this.gettingLocation = false
           this.initialPosition.lat = coordinates.lat
           this.initialPosition.lng = coordinates.lng
           const userData = {
