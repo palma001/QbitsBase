@@ -31,8 +31,7 @@ module.exports = function (/* ctx */) {
       'vbarcode',
       'google-maps',
       'geolocation',
-      'crontab'
-      'geolocation',
+      'crontab',
       'ably'
     ],
 
