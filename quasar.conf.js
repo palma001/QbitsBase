@@ -30,7 +30,8 @@ module.exports = function (/* ctx */) {
       'vqrbarcode',
       'vbarcode',
       'google-maps',
-      'geolocation'
+      'geolocation',
+      'crontab'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
