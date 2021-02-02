@@ -22,14 +22,14 @@ export const categoryModules = [
         name: 'listaEmpaques',
         route: 'EmpaquesEmpleado',
         icon: 'receipt',
-        access: ['empacador', 'admin'],
+        access: ['empacador'],
         devices: ['mobile', 'desktop']
       },
       {
         name: 'listaEmpaques',
         route: 'EmpaquesCliente',
         icon: 'receipt',
-        access: ['cliente'],
+        access: ['cliente', 'admin'],
         devices: ['mobile', 'desktop']
       }
     ]

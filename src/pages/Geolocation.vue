@@ -1,16 +1,17 @@
 <template>
-  <div class="q-pa-md" v-if="coordinates">
+  <div class="q-pa-md">
     <p class="text-h5">
       Localización de los transportes
     </p>
     <gmap-map
-      :center="this.coordinates"
+      v-if="coordinates"
+      :center="coordinates"
       :zoom="12"
       map-type-id="roadmap"
       style="width: 100%; height: 480px"
     >
       <gmap-marker
-        :position="this.coordinates"
+        :position="coordinates"
         :clickable="true"
         :draggable="true"
       />
@@ -35,10 +36,11 @@ export default {
         { lat: -18.142, lng: 178.431 },
         { lat: -27.467, lng: 153.027 }
       ],
-      coordinates: {},
-      options: {
-        rotateControl: true
-      }
+      coordinates: {
+        lat: 0,
+        lng: 0
+      },
+      options: {}
     }
   },
   created () {

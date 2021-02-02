@@ -4,7 +4,7 @@
       <div class="col-md-5 col-xl-4 col-lg-5 col-sm-10 col-xs-10 offset-sm-2 offset-lg-1 offset-xl-2 offset-md-1" style="position: relative;">
       </div>
     </div> -->
-    <div class="row justify-center q-mt-xl">
+    <div class="row justify-center q-mt-lg">
       <div class="col-12">
         <q-card flat class="my-card q-pa-none" style="background-color: transparent !important;">
           <q-card-section class="text-center q-pa-none">
@@ -12,9 +12,9 @@
           </q-card-section>
         </q-card>
       </div>
-      <div class="col-xl-3 col-lg-4 col-md-4 col-sm-5 col-xs-11">
+      <div class="col-xl-3 col-lg-4 col-md-4 col-sm-5 col-xs-11 q-mt-md">
         <q-card class="my-card">
-          <q-card-section class="bg-primary glossy text-white">
+          <q-card-section class="bg-teal glossy text-white">
             <div class="text-h6">Iniciar sesión</div>
           </q-card-section>
           <q-card-section>
@@ -63,7 +63,7 @@
           <q-card-actions class="">
             <q-space/>
             <q-btn
-              color="primary glossy"
+              color="teal glossy"
               @click="login"
               :disable="btnDisable">
               <span v-if="btnDisable">
