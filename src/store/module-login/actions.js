@@ -107,6 +107,7 @@ export const actions = {
         self.$router.push({ name: 'EmpaquesCliente' })
         break
       default:
+        self.$router.push({ name: 'EmpaquesTransporte' })
         break
     }
   },
