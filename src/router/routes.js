@@ -40,6 +40,11 @@ const routes = [
         path: '/empaques-cliente',
         component: () => import('pages/EmpaquesCliente.vue'),
         name: 'EmpaquesCliente'
+      },
+      {
+        path: '/crontab',
+        component: () => import('pages/Crontab.vue'),
+        name: 'Crontab'
       }
     ]
   },
