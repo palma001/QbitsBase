@@ -1,29 +1,50 @@
-// import { validationSession, validationNotSession } from './validations-router'
+import { validationSession, validationNotSession } from './validations-router'
 const routes = [
-  // {
-  //   path: '/login',
-  //   name: 'login',
-  //   beforeEnter: validationNotSession,
-  //   component: () => import('pages/Login.vue')
-  // },
+  {
+    path: '/login',
+    name: 'login',
+    beforeEnter: validationNotSession,
+    component: () => import('pages/Login.vue')
+  },
   {
     path: '',
     component: () => import('layouts/MainLayout.vue'),
+    beforeEnter: validationSession,
     children: [
       {
         path: '',
-        component: () => import('pages/Index.vue'),
+        component: () => import('pages/EmpaquesEmpleado.vue'),
         name: ''
       },
       {
-        path: '/products',
-        component: () => import('pages/Index.vue'),
-        name: 'products'
+        path: '/empaques-empleado',
+        component: () => import('pages/EmpaquesEmpleado.vue'),
+        name: 'EmpaquesEmpleado'
+      },
+      {
+        path: '/empaques-transporte',
+        component: () => import('pages/EmpaquesTransporte.vue'),
+        name: 'EmpaquesTransporte'
       },
       {
         path: '/geolocation',
         component: () => import('pages/Geolocation.vue'),
-        name: 'geolocation'
+        name: 'Geolocation'
+      },
+      {
+        path: '/embalar',
+        component: () => import('pages/Embalar.vue'),
+        name: 'Embalar'
+      },
+      {
+        path: '/empaques-cliente',
+        component: () => import('pages/EmpaquesCliente.vue'),
+        name: 'EmpaquesCliente'
+      },
+      {
+        path: '/crontab',
+        component: () => import('pages/Crontab.vue'),
+        name: 'Crontab'
       }
     ]
   },

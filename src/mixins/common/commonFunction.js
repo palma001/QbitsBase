@@ -128,7 +128,7 @@ export const can = (self, module, permission) => {
 
 export const notify = (self, message, color, icon, position = 'top') => {
   self.$q.notify({
-    message: ucwords(self.$t(message)),
+    message: ucwords(message),
     color: color,
     position: position,
     icon: icon

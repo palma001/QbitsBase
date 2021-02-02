@@ -4,30 +4,33 @@
       <div class="col-md-5 col-xl-4 col-lg-5 col-sm-10 col-xs-10 offset-sm-2 offset-lg-1 offset-xl-2 offset-md-1" style="position: relative;">
       </div>
     </div> -->
-    <div class="row justify-center">
-      <div class="col-xl-3 col-lg-4 col-md-4 col-sm-5 col-xs-11">
-        <q-card flat class="my-card" style="background-color: transparent !important;">
-          <q-card-section class="text-center q-pt-none q-pb-none">
-            <img src="../statics/logos/logo_dixcont.png" class="img">
+    <div class="row justify-center q-mt-lg">
+      <div class="col-12">
+        <q-card flat class="my-card q-pa-none" style="background-color: transparent !important;">
+          <q-card-section class="text-center q-pa-none">
+            <img src="icons/Monteverde-svg.svg" class="img">
           </q-card-section>
         </q-card>
-        <q-card class="my-card" style="opacity: 0.9">
-          <q-card-section class="bg-primary glossy text-white">
+      </div>
+      <div class="col-xl-3 col-lg-4 col-md-4 col-sm-5 col-xs-11 q-mt-md">
+        <q-card class="my-card">
+          <q-card-section class="bg-teal glossy text-white">
             <div class="text-h6">Iniciar sesión</div>
           </q-card-section>
           <q-card-section>
             <q-input
-              class="q-mt-sm"
+              class="q-mt-lg"
               color="primary"
-              v-model="username"
-              label="Correo"
+              v-model="usuario"
+              label="Usuario"
               ref="username"
               name="username"
               outlined
+              dense
               @keyup.enter.native="login"
               :rules="[val => !!val || 'El campo es requerido.']">
               <template v-slot:prepend>
-                <q-icon name="email" />
+                <q-icon name="account_circle" />
               </template>
             </q-input>
             <q-input
@@ -39,17 +42,28 @@
               name="password"
               type="password"
               outlined
+              dense
               @keyup.enter.native="login"
               :rules="[val => !!val || 'El campo es requerido.']">
               <template v-slot:prepend>
-                <q-icon name="lock"/>
+                <q-icon name="lock" />
+              </template>
+              <template v-slot:append>
+                <q-btn
+                  color="teal"
+                  text-color="white"
+                  size="xs"
+                  icon="qr_code"
+                  round
+                  @click="scanner = !scanner"
+                />
               </template>
             </q-input>
           </q-card-section>
           <q-card-actions class="">
             <q-space/>
             <q-btn
-              color="primary glossy"
+              color="teal glossy"
               @click="login"
               :disable="btnDisable">
               <span v-if="btnDisable">
@@ -67,20 +81,28 @@
           </q-card-actions>
         </q-card>
       </div>
+      <b-scanner :show="scanner" @eventScanner="eventScanner"/>
     </div>
   </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
 import { ACTIONS } from '../store/module-login/name.js'
+import BScanner from '../components/BScanner.vue'
 export default {
+  components: {
+    BScanner
+  },
   data () {
     return {
+      rol: 'Usuario',
+      scanner: false,
+      listaRoles: ['Empleado', 'Usuario'],
       /**
          * Email User
          * @type {String}
          */
-      username: '',
+      usuario: '',
       /**
          * Password User
          * @type {String}
@@ -103,6 +125,9 @@ export default {
     errorValidation (field) {
       return this.errors.has(field) ? 'is-danger' : null
     },
+    eventScanner (code) {
+      console.log(code)
+    },
     /**
      * Login app
      */
@@ -121,26 +146,7 @@ export default {
 }
 </script>
 <style>
-  .body {
-    background-image: url('../statics/image/fondo.jpeg');
-    overflow-y:hidden!important;
-    overflow-x: auto!important;
-    width: 100%;
-    height: 100vh;
-    position: relative;
-  }
-  .body:before {
-    content:'';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow-y:hidden!important;
-    background-color: rgba(0,0,0,0.6);
-  }
-
   .img {
-    width: 70%;
+    width: 300px;
   }
 </style>

@@ -1,23 +1,50 @@
 export const users = [
   {
-    first_name: 'bais',
+    id: 1,
+    first_name: 'cliente',
     last_name: 'software',
     document: 26720270,
     number_phone: 4249502755,
-    email: 'bais@gmail.com'
+    usuario: 'cliente',
+    password: '123456',
+    rol: {
+      name: 'cliente'
+    }
   },
   {
-    first_name: 'super_admin',
-    last_name: 'super_admin',
-    document: 26720270,
-    number_phone: 4249502755,
-    email: 'super_admin@gmail.com'
-  },
-  {
+    id: 3,
     first_name: 'admin',
-    last_name: 'admin',
-    document: 26720270,
+    last_name: 'rondon',
+    document: 26720271,
     number_phone: 4249502755,
-    email: 'admin@gmail.com'
+    usuario: 'admin',
+    password: '123456',
+    rol: {
+      name: 'admin'
+    }
+  },
+  {
+    id: 3,
+    first_name: 'empacador',
+    last_name: 'lopez',
+    document: 26720272,
+    number_phone: 4249502755,
+    usuario: 'empacador',
+    password: '123456',
+    rol: {
+      name: 'empacador'
+    }
+  },
+  {
+    id: 4,
+    first_name: 'transporte',
+    last_name: 'lopez',
+    document: 26720272,
+    number_phone: 4249502755,
+    usuario: 'transporte',
+    password: '123456',
+    rol: {
+      name: 'transporte'
+    }
   }
 ]

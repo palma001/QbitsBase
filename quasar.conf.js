@@ -30,7 +30,9 @@ module.exports = function (/* ctx */) {
       'vqrbarcode',
       'vbarcode',
       'google-maps',
-      'geolocation'
+      'geolocation',
+      'crontab',
+      'ably'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -134,8 +136,8 @@ module.exports = function (/* ctx */) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: 'Monte Verde',
-        short_name: 'Monte Verde',
+        name: 'Monteverde',
+        short_name: 'Monteverde',
         description: 'software accounting software',
         display: 'standalone',
         orientation: 'portrait',
@@ -212,7 +214,7 @@ module.exports = function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'Monte Verde'
+        appId: 'Monteverde'
       },
 
       // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
