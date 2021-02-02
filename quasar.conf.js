@@ -30,7 +30,8 @@ module.exports = function (/* ctx */) {
       'vqrbarcode',
       'vbarcode',
       'google-maps',
-      'geolocation'
+      'geolocation',
+      'ably'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -134,8 +135,8 @@ module.exports = function (/* ctx */) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: 'Monte Verde',
-        short_name: 'Monte Verde',
+        name: 'Monteverde',
+        short_name: 'Monteverde',
         description: 'software accounting software',
         display: 'standalone',
         orientation: 'portrait',
@@ -143,29 +144,29 @@ module.exports = function (/* ctx */) {
         theme_color: '#027be3',
         icons: [
           {
-            src: 'icons/icon-128x128.png',
+            src: 'icons/Monteverde.svg',
             sizes: '128x128',
-            type: 'image/png'
+            type: 'image/svg'
           },
           {
-            src: 'icons/icon-192x192.png',
+            src: 'icons/Monteverde.svg',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/svg'
           },
           {
-            src: 'icons/icon-256x256.png',
+            src: 'icons/Monteverde.svg',
             sizes: '256x256',
-            type: 'image/png'
+            type: 'image/svg'
           },
           {
-            src: 'icons/icon-384x384.png',
+            src: 'icons/Monteverde.svg',
             sizes: '384x384',
-            type: 'image/png'
+            type: 'image/svg'
           },
           {
-            src: 'icons/icon-512x512.png',
+            src: 'icons/Monteverde.svg',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/svg'
           }
         ]
       }
@@ -212,7 +213,7 @@ module.exports = function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'Monte Verde'
+        appId: 'Monteverde'
       },
 
       // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
