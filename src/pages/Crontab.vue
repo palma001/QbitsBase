@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div>
-      <div class="counter">{{ counter }}</div>
+      <div class="counter">{{ c }}</div>
     </div>
   </div>
 </template>
@@ -10,10 +10,11 @@
 export default {
   data () {
     return {
-      counter: 0
+      counter: 0,
+      c: 0
     }
   },
-  created () {
+  mounted () {
     this.$crontab.addJob({
       name: 'counter',
       interval: {
@@ -22,8 +23,15 @@ export default {
       job: this.countUp
     })
   },
+  watch: {
+    counter (value) {
+      console.log(value)
+      this.c = value
+    }
+  },
   methods: {
-    countUp () {
+    countUp (data) {
+      console.log(data)
       this.counter += 1
     }
   }
