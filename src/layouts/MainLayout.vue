@@ -10,9 +10,8 @@
 <script>
 
 import LayoutComponent from 'components/LayoutComponent.vue'
-
-import { mapActions } from 'vuex'
-import { ACTIONS } from '../store/module-login/name.js'
+import { mapActions, mapGetters } from 'vuex'
+import { ACTIONS, GETTERS } from '../store/module-login/name.js'
 import { CLOSE_BOX_CUT } from '../Graphql/BoxCut/boxCutMutations'
 export default {
   name: 'MainLayout',
@@ -31,8 +30,21 @@ export default {
 
   created () {
     this.getAllModules()
+    this.$crontab.addJob({
+      name: 'location',
+      interval: {
+        seconds: '/60'
+      },
+      job: this.location
+    })
   },
 
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
+  },
   methods: {
     /**
      * Get all products
@@ -50,7 +62,37 @@ export default {
       this[ACTIONS.LOGOUT]({ self: this })
       this.closeBox()
     },
-
+    /**
+     * Enviar localización
+    */
+    location () {
+      if (this[GETTERS.GET_USER].rol.name === 'transporte') {
+        let coo = 1
+        setInterval(() => {
+          this.$getLocation({})
+            .then(coordinates => {
+              const userData = {
+                position: {
+                  lat: coordinates.lat + coo,
+                  lng: coordinates.lng
+                },
+                userName: this[GETTERS.GET_USER].name
+              }
+              this.updateRoom(userData)
+            })
+          coo += 1
+        }, 5000)
+      }
+    },
+    updateRoom (data) {
+      const channel = this.$ably.channels.get(this[GETTERS.GET_USER].id)
+      channel.presence.update(data, function (err) {
+        if (err) {
+          return console.error('Error updating presence data')
+        }
+        console.log('We have successfully updated our data')
+      })
+    },
     /**
      * Close box
      */

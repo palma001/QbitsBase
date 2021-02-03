@@ -6,16 +6,20 @@
       map-type-id="terrain"
       style="width: 100%; height: 400px"
     >
-      <!-- check if icon link in makers payload then display -->
+      <gmap-info-window
+        :options="infoOptions"
+        :position="infoWindowPos"
+        :opened="infoWinOpen"
+        @closeclick="infoWinOpen=false"
+      />
       <gmap-marker
         :key="index"
         :position="m.position"
         :clickable="true"
         :draggable="false"
-        :icon="m.icon"
         :title="m.userName"
-        v-for="(m, index) in markers"
-        @click="center = m.position"
+        v-for="(m, index) in markersMap"
+        @click="toggleInfoWindow(m, index)"
       />
     </gmap-map>
 
@@ -31,10 +35,14 @@
 </template>
 
 <script>
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   name: 'Geolocation',
   data () {
     return {
+      infoWinOpen: false,
+      markersMap: [],
       usersName: null,
       gettingLocation: true,
       initialPosition: {
@@ -45,86 +53,69 @@ export default {
       markers: [],
       userlocation: [],
       onlineUsers: [],
-      channelName: null
+      channelName: null,
+      infoWindowPos: null,
+      infoOptions: {
+        content: '',
+        pixelOffset: {
+          width: 0,
+          height: -35
+        }
+      }
     }
   },
-  mounted () {
-    const name = prompt('To get started, input your name in the field below and locate your friends around based on your location, please turn on your location setting \n What is your name?')
-    this.usersName = name
-    const channel = prompt('Enter the name of the channel you are interested in')
-    this.channelName = channel
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
   },
-  async created () {
-    await this.location()
-    var channel = this.$ably.channels.get(this.channelName)
-    channel.attach(err => {
-      if (err) {
-        return console.error('Error attaching to the channel')
-      }
-      console.log('We are now attached to the channel')
-      channel.presence.enter(this.userlocation, function (err) {
-        if (err) {
-          return console.error('Error entering presence')
-        }
-        console.log('We are now successfully present')
-      })
+  created () {
+    this.$crontab.addJob({
+      name: 'counter',
+      interval: {
+        seconds: '/10'
+      },
+      job: this.obtenerCamiones
     })
-    const self = this
-    channel.presence.subscribe('update', function (presenceMsg) {
-      console.log(presenceMsg)
-      console.log(
-        'Received a ' + presenceMsg.action + ' from ' + presenceMsg.clientId
-      )
-      channel.presence.get((e, members) => {
-        console.log(members)
-        self.markers = members.map(mem => {
-          if (JSON.stringify(self.userlocation) === JSON.stringify(mem.data)) {
-            return {
-              ...mem.data,
-              icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-            }
-          } else {
-            return {
-              ...mem.data,
-              icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-            }
-          }
-        })
-        self.onlineUsers = members
-        console.log(
-          'There are now ' + members.length + ' clients present on this channel'
-        )
-      })
-    })
+  },
+  watch: {
+    markers () {
+      this.markersMap = this.markers
+    }
   },
   methods: {
-    location () {
-      this.gettingLocation = true
-      this.$getLocation(this.options)
-        .then(coordinates => {
-          this.gettingLocation = false
-          this.initialPosition.lat = coordinates.lat
-          this.initialPosition.lng = coordinates.lng
-          const userData = {
-            position: {
-              lat: coordinates.lat,
-              lng: coordinates.lng
-            },
-            userName: this.usersName
-          }
+    toggleInfoWindow (marker, idx) {
+      this.infoWindowPos = marker.position
+      this.infoOptions.content = marker.infoText
 
-          this.userlocation = userData
-          this.updateRoom(userData)
-        })
+      if (this.currentMidx === idx) {
+        this.infoWinOpen = !this.infoWinOpen
+      } else {
+        this.infoWinOpen = true
+        this.currentMidx = idx
+      }
     },
-    updateRoom (data) {
-      const channel = this.$ably.channels.get(this.channelName)
-      channel.presence.update(data, function (err) {
-        if (err) {
-          return console.error('Error updating presence data')
+    obtenerCoordenadas (data) {
+      data.map(element => {
+        if (element.rol.name === 'transporte') {
+          var channel = this.$ably.channels.get(element.id)
+          channel.presence.get((e, members) => {
+            this.markers = members.map(mem => {
+              console.log(mem.data)
+              return {
+                ...mem.data
+              }
+            })
+          })
         }
-        console.log('We have successfully updated our data')
       })
+    },
+    obtenerCamiones () {
+      this.$mockData.getData('users')
+        .then(({ response }) => {
+          this.obtenerCoordenadas(response.data.content)
+        })
     }
   }
 }
