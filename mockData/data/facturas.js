@@ -1,6 +1,6 @@
 export const facturas = [
   {
-    codigo: 138055651546,
+    codigo: 13123213,
     estado: 'en ruta',
     cliente_id: 2,
     empacador_id: 3,
@@ -11,11 +11,11 @@ export const facturas = [
     tipo_factura: 'delivery',
     detalles: [
       {
-        codigo: 13123213,
+        codigo: 131232131,
         nombre_producto: 'harina',
         cantidad: 2,
         precio: 400,
-        subtotal: 800
+        subtotal: 80013123213
       },
       {
         codigo: 13123212,

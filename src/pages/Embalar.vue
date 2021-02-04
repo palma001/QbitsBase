@@ -65,7 +65,6 @@
           label="Scanner"
           label-position="left"
           external-label
-          @click="persistent = true"
         />
       </q-fab>
     </q-page-sticky>
@@ -194,21 +193,10 @@ export default {
       ]
     }
   },
-  // created () {
-  //   this.api()
-  // },
-  // mounted () {
-  //   window.addEventListener('keyup', event => {
-  //     this.getCode(event)
-  //   })
-  // },
+  created () {
+    this.$barcodeScanner.init(this.obtenerFactura)
+  },
   methods: {
-    api () {
-      this.$services.getData(['api', 'helloworld'])
-        .then(({ res }) => {
-          this.response = res.data
-        })
-    },
     /**
      * Finalizar embalaje
      */
@@ -231,17 +219,6 @@ export default {
         }
       })
     },
-    // getCode (e) {
-    //   const code = (e.keyCode ? e.keyCode : e.which)
-    //   if (code === 13) {
-    //     if (this.factura.length > 0) {
-    //       this.obtenerProducto(this.barcode)
-    //     }
-    //     this.barcode = ''
-    //   } else {
-    //     this.barcode += e.key
-    //   }
-    // },
     /**
      * Obtiene el codigo de barra o Qr
      * @param {String} data codigo de barra o Qr
@@ -259,10 +236,11 @@ export default {
      * @param {String} code codigo de barra o Qr de la factura
      */
     obtenerFactura (code) {
-      this.codigoFactura = typeof code === 'string' ? code : this.codigoFactura
+      this.codigoFactura = typeof code !== 'string' ? this.codigoFactura : code
       this.loadingFactura = true
-      this.$mockData.getOneData('facturas', this.codigoFactura)
+      this.$mockData.getOneData('facturas', { codigo: this.codigoFactura })
         .then(({ response }) => {
+          console.log(response)
           this.factura = response.data.content.detalles.map(product => {
             product.cantidad_embalado = 0
             return product
@@ -271,7 +249,7 @@ export default {
           this.persistent = false
         })
         .catch(() => {
-          this.notify(this, 'Factura no encontrada' + code, 'negative', 'warning')
+          this.notify(this, 'Factura no encontrada ' + this.codigoFactura, 'negative', 'warning')
           this.factura = []
           this.loadingFactura = false
         })
