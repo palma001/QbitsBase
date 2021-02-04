@@ -17,7 +17,6 @@
         :position="m.position"
         :clickable="true"
         :draggable="false"
-        :title="m.userName"
         v-for="(m, index) in markers"
         @click="toggleInfoWindow(m, index)"
       />
@@ -87,16 +86,17 @@ export default {
       data.map(element => {
         if (element.rol.name === 'transporte') {
           var channel = this.$ably.channels.get(element.id)
-          channel.attach(() => {
-            channel.presence.enter(this.userlocation, (err) => {
-              if (err) {
-                return console.error('Error entering presence')
-              }
-              console.log('We are now successfully present')
-            })
-          })
+          // channel.attach(() => {
+          //   channel.presence.enter(this.userlocation, (err) => {
+          //     if (err) {
+          //       return console.error('Error entering presence')
+          //     }
+          //     console.log('We are now successfully present')
+          //   })
+          // })
           channel.presence.subscribe('update', (presenceMsg) => {
             channel.presence.get((e, members) => {
+              console.log(members)
               this.markers = members.map(mem => {
                 this.infoWindowPos = mem.data.position
                 return {
