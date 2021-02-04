@@ -38,13 +38,6 @@ export const categoryModules = [
         icon: 'receipt',
         access: ['transporte'],
         devices: ['mobile', 'desktop']
-      },
-      {
-        name: 'crontab',
-        route: 'Crontab',
-        icon: 'receipt',
-        access: ['transporte', 'admin', 'cliente'],
-        devices: ['mobile', 'desktop']
       }
     ]
   }

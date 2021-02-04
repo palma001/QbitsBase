@@ -24,7 +24,8 @@ export default {
        *
        * @type {Array} data menu
        */
-      modules: []
+      modules: [],
+      coo: 1
     }
   },
 
@@ -33,7 +34,7 @@ export default {
     this.$crontab.addJob({
       name: 'location',
       interval: {
-        seconds: '/60'
+        seconds: '/10'
       },
       job: this.location
     })
@@ -67,21 +68,19 @@ export default {
     */
     location () {
       if (this[GETTERS.GET_USER].rol.name === 'transporte') {
-        let coo = 1
-        setInterval(() => {
-          this.$getLocation({})
-            .then(coordinates => {
-              const userData = {
-                position: {
-                  lat: coordinates.lat + coo,
-                  lng: coordinates.lng
-                },
-                userName: this[GETTERS.GET_USER].name
-              }
-              this.updateRoom(userData)
-            })
-          coo += 1
-        }, 5000)
+        this.$getLocation({})
+          .then(coordinates => {
+            const userData = {
+              position: {
+                lat: coordinates.lat + this.coo,
+                lng: coordinates.lng
+              },
+              userName: `${this[GETTERS.GET_USER].first_name} ${this[GETTERS.GET_USER].last_name}`
+            }
+            console.log(userData)
+            this.updateRoom(userData)
+          })
+        this.coo += 1
       }
     },
     updateRoom (data) {
