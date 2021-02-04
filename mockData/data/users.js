@@ -58,5 +58,29 @@ export const users = [
     rol: {
       name: 'transporte'
     }
+  },
+  {
+    id: 5,
+    first_name: 'amable',
+    last_name: 'lopez',
+    document: 26720272,
+    number_phone: 4249502755,
+    usuario: 'amable',
+    password: '123456',
+    rol: {
+      name: 'transporte'
+    }
+  },
+  {
+    id: 5,
+    first_name: 'ramon',
+    last_name: 'lopez',
+    document: 26720272,
+    number_phone: 4249502755,
+    usuario: 'ramon',
+    password: '123456',
+    rol: {
+      name: 'transporte'
+    }
   }
 ]
