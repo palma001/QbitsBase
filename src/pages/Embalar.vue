@@ -65,6 +65,7 @@
           label="Scanner"
           label-position="left"
           external-label
+          @click="persistent = true"
         />
       </q-fab>
     </q-page-sticky>
