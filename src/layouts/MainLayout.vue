@@ -80,7 +80,6 @@ export default {
             },
             userName: `${this[GETTERS.GET_USER].first_name} ${this[GETTERS.GET_USER].last_name}`
           }
-          console.log(userData)
           this.updateRoom(userData)
         })
       this.coo += 1
