@@ -87,12 +87,22 @@ export default {
       data.map(element => {
         if (element.rol.name === 'transporte') {
           var channel = this.$ably.channels.get(element.id)
-          channel.presence.get((e, members) => {
-            this.markers = members.map(mem => {
-              this.infoWindowPos = mem.data.position
-              return {
-                ...mem.data
+          channel.attach(() => {
+            channel.presence.enter(this.userlocation, (err) => {
+              if (err) {
+                return console.error('Error entering presence')
               }
+              console.log('We are now successfully present')
+            })
+          })
+          channel.presence.subscribe('update', (presenceMsg) => {
+            channel.presence.get((e, members) => {
+              this.markers = members.map(mem => {
+                this.infoWindowPos = mem.data.position
+                return {
+                  ...mem.data
+                }
+              })
             })
           })
         }
@@ -101,9 +111,7 @@ export default {
     obtenerCamiones () {
       this.$mockData.getData('users')
         .then(({ response }) => {
-          setInterval(() => {
-            this.obtenerCoordenadas(response.data.content)
-          }, 1000)
+          this.obtenerCoordenadas(response.data.content)
         })
     }
   }
