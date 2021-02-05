@@ -4,7 +4,7 @@
       :center="{ lat: initialPosition.lat, lng: initialPosition.lng }"
       :zoom="3"
       map-type-id="terrain"
-      style="width: 100%; height: 400px"
+      style="width: 100%; height: 470px"
     >
       <gmap-info-window
         :options="infoOptions"
@@ -21,15 +21,6 @@
         @click="toggleInfoWindow(m, index)"
       />
     </gmap-map>
-
-    <div class="notification">
-      <p>Online Users: {{ markers.length }}</p>
-      <ul>
-        <li v-for="(user, i) in markers" :key="i">
-          <pre v-text="user.userName"></pre>
-        </li>
-      </ul>
-    </div>
   </div>
 </template>
 

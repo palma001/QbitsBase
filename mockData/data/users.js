@@ -12,7 +12,7 @@ export const users = [
     }
   },
   {
-    id: 3,
+    id: 2,
     first_name: 'admin',
     last_name: 'rondon',
     document: 26720271,
@@ -60,7 +60,7 @@ export const users = [
     }
   },
   {
-    id: 5,
+    id: 6,
     first_name: 'amable',
     last_name: 'lopez',
     document: 26720272,
@@ -72,7 +72,7 @@ export const users = [
     }
   },
   {
-    id: 5,
+    id: 7,
     first_name: 'ramon',
     last_name: 'lopez',
     document: 26720272,

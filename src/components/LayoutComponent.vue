@@ -20,7 +20,7 @@
           icon="person"
           class="q-mr-sm q-ml-sm">
           <q-menu>
-            <q-list style="min-width: 205px;">
+            <q-list style="min-width: 180px;">
               <q-item clickable
                 v-close-popup>
                 <q-item-section>
@@ -174,7 +174,7 @@ export default {
        *
        * @type {Bollean} status menu
        */
-      leftDrawerOpen: true
+      leftDrawerOpen: !this.$q.screen.sm
     }
   },
   watch: {
