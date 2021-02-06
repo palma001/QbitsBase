@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md row">
+  <div class="q-pa-md row q-gutter-y-md row">
     <div class="col-12 row q-gutter-sm">
       <div class="col-sm-3 col-xs-12">
         <q-input
@@ -22,13 +22,45 @@
         </q-input>
       </div>
       <div class="col-sm-2 col-xs-12">
-        <q-select filled dense v-model="tipoEmpaque" :options="listaTipoEmpaque" label="Tipos de Empaque" />
+        <q-select
+          filled
+          dense
+          v-model="tipoEntrega"
+          :options="listaTipoEntrega"
+          label="Tipos de entrega"
+        />
+      </div>
+      <div class="col-sm-3 col-xs-12">
+        <q-select
+          filled
+          label="Empaque"
+          v-model="tipoEmpaque"
+          multiple
+          dense
+          input-debounce="0"
+          :options="listaTipoEmpaque"
+        />
       </div>
       <div class="col-sm-2 col-xs-12">
-        <q-select filled dense v-model="tipoEntrega" :options="listaTipoEntrega" label="Tipos de Entrega" />
+        <q-btn
+          color="teal"
+          text-color="white"
+          label="Finalizar"
+          size="15px"
+          @click="finalizarEntrega">
+        </q-btn>
       </div>
-      <div class="col-sm-4 col-xs-12">
-        <q-btn color="teal" text-color="white" label="Finalizar Empaque" size="15px" @click="finalizarEntrega"/>
+    </div>
+    <div class="col-sm-12 row" v-if="tipoEmpaque.length > 0">
+      <div v-for="tipo in tipoEmpaque" :key="tipo.id" class="col-sm-2 col-xs-4">
+        <q-input
+          type="number"
+          dense
+          filled
+          style="width: 95%"
+          v-model="cantidadEmpaque[tipo.label]"
+          :label="`Cantidad de ${tipo.label}`"
+        />
       </div>
     </div>
     <div class="col-12 q-mt-md" v-if="factura.length > 0">
@@ -40,17 +72,14 @@
       >
         <template v-slot:body="props">
           <q-tr :props="props" :class="props.row.cantidad === props.row.cantidad_embalado ? 'bg-teal' : ''">
-            <q-td key="nombre_producto" :props="props">
-              {{ props.row.nombre_producto }}
+            <q-td key="descripcion" :props="props">
+              {{ props.row.descripcion }}
             </q-td>
             <q-td key="cantidad" :props="props">
               {{ props.row.cantidad }}
             </q-td>
             <q-td key="cantidad_embalado" :props="props">
               {{ props.row.cantidad_embalado }}
-              <q-popup-edit v-model="props.row.cantidad_embalado" title="Editar cantidad embalado">
-                <q-input type="number" v-model="props.row.cantidad_embalado" dense autofocus counter />
-              </q-popup-edit>
             </q-td>
           </q-tr>
         </template>
@@ -82,9 +111,6 @@
         <v-quagga v-else class="full-width" :frequency="0" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
       </q-card>
     </q-dialog>
-    <div>
-      <h2>{{ response }}</h2>
-    </div>
   </div>
 </template>
 
@@ -94,12 +120,7 @@ export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
-      response: '',
-      /**
-       * Código de barra
-       * @type {String} código de barra
-       */
-      barcode: '',
+      cantidadEmpaque: {},
       /**
        * Loading factura
        * @type {Boolean} Loading factura
@@ -142,9 +163,9 @@ export default {
       codigoFactura: null,
       /**
        * Valor del tipo de empaque
-       * @type {String} tipo de empaque
+       * @type {Array} tipo de empaque
        */
-      tipoEmpaque: null,
+      tipoEmpaque: [],
       /**
        * Valor del tipo de entrega del empaque
        * @type {String} tipo de entrega del empaque
@@ -154,9 +175,7 @@ export default {
        * Tipos de empaque
        * @type {Array} datos de los tipo de empaque
        */
-      listaTipoEmpaque: [
-        'CAJA', 'BOLSA', 'SOBRE'
-      ],
+      listaTipoEmpaque: [],
       /**
        * Tipos de entrega
        * @type {Array} datos de los tipo de entrega
@@ -170,7 +189,7 @@ export default {
        */
       columns: [
         {
-          name: 'nombre_producto',
+          name: 'descripcion',
           required: true,
           label: 'Nombre del producto',
           align: 'left',
@@ -196,8 +215,18 @@ export default {
   },
   created () {
     this.$barcodeScanner.init(this.obtenerFactura)
+    this.obtenerEmpaques()
   },
   methods: {
+    async obtenerEmpaques () {
+      const { res } = await this.$services.getData(['empaques', ''])
+      this.listaTipoEmpaque = res.data.map(element => {
+        return {
+          label: element.nombre,
+          value: element.codigo
+        }
+      })
+    },
     /**
      * Finalizar embalaje
      */
@@ -239,18 +268,15 @@ export default {
     obtenerFactura (code) {
       this.codigoFactura = typeof code !== 'string' ? this.codigoFactura : code
       this.loadingFactura = true
-      this.$mockData.getOneData('facturas', { codigo: this.codigoFactura })
-        .then(({ response }) => {
-          console.log(response)
-          this.factura = response.data.content.detalles.map(product => {
-            product.cantidad_embalado = 0
-            return product
-          })
+      this.$services.getOneData(['factura', this.codigoFactura, 'detalles'])
+        .then(({ res }) => {
+          console.log(res.data)
+          this.factura = res.data
           this.loadingFactura = false
           this.persistent = false
         })
-        .catch(() => {
-          this.notify(this, 'Factura no encontrada ' + this.codigoFactura, 'negative', 'warning')
+        .catch((e) => {
+          this.notify(this, e, 'negative', 'warning')
           this.factura = []
           this.loadingFactura = false
         })
