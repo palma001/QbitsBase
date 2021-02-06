@@ -64,7 +64,7 @@
       </div>
     </div>
     <div class="col-12 q-mt-md" v-if="factura.length > 0">
-      <q-table
+      <!-- <q-table
         title="Productos"
         row-key="name"
         :data="factura"
@@ -83,7 +83,8 @@
             </q-td>
           </q-tr>
         </template>
-      </q-table>
+      </q-table> -->
+      <b-markup-table :data="factura" :header="columns"/>
     </div>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab color="purple" icon="keyboard_arrow_up" direction="up" label="Opciones" label-position="left" external-label>
@@ -116,8 +117,12 @@
 
 <script>
 import { mixins } from '../mixins'
+import BMarkupTable from '../components/BMarkupTable'
 export default {
   mixins: [mixins.containerMixin],
+  components: {
+    BMarkupTable
+  },
   data () {
     return {
       cantidadEmpaque: {},
@@ -189,25 +194,17 @@ export default {
        */
       columns: [
         {
-          name: 'descripcion',
-          required: true,
-          label: 'Nombre del producto',
-          align: 'left',
-          sortable: true
+          value: 'descripcion',
+          label: 'Nombre del producto'
         },
         {
-          name: 'cantidad',
-          align: 'center',
-          label: 'Cantidad producto',
-          field: 'cantidad',
-          sortable: true
+          value: 'cantidad',
+          label: 'Cantidad producto'
           // classes: row => row.cantidad === row.fat ? 'bg-teal' : ''
         },
         {
           name: 'cantidad_embalado',
-          label: 'Cantidad embalado',
-          field: 'cantidad_embalado',
-          sortable: true
+          label: 'Cantidad embalado'
           // classes: row => row.cantidad === row.fat ? 'bg-teal' : ''
         }
       ]
