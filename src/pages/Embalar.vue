@@ -64,27 +64,7 @@
       </div>
     </div>
     <div class="col-12 q-mt-md" v-if="factura.length > 0">
-      <!-- <q-table
-        title="Productos"
-        row-key="name"
-        :data="factura"
-        :columns="columns"
-      >
-        <template v-slot:body="props">
-          <q-tr :props="props" :class="props.row.cantidad === props.row.cantidad_embalado ? 'bg-teal' : ''">
-            <q-td key="descripcion" :props="props">
-              {{ props.row.descripcion }}
-            </q-td>
-            <q-td key="cantidad" :props="props">
-              {{ props.row.cantidad }}
-            </q-td>
-            <q-td key="cantidad_embalado" :props="props">
-              {{ props.row.cantidad_embalado }}
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table> -->
-      <b-markup-table :data="factura" :header="columns"/>
+      <b-markup-table :data="factura" :header="columns" title="Lista de productos"/>
     </div>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab color="purple" icon="keyboard_arrow_up" direction="up" label="Opciones" label-position="left" external-label>
@@ -195,17 +175,18 @@ export default {
       columns: [
         {
           value: 'descripcion',
-          label: 'Nombre del producto'
+          label: 'Nombre del producto',
+          align: 'left'
         },
         {
           value: 'cantidad',
-          label: 'Cantidad producto'
-          // classes: row => row.cantidad === row.fat ? 'bg-teal' : ''
+          label: 'Cantidad producto',
+          align: 'right'
         },
         {
-          name: 'cantidad_embalado',
-          label: 'Cantidad embalado'
-          // classes: row => row.cantidad === row.fat ? 'bg-teal' : ''
+          value: 'cantidad_embalado',
+          label: 'Cantidad embalado',
+          align: 'right'
         }
       ]
     }
