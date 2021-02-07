@@ -14,20 +14,51 @@
     <div class="col-12">
       <q-table
         title="Empaques"
+        row-key="name"
         :data="data"
         :columns="columns"
-        row-key="name"
-      />
+        :loading="loadingTable"
+      >
+        <template v-slot:loading>
+          <q-inner-loading showing color="primary" />
+        </template>
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="codigo" :props="props">
+              {{ props.row.codigo }}
+            </q-td>
+            <q-td key="fecha_emision" :props="props">
+              {{ props.row.fecha_emision }}
+            </q-td>
+            <q-td key="detalles" :props="props">
+              <q-btn size="sm"
+                color="teal"
+                dense
+                round
+                icon="fullscreen"
+                @click="viewDetails(props.row)"
+              >
+                <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+                  Detalles del empaque
+                </q-tooltip>
+              </q-btn>
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
     </div>
   </div>
 </template>
 
 <script>
 import { mixins } from '../mixins'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
+      loadingTable: false,
       /**
        * Valor de la fecha del empaques
        * @type {String} fecha desde del empaque
@@ -51,10 +82,9 @@ export default {
           sortable: true
         },
         {
-          name: 'fecha',
-          align: 'center',
-          label: 'Fecha emitida',
-          field: 'fecha',
+          name: 'fecha_emision',
+          label: 'Fecha de emision',
+          field: 'fecha_emision',
           sortable: true
         }
       ],
@@ -62,20 +92,34 @@ export default {
        * Data de la tabla
        * @type {Array} data de la tabla
        */
-      data: [
-        {
-          codigo: 9823982938,
-          fecha: '01/26/2021 10:00 am'
-        },
-        {
-          codigo: 7627362763,
-          fecha: '01/26/2021 11:00 am'
-        },
-        {
-          codigo: 'Eclair',
-          fecha: '01/26/2021 12:00 am'
-        }
-      ]
+      data: []
+    }
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
+  },
+  created () {
+    this.obtenerFactura()
+  },
+  methods: {
+    async obtenerFactura () {
+      this.loadingTable = true
+      const { res } = await this.$services.getOneData(['factura', 'empleado-empaque', this[GETTERS.GET_USER].codigo])
+      this.data = res.data
+      this.loadingTable = false
+    },
+    /**
+     * Abrir detalles de la factura
+     * @param {Object} data detalle de la factura
+     */
+    viewDetails (data) {
+      this.detallesFactura = true
+      this.oneFactura = data
+      this.productos = data.detalles
+      console.log(data)
     }
   }
 }
