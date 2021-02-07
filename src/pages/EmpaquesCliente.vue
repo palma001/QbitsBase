@@ -27,13 +27,13 @@
             <q-td key="codigo" :props="props">
               {{ props.row.codigo }}
             </q-td>
-            <q-td key="estado" :props="props">
-              <q-badge :color="props.row.estado === 'en ruta' ? 'red' : 'green'">
-                {{ props.row.estado }}
+            <q-td key="status" :props="props">
+              <q-badge :color="props.row.status === 'EC' ? 'green' : 'red'">
+                {{ statusFactura[props.row.status] }}
               </q-badge>
             </q-td>
-            <q-td key="fecha_entrega" :props="props">
-              {{ props.row.fecha_entrega }}
+            <q-td key="fecha_emision" :props="props">
+              {{ props.row.fecha_emision }}
             </q-td>
             <q-td key="detalles" :props="props">
               <q-btn size="sm"
@@ -135,10 +135,20 @@
 </template>
 
 <script>
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
       oneFactura: null,
+      statusFactura: {
+        PE: 'Por empaquetar',
+        LE: 'Empaquetado',
+        ET: 'En transporte',
+        ER: 'En ruta',
+        EC: 'Entregado',
+        PD: 'Devuelto'
+      },
       loadingTable: false,
       /**
        * Productos del empaque
@@ -236,22 +246,17 @@ export default {
           sortable: true
         },
         {
-          name: 'estado',
+          name: 'status',
           align: 'center',
           label: 'Estado',
-          field: 'estado',
+          field: 'status',
           sortable: true
         },
         {
-          name: 'fecha_entrega',
-          label: 'Fecha de entrega',
-          field: 'fecha_entrega',
+          name: 'fecha_emision',
+          label: 'Fecha de emision',
+          field: 'fecha_emision',
           sortable: true
-        },
-        {
-          name: 'detalles',
-          label: 'Detalles',
-          field: 'detalles'
         }
       ],
       /**
@@ -261,21 +266,21 @@ export default {
       data: []
     }
   },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
+  },
   created () {
-    this.obteneractura()
+    this.obtenerFactura()
   },
   methods: {
-    /**
-     * Obtiene todas las facturas del cliente
-     */
-    obteneractura () {
+    async obtenerFactura () {
       this.loadingTable = true
-      this.$mockData.getData('facturas')
-        .then(({ response }) => {
-          this.data = response.data.content
-          this.loadingTable = false
-          console.log(response)
-        })
+      const { res } = await this.$services.getOneData(['factura', 'cliente', this[GETTERS.GET_USER].codigo])
+      this.data = res.data
+      this.loadingTable = false
     },
     /**
      * Abrir detalles de la factura

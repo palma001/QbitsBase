@@ -17,19 +17,23 @@
         :data="data"
         :columns="columns"
         row-key="name"
+        :loading="loadingTable"
       >
+        <template v-slot:loading>
+          <q-inner-loading showing color="primary" />
+        </template>
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="codigo" :props="props">
               {{ props.row.codigo }}
             </q-td>
-            <q-td key="estado" :props="props">
-              <q-badge :color="props.row.estado === 'en ruta' ? 'red' : 'green'">
-                {{ props.row.estado }}
+            <q-td key="status" :props="props">
+              <q-badge :color="props.row.status === 'EC' ? 'green' : 'red'">
+                {{ statusFactura[props.row.status] }}
               </q-badge>
             </q-td>
-            <q-td key="fecha" :props="props">
-              {{ props.row.fecha }}
+            <q-td key="fecha_emision" :props="props">
+              {{ props.row.fecha_emision }}
             </q-td>
           </q-tr>
         </template>
@@ -54,12 +58,23 @@
 
 <script>
 import BScanner from '../components/BScanner.vue'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     BScanner
   },
   data () {
     return {
+      statusFactura: {
+        PE: 'Por empaquetar',
+        LE: 'Empaquetado',
+        ET: 'En transporte',
+        ER: 'En ruta',
+        EC: 'Entregado',
+        PD: 'Devuelto'
+      },
+      loadingTable: false,
       scanner: false,
       /**
        * Valor de la fecha del empaques
@@ -84,16 +99,16 @@ export default {
           sortable: true
         },
         {
-          name: 'estado',
+          name: 'status',
           align: 'center',
           label: 'Estado',
-          field: 'estado',
+          field: 'status',
           sortable: true
         },
         {
-          name: 'fecha',
-          label: 'Fecha de entrega',
-          field: 'fecha',
+          name: 'fecha_emision',
+          label: 'Fecha de emision',
+          field: 'fecha_emision',
           sortable: true
         }
       ],
@@ -101,26 +116,25 @@ export default {
        * Data de la tabla
        * @type {Array} data de la tabla
        */
-      data: [
-        {
-          codigo: 9823982938,
-          estado: 'entregado',
-          fecha: '26/01/2021'
-        },
-        {
-          codigo: 7627362763,
-          estado: 'en ruta',
-          fecha: '-'
-        },
-        {
-          codigo: 8327483274,
-          estado: 'en ruta',
-          fecha: '-'
-        }
-      ]
+      data: []
     }
   },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
+  },
+  created () {
+    this.obtenerFactura()
+  },
   methods: {
+    async obtenerFactura () {
+      this.loadingTable = true
+      const { res } = await this.$services.getOneData(['factura', 'empleado-transporte', this[GETTERS.GET_USER].codigo])
+      this.data = res.data
+      this.loadingTable = false
+    },
     eventScanner (data) {
       console.log(data)
     }

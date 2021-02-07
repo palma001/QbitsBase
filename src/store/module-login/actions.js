@@ -24,6 +24,7 @@ export const actions = {
           icon: 'report_problem',
           message: 'Las credenciales son incorrectas'
         })
+        self.btnDisable = false
       })
   },
   /**
