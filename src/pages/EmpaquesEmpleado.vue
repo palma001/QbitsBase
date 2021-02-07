@@ -30,7 +30,7 @@
             <q-td key="fecha_emision" :props="props">
               {{ date(props.row.fecha_emision) }}
             </q-td>
-            <q-td key="fecha_emision" :props="props">
+            <q-td key="hora_emision" :props="props">
               {{ time(props.row.fecha_emision) }}
             </q-td>
             <q-td key="detalles" :props="props">
@@ -91,7 +91,7 @@ export default {
           sortable: true
         },
         {
-          name: 'fecha_emision',
+          name: 'hora_emision',
           label: 'Hora emisión',
           field: 'fecha_emision',
           sortable: true

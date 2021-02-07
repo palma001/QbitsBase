@@ -39,7 +39,21 @@
           dense
           input-debounce="0"
           :options="listaTipoEmpaque"
-        />
+        >
+          <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
+            <q-item
+              v-bind="itemProps"
+              v-on="itemEvents"
+            >
+              <q-item-section>
+                <q-item-label v-html="opt.label" ></q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-toggle :value="selected" @input="toggleOption(opt)" />
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
       </div>
       <div class="col-sm-2 col-xs-12">
         <q-btn
@@ -248,7 +262,6 @@ export default {
       this.loadingFactura = true
       this.$services.getOneData(['factura', this.codigoFactura, 'detalles'])
         .then(({ res }) => {
-          console.log(res.data)
           this.factura = res.data
           this.loadingFactura = false
           this.persistent = false

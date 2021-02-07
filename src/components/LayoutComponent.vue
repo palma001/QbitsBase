@@ -32,7 +32,7 @@
                     </div>
                     <div class="column">
                       <div class="text-subtitle1 text-primary q-mt-sm q-mb-xs q-ml-sm">
-                        {{ GET_USER ? GET_USER.nombre : '' }}
+                        {{ GET_USER ? ucwords(GET_USER.nombre) : '' }}
                       </div>
                     </div>
                   </div>
