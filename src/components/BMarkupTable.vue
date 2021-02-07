@@ -1,13 +1,28 @@
 <template>
   <q-card class="my-card">
-    <q-card-section>
-      <div class="text-h6">{{ title }}</div>
+    <q-card-section class="row justify-between">
+      <div class="text-h6 col-4">
+        {{ title }}
+      </div>
+      <q-input
+        v-model="text"
+        type="text"
+        :label="labelInput"
+        class="col-4"
+        dense
+        filled
+        @keyup.enter="enter"
+      />
     </q-card-section>
     <q-card-section class="q-pt-none">
       <q-markup-table>
         <thead>
           <tr>
-            <th v-for="head in header" :key="head.id" :class="`text-${head.align}`">
+            <th
+              v-for="head in header"
+              :key="head.id"
+              :class="`text-${head.align}`"
+            >
               {{ head.label }}
             </th>
           </tr>
@@ -38,10 +53,21 @@ export default {
     },
     title: {
       type: String
+    },
+    labelInput: {
+      type: String,
+      default: 'Label'
     }
   },
   data () {
-    return {}
+    return {
+      text: ''
+    }
+  },
+  methods: {
+    enter () {
+      this.$emit('enter', this.text)
+    }
   }
 }
 </script>

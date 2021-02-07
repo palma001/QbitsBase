@@ -55,7 +55,7 @@ export const postData = function (url, params) {
   })
 }
 export const putData = function (url, params) {
-  return axiosInstance.put(`${url[0]}/${url[1]}/${url[2]}`, params).then((res) => {
+  return axiosInstance.put(url.join('/'), params).then((res) => {
     return {
       status: true,
       res: res

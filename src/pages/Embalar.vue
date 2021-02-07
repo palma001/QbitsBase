@@ -78,7 +78,13 @@
       </div>
     </div>
     <div class="col-12 q-mt-md" v-if="factura.length > 0">
-      <b-markup-table :data="factura" :header="columns" title="Lista de productos"/>
+      <b-markup-table
+        title="Lista de productos"
+        labelInput="Código del producto"
+        :data="factura"
+        :header="columns"
+        @enter="obtenerProducto"
+      />
     </div>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab color="purple" icon="keyboard_arrow_up" direction="up" label="Opciones" label-position="left" external-label>
@@ -106,6 +112,64 @@
         <v-quagga v-else class="full-width" :frequency="0" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="product" persistent>
+      <q-card class="my-card">
+        <q-card-section>
+          <div class="text-h6">Producto seleccionado</div>
+        </q-card-section>
+        <q-separator />
+        <q-card-section class="q-pl-lg q-pr-lg">
+          <q-input
+            type="text"
+            label="Nombre del producto"
+            disable
+            filled
+            dense
+            :value="productoSelected.descripcion"
+          />
+        </q-card-section>
+        <q-card-actions align="center">
+          <q-item class="q-mb-md">
+            <q-item-section>
+              <q-input
+                type="text"
+                label="Nombre del producto"
+                disable
+                filled
+                dense
+                :value="productoSelected.cantidad"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item class="q-mt-xs">
+            <q-item-section>
+              <q-input
+                type="text"
+                label="Cantidad a embalar"
+                ref="cantidadEmbalar"
+                filled
+                dense
+                v-model="cantidadEmbalar"
+                :rules="[val => Number(val) <= Number(productoSelected.cantidad) || 'Cantidad de embalaje es mayor a la factura']"
+                @keyup.enter="guardarEmbalaje"
+              />
+            </q-item-section>
+          </q-item>
+        </q-card-actions>
+        <q-separator />
+        <q-card-actions align="right" class="text-primary">
+          <q-btn label="Cancelar" color="negative" v-close-popup />
+          <q-btn
+            label="Aceptar"
+            color="teal"
+            @click="guardarEmbalaje" :loading="loadingGuardarEmbalaje">
+            <template v-slot:loading>
+              <q-spinner color="teal" />
+            </template>
+          </q-btn>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -119,7 +183,11 @@ export default {
   },
   data () {
     return {
+      loadingGuardarEmbalaje: false,
+      product: false,
+      cantidadEmbalar: 1,
       cantidadEmpaque: {},
+      productoSelected: {},
       /**
        * Loading factura
        * @type {Boolean} Loading factura
@@ -210,6 +278,25 @@ export default {
     this.obtenerEmpaques()
   },
   methods: {
+    guardarEmbalaje () {
+      this.$refs.cantidadEmbalar.validate()
+      if (!this.$refs.cantidadEmbalar.hasError) {
+        this.loadingGuardarEmbalaje = true
+        this.$services.putData(['factura', this.codigoFactura, 'detalles', this.productoSelected.codigo_producto], {
+          cantidad_embalada: this.cantidadEmbalar
+        })
+          .then(({ res }) => {
+            this.notify(this, res.data, 'positive', 'thumb_up')
+            this.product = false
+            this.loadingGuardarEmbalaje = false
+            this.obtenerFactura(this.codigoFactura)
+            this.cantidadEmbalar = 1
+          })
+      }
+    },
+    /**
+     * Obtener lista de tipos de empaques
+     */
     async obtenerEmpaques () {
       const { res } = await this.$services.getData(['empaques', ''])
       this.listaTipoEmpaque = res.data.map(element => {
@@ -277,18 +364,10 @@ export default {
      * @param {String} codigo codigo del producto
      */
     obtenerProducto (codigo) {
-      const factura = this.factura.filter(row => Number(row.codigo) === Number(codigo))
-      if (factura.length > 0) {
-        this.factura.map(product => {
-          if (Number(product.codigo) === Number(codigo)) {
-            if (product.cantidad > product.cantidad_embalado) {
-              product.cantidad_embalado += 1
-              return product
-            } else {
-              alert('Producto supero el limite')
-            }
-          }
-        })
+      const producto = this.factura.filter(row => Number(row.codigo_producto) === Number(codigo))[0]
+      if (producto) {
+        this.productoSelected = producto
+        this.product = true
       } else {
         this.notify(this, 'Producto no encontrada', 'negative', 'warning')
       }
