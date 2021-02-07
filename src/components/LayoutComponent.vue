@@ -32,7 +32,7 @@
                     </div>
                     <div class="column">
                       <div class="text-subtitle1 text-primary q-mt-sm q-mb-xs q-ml-sm">
-                        {{ GET_USER ? GET_USER.usuario : '' }}
+                        {{ GET_USER ? GET_USER.nombre : '' }}
                       </div>
                     </div>
                   </div>
@@ -41,7 +41,7 @@
               <q-expansion-item expand-separator
                 class="text-primary"
                 icon="people_alt"
-                :label="GET_USER ? `${GET_USER.first_name} ${GET_USER.last_name}` : ''">
+                :label="GET_USER ? `${GET_USER.email}` : ''">
                 <q-item clickable @click="darkMode">
                   <q-item-section avatar>
                     <q-icon name="chrome_reader_mode">
@@ -200,7 +200,7 @@ export default {
       const user = this[GETTERS.GET_USER]
       if (access && user) {
         return access.filter(element => {
-          return element === user.rol.name
+          return element === user.rol
         })[0]
       }
     },

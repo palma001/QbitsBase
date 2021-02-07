@@ -9,77 +9,22 @@ import gql from 'graphql-tag'
 export const actions = {
   [ACTIONS.LOGIN]: ({ commit, dispatch }, { self }) => {
     self.btnDisable = true
-    self.$mockData.getOneData('auth', {
-      usuario: self.usuario,
+    self.$services.postData(['login', 'usuario-password'], {
+      email: self.usuario,
       password: self.password
     })
-      .then(({ response }) => {
-        if (!response.data.content) {
-          self.$q.notify({
-            position: 'top',
-            color: 'negative',
-            icon: 'report_problem',
-            message: 'Las credenciales son incorrectas'
-          })
-          self.btnDisable = false
-          return 0
-        }
-        dispatch(ACTIONS.LOGIN_SUCCESS, { data: response.data.content, self: self })
+      .then(({ res }) => {
+        dispatch(ACTIONS.LOGIN_SUCCESS, { data: res.data, self: self })
         self.btnDisable = false
       })
-    // self.$apollo.mutate({
-    //   mutation: gql`mutation ($username: String!, $password: String!) {
-    //     login(input: {
-    //       username: $username,
-    //       password: $password,
-    //     })
-    //     {
-    //       access_token
-    //       refresh_token
-    //       expires_in
-    //       token_type
-    //       user {
-    //         id
-    //         name
-    //         email
-    //         full_name
-    //       }
-    //       sucursales {
-    //         id
-    //         nombre_sucursal
-    //       }
-    //     }
-    //   }`,
-    //   variables: {
-    //     username: self.username,
-    //     password: self.password
-    //   },
-    //   update: (store, { data: { login } }) => {
-    //     console.log(login)
-    //     commit(MUTATIONS.SET_TOKEN, login.access_token)
-    //     commit(MUTATIONS.SET_REFRESH_TOKEN, login.refresh_token)
-    //     commit(MUTATIONS.SET_USER, login.user)
-    //     commit(MUTATIONS.SET_EXPIRE_IN, Number(login.expires_in))
-    //     commit(MUTATIONS.SET_EXPIRE_IN, Number(login.expires_in))
-    //     commit(MUTATIONS.SET_ID, Number(login.user.id))
-    //     dispatch(ACTIONS.AUTO_LOGOUT, Number(login.expires_in))
-    //     self.$q.sessionStorage.set('sucursales', login.sucursales)
-    //     self.$router.push({ name: 'billing' })
-    //   }
-    // })
-    //   .then(res => {
-    //     self.btnDisable = false
-    //   })
-    //   .catch((error) => {
-    //     // Error
-    //     self.$q.notify({
-    //       position: 'top',
-    //       color: 'negative',
-    //       icon: 'report_problem',
-    //       message: error.message
-    //     })
-    //     self.btnDisable = false
-    //   })
+      .catch(() => {
+        self.$q.notify({
+          position: 'top',
+          color: 'negative',
+          icon: 'report_problem',
+          message: 'Las credenciales son incorrectas'
+        })
+      })
   },
   /**
    * Logout of the app
@@ -96,14 +41,14 @@ export const actions = {
    */
   [ACTIONS.LOGIN_SUCCESS]: ({ commit }, { data, self }) => {
     commit(MUTATIONS.SET_USER, data)
-    switch (data.rol.name) {
-      case 'empacador':
+    switch (data.rol) {
+      case 'EE':
         self.$router.push({ name: 'Embalar' })
         break
-      case 'cliente':
+      case 'UC':
         self.$router.push({ name: 'EmpaquesCliente' })
         break
-      case 'admin':
+      case 'UA':
         self.$router.push({ name: 'EmpaquesCliente' })
         break
       default:

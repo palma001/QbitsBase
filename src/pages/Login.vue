@@ -22,7 +22,7 @@
               class="q-mt-lg"
               color="primary"
               v-model="usuario"
-              label="Usuario"
+              label="Email"
               ref="username"
               name="username"
               outlined
@@ -30,7 +30,7 @@
               @keyup.enter.native="login"
               :rules="[val => !!val || 'El campo es requerido.']">
               <template v-slot:prepend>
-                <q-icon name="account_circle" />
+                <q-icon name="email" />
               </template>
             </q-input>
             <q-input

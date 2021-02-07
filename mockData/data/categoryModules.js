@@ -8,35 +8,35 @@ export const categoryModules = [
         name: 'geolocation',
         route: 'Geolocation',
         icon: 'map',
-        access: ['admin'],
+        access: ['UA'],
         devices: ['mobile', 'desktop']
       },
       {
         name: 'embalar',
         route: 'Embalar',
         icon: 'map',
-        access: ['empacador'],
+        access: ['EE'],
         devices: ['mobile', 'desktop']
       },
       {
         name: 'listaEmpaques',
         route: 'EmpaquesEmpleado',
         icon: 'receipt',
-        access: ['empacador'],
+        access: ['EE'],
         devices: ['mobile', 'desktop']
       },
       {
         name: 'listaEmpaques',
         route: 'EmpaquesCliente',
         icon: 'receipt',
-        access: ['cliente', 'admin'],
+        access: ['UC', 'UA'],
         devices: ['mobile', 'desktop']
       },
       {
         name: 'listaEmpaques',
         route: 'EmpaquesTransporte',
         icon: 'receipt',
-        access: ['transporte'],
+        access: ['ET'],
         devices: ['mobile', 'desktop']
       }
     ]
