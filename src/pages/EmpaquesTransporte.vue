@@ -129,6 +129,9 @@ export default {
     this.obtenerFactura()
   },
   methods: {
+    /**
+     * Obtener todas las facturas del empleado transporte en sesión
+     */
     async obtenerFactura () {
       this.loadingTable = true
       const { res } = await this.$services.getOneData(['factura', 'empleado-transporte', this[GETTERS.GET_USER].codigo])
