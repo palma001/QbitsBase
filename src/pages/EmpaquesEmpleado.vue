@@ -28,7 +28,10 @@
               {{ props.row.codigo }}
             </q-td>
             <q-td key="fecha_emision" :props="props">
-              {{ props.row.fecha_emision }}
+              {{ date(props.row.fecha_emision) }}
+            </q-td>
+            <q-td key="fecha_emision" :props="props">
+              {{ time(props.row.fecha_emision) }}
             </q-td>
             <q-td key="detalles" :props="props">
               <q-btn size="sm"
@@ -83,7 +86,13 @@ export default {
         },
         {
           name: 'fecha_emision',
-          label: 'Fecha de emision',
+          label: 'Fecha emisión',
+          field: 'fecha_emision',
+          sortable: true
+        },
+        {
+          name: 'fecha_emision',
+          label: 'Hora emisión',
           field: 'fecha_emision',
           sortable: true
         }

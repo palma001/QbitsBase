@@ -1,4 +1,3 @@
-
 import { SessionStorage } from 'quasar'
 /**
  * Translates the tags in Entities
@@ -126,6 +125,16 @@ export const can = (self, module, permission) => {
   }
 }
 
+export const date = (dateFormating) => {
+  const newDate = new Date(dateFormating)
+  return `${newDate.getDate()}-${newDate.getMonth() + 1}-${newDate.getFullYear()}`
+}
+
+export const time = (timeFormating) => {
+  const newDate = new Date(timeFormating)
+  return `${newDate.getHours()}:${newDate.getMinutes()}:${newDate.getSeconds()}`
+}
+
 export const notify = (self, message, color, icon, position = 'top') => {
   self.$q.notify({
     message: ucwords(message),
@@ -142,5 +151,7 @@ export const methods = {
   ucwords,
   can,
   notify,
-  errorRequest
+  errorRequest,
+  date,
+  time
 }
