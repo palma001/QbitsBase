@@ -61,7 +61,8 @@
           text-color="white"
           label="Finalizar"
           size="15px"
-          @click="finalizarEntrega">
+          :disable="factura.length === 0 ? true : false"
+          @click="validarEmbalaje">
         </q-btn>
       </div>
     </div>
@@ -110,6 +111,50 @@
           v-if="scanner === 'Qr'"
         />
         <v-quagga v-else class="full-width" :frequency="0" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="dialogFinalizarEmpaque" transition-show="scale" transition-hide="scale">
+      <q-card>
+        <q-card-section class="q-pb-none">
+          <p class="text-h6">
+            Finalizar empaque
+          </p>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section
+          class="row q-gutter-md justify-between"
+          v-for="producto in productosFaltantes"
+          :key="producto.id"
+        >
+          <q-input
+            :value="producto.descripcion"
+            type="text"
+            label="Nombre del producto"
+            class="col-3"
+            disable
+          />
+          <q-input
+            :key="producto.id"
+            :value="producto.cantidad"
+            type="text"
+            label="Cantidad"
+            class="col-3"
+            disable
+          />
+          <q-input
+            :key="producto.id"
+            :value="producto.cantidad_embalado"
+            type="text"
+            label="Cantidad embalada"
+            class="col-3"
+            disable
+          />
+        </q-card-section>
+         <q-separator/>
+        <q-card-actions align="right">
+          <q-btn color="negative" v-close-popup clo label="Cancelar" />
+          <q-btn color="teal" label="Finalizar" />
+        </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="product" persistent>
@@ -176,6 +221,8 @@
 <script>
 import { mixins } from '../mixins'
 import BMarkupTable from '../components/BMarkupTable'
+import { GETTERS } from 'src/store/module-login/name'
+import { mapGetters } from 'vuex'
 export default {
   mixins: [mixins.containerMixin],
   components: {
@@ -183,10 +230,30 @@ export default {
   },
   data () {
     return {
+      /**
+       * Loading del boton de guardar embalaje del producto
+       * @type {Boolean} Loading embalaje del producto
+       */
       loadingGuardarEmbalaje: false,
+      /**
+       * Modal del producto seleccionado
+       * @type {Boolean} Status del modal seleccionado
+       */
       product: false,
+      /**
+       * Variable de la cantidad de embalaje del producto
+       * @type {Number} Cantidad del producto
+       */
       cantidadEmbalar: 1,
+      /**
+       * Cantiad de empaque del producto seleccionado
+       * @type {Object} Producto seleccionado
+       */
       cantidadEmpaque: {},
+      /**
+       * Producto seleccionado
+       * @type {Object} Producto seleccionado
+       */
       productoSelected: {},
       /**
        * Loading factura
@@ -250,6 +317,8 @@ export default {
       listaTipoEntrega: [
         'Delivery', 'Tienda'
       ],
+      dialogFinalizarEmpaque: false,
+      productosFaltantes: [],
       /**
        * Columnas de la tabla de los productos de la factura
        * @type {Array} columnas de la tabla
@@ -277,7 +346,16 @@ export default {
     this.$barcodeScanner.init(this.obtenerFactura)
     this.obtenerEmpaques()
   },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
+  },
   methods: {
+    /**
+     * Guardar embalaje del producto
+     */
     guardarEmbalaje () {
       this.$refs.cantidadEmbalar.validate()
       if (!this.$refs.cantidadEmbalar.hasError) {
@@ -309,24 +387,49 @@ export default {
     /**
      * Finalizar embalaje
      */
-    finalizarEntrega () {
+    validarEmbalaje () {
+      const productos = []
       this.factura.forEach(element => {
         if (Number(element.cantidad) > Number(element.cantidad_embalado)) {
-          this.notify(
-            this,
-            `el producto ${element.nombre_producto} no tiene la cantidad embalada correcta`,
-            'negative',
-            'warining'
-          )
+          productos.push(element)
         } else if (Number(element.cantidad) < Number(element.cantidad_embalado)) {
           this.notify(
             this,
-            `el producto ${element.nombre_producto} supera la cantidad en la factura`,
+            `el producto ${element.descripcion} supera la cantidad en la factura`,
             'negative',
-            'warining'
+            'warning'
           )
         }
       })
+      this.abrirModalFinalizarEmpaque(productos)
+    },
+    /**
+     * Abrir modal de verificación
+     * @param {Array} productos productos faltantes
+    */
+    abrirModalFinalizarEmpaque (productos) {
+      if (productos.length > 0) {
+        this.dialogFinalizarEmpaque = true
+        this.productosFaltantes = productos
+      } else {
+        this.finalizarEmpaque()
+      }
+    },
+    async finalizarEmpaque () {
+      const { res } = await this.$services.putData(['factura', this.codigoFactura, 1], {
+        tipo_entrega: this.tipoEntrega,
+        codigo_empleado: this[GETTERS.GET_USER].codigo
+      })
+      if (res.data === 'Empaque Finalizado') {
+        this.factura = []
+        this.codigoFactura = null
+        this.notify(
+          this,
+          res.data,
+          'positive',
+          'thumb_up'
+        )
+      }
     },
     /**
      * Obtiene el codigo de barra o Qr
@@ -352,6 +455,7 @@ export default {
           this.factura = res.data
           this.loadingFactura = false
           this.persistent = false
+          this.$services.putData(['factura', this.codigoFactura, 0], {})
         })
         .catch((e) => {
           this.notify(this, e, 'negative', 'warning')
