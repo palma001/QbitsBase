@@ -90,7 +90,7 @@ export default {
        * Status scanner
        * @type {Boolean} Status scanner
        */
-      showScanner: true
+      showScanner: false
     }
   },
   watch: {
