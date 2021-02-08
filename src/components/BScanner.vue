@@ -5,15 +5,28 @@
         <q-card-section class="q-pa-xs">
           <q-select dense behavior="menu" v-model="value" :options="optionsScanner" label="Tipo de scanner" />
         </q-card-section>
-        <qrcode-stream style="width: 100% !important; height: 288px; !important;" @decode="eventQr" v-if="value === 'Qr'"></qrcode-stream>
-        <v-quagga v-else class="full-width" :onDetected="eventQuagga" :readerTypes="readerTypes"></v-quagga>
+        <qrcode-stream
+          style="width: 100% !important; height: 288px; !important;"
+          @decode="eventQr"
+          v-if="value === 'Qr'"
+        />
+        <b-quagga
+          v-else
+          class="full-width"
+          :onDetected="eventQuagga"
+          :readerTypes="readerTypes"
+        />
       </q-card>
     </q-dialog>
   </div>
 </template>
 <script>
+import BQuagga from '../components/BQuagga'
 export default {
   name: 'BScanner',
+  components: {
+    BQuagga
+  },
   props: {
     /**
      * Show scanner
@@ -36,6 +49,15 @@ export default {
         ]
       }
     },
+    readerSize: {
+      type: Object,
+      default () {
+        return {
+          width: 100,
+          height: 50
+        }
+      }
+    },
     /**
      * Tipo de codigo de barra
      * @type {Array} Tipo de codigo de barra
@@ -45,14 +67,14 @@ export default {
       default () {
         return [
           'code_128_reader',
-          'ean_reader'
-          // 'ean_8_reader'
-          // 'code_39_reader',
-          // 'code_39_vin_reader',
-          // 'codabar_reader',
-          // 'upc_reader',
-          // 'upc_e_reader',
-          // 'i2of5_reader'
+          'ean_reader',
+          'ean_8_reader',
+          'code_39_reader',
+          'code_39_vin_reader',
+          'codabar_reader',
+          'upc_reader',
+          'upc_e_reader',
+          'i2of5_reader'
         ]
       }
     }
@@ -68,7 +90,7 @@ export default {
        * Status scanner
        * @type {Boolean} Status scanner
        */
-      showScanner: false
+      showScanner: true
     }
   },
   watch: {
