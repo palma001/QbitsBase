@@ -34,7 +34,7 @@
             </template>
           </q-input>
         </div>
-        <div class="col-sm-2 col-xs-12">
+        <div class="col-sm-3 col-xs-12">
           <q-select
             label="Tipos de entrega"
             ref="tipoEntrega"
@@ -45,7 +45,7 @@
             :rules="[val => !!val || 'El campo es requerido.']"
           />
         </div>
-        <div class="col-sm-3 col-xs-12">
+        <div class="col-sm-2 col-xs-12">
           <q-select
             label="Empaque"
             ref="tipoEmpaque"
@@ -91,12 +91,12 @@
           />
         </div>
         <div class="col-sm-12 row" v-if="tipoEmpaque.length > 0">
-          <div v-for="tipo in tipoEmpaque" :key="tipo.id" class="col-sm-2 col-xs-4">
+          <div v-for="tipo in tipoEmpaque" :key="tipo.id" class="col-sm-2 col-xs-6">
             <q-input
               type="number"
               dense
               filled
-              style="width: 95%"
+              style="width: 98%"
               ref="cantidadEmpaque"
               v-model="cantidadEmpaque[tipo.label]"
               :rules="[val => !!val && val > 0 || 'El campo es requerido.']"
