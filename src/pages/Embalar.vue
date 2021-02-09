@@ -1,82 +1,97 @@
 <template>
   <div class="q-pa-md row q-gutter-y-md row">
-    <div class="col-12 row q-gutter-sm">
-      <div class="col-sm-3 col-xs-12">
-        <q-input
-          filled
-          dense
-          autofocus
-          label="Código Factura"
-          v-model="codigoFactura"
-          :disable="factura.length === 0 ? false : true"
-          @keyup.enter="obtenerFactura"
-        >
-          <template v-slot:append>
-            <q-spinner
-              v-if="loadingFactura"
-              color="primary"
-              :thickness="2"
+    <div class="col-12">
+      <q-form
+        ref="myForm"
+        class="row q-gutter-sm"
+        @submit="validarEmbalaje"
+      >
+        <div class="col-sm-3 col-xs-12">
+          <q-input
+            filled
+            dense
+            autofocus
+            label="Código Factura"
+            v-model="codigoFactura"
+            ref="codigoFactura"
+            :disable="factura.length === 0 ? false : true"
+            :rules="[val => !!val || 'El campo es requerido.']"
+            @keyup.enter="obtenerFactura"
+          >
+            <template v-slot:append>
+              <q-spinner
+                v-if="loadingFactura"
+                color="primary"
+                :thickness="2"
+              />
+              <q-icon name="search" v-else/>
+            </template>
+          </q-input>
+        </div>
+        <div class="col-sm-2 col-xs-12">
+          <q-select
+            label="Tipos de entrega"
+            ref="tipoEntrega"
+            filled
+            dense
+            v-model="tipoEntrega"
+            :options="listaTipoEntrega"
+            :rules="[val => !!val || 'El campo es requerido.']"
+          />
+        </div>
+        <div class="col-sm-3 col-xs-12">
+          <q-select
+            label="Empaque"
+            ref="tipoEmpaque"
+            filled
+            multiple
+            dense
+            input-debounce="0"
+            v-model="tipoEmpaque"
+            :rules="[val => !!val && val.length > 0 || 'El campo es requerido.']"
+            :options="listaTipoEmpaque"
+          >
+            <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
+              <q-item
+                v-bind="itemProps"
+                v-on="itemEvents"
+              >
+                <q-item-section>
+                  <q-item-label v-html="opt.label" ></q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-toggle :value="selected" @input="toggleOption(opt)" />
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
+        <div class="col-sm-3 col-xs-12 text-right">
+          <q-btn
+            color="teal"
+            text-color="white"
+            label="Finalizar"
+            size="15px"
+            type="submit"
+            :disable="factura.length === 0 ? true : false"
+          >
+          </q-btn>
+        </div>
+        <div class="col-sm-12 row" v-if="tipoEmpaque.length > 0">
+          <div v-for="tipo in tipoEmpaque" :key="tipo.id" class="col-sm-2 col-xs-4">
+            <q-input
+              type="number"
+              dense
+              filled
+              style="width: 95%"
+              ref="cantidadEmpaque"
+              v-model="cantidadEmpaque[tipo.label]"
+              :rules="[val => !!val && val > 0 || 'El campo es requerido.']"
+              :label="`Cantidad de ${tipo.label}`"
             />
-            <q-icon name="search" v-else/>
-          </template>
-        </q-input>
-      </div>
-      <div class="col-sm-2 col-xs-12">
-        <q-select
-          filled
-          dense
-          v-model="tipoEntrega"
-          :options="listaTipoEntrega"
-          label="Tipos de entrega"
-        />
-      </div>
-      <div class="col-sm-3 col-xs-12">
-        <q-select
-          filled
-          label="Empaque"
-          v-model="tipoEmpaque"
-          multiple
-          dense
-          input-debounce="0"
-          :options="listaTipoEmpaque"
-        >
-          <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
-            <q-item
-              v-bind="itemProps"
-              v-on="itemEvents"
-            >
-              <q-item-section>
-                <q-item-label v-html="opt.label" ></q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-toggle :value="selected" @input="toggleOption(opt)" />
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-select>
-      </div>
-      <div class="col-sm-2 col-xs-12">
-        <q-btn
-          color="teal"
-          text-color="white"
-          label="Finalizar"
-          size="15px"
-          :disable="factura.length === 0 ? true : false"
-          @click="validarEmbalaje">
-        </q-btn>
-      </div>
-    </div>
-    <div class="col-sm-12 row" v-if="tipoEmpaque.length > 0">
-      <div v-for="tipo in tipoEmpaque" :key="tipo.id" class="col-sm-2 col-xs-4">
-        <q-input
-          type="number"
-          dense
-          filled
-          style="width: 95%"
-          v-model="cantidadEmpaque[tipo.label]"
-          :label="`Cantidad de ${tipo.label}`"
-        />
-      </div>
+          </div>
+        </div>
+      </q-form>
     </div>
     <div class="col-12 q-mt-md" v-if="factura.length > 0">
       <b-markup-table
@@ -415,21 +430,43 @@ export default {
         this.finalizarEmpaque()
       }
     },
+    /**
+     * Finalizar empaque, guarda los cambios en la factura
+     */
     async finalizarEmpaque () {
       const { res } = await this.$services.putData(['factura', this.codigoFactura, 1], {
         tipo_entrega: this.tipoEntrega,
         codigo_empleado: this[GETTERS.GET_USER].codigo
       })
       if (res.data === 'Empaque Finalizado') {
+        this.agregarEmpaques()
         this.factura = []
         this.codigoFactura = null
-        this.notify(
-          this,
-          res.data,
-          'positive',
-          'thumb_up'
-        )
+        this.tipoEmpaque = []
+        this.tipoEntrega = null
+        this.cantidadEmpaque = {}
+        await this.resetValidation()
+        this.notify(this, res.data, 'positive', 'thumb_up')
       }
+    },
+    /**
+     * Guardar el tipo y cantidad de empaque de la factura
+     */
+    async agregarEmpaques () {
+      this.tipoEmpaque.forEach(async element => {
+        await this.$services.postData(['factura', this.codigoFactura, 'tipo-empaques'], {
+          codigo_tipo_empaque: element.value,
+          cantidad: this.cantidadEmpaque[element.label]
+        })
+      })
+    },
+    /**
+     * Elimina la validación de los formularios
+     */
+    resetValidation () {
+      setTimeout(() => {
+        this.$refs.myForm.resetValidation()
+      })
     },
     /**
      * Obtiene el codigo de barra o Qr

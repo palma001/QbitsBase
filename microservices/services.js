@@ -40,7 +40,7 @@ export const getOneData = function (url) {
   })
 }
 export const postData = function (url, params) {
-  return axiosInstance.post(`${url[0]}/${url[1]}`, params).then((res) => {
+  return axiosInstance.post(url.join('/'), params).then((res) => {
     return {
       status: true,
       res: res
