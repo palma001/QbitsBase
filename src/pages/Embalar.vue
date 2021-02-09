@@ -342,10 +342,16 @@ export default {
        * Tipos de entrega
        * @type {Array} datos de los tipo de entrega
        */
-      listaTipoEntrega: [
-        'Delivery', 'Tienda'
-      ],
+      listaTipoEntrega: [],
+      /**
+       * Dialogo de finalizar empaque
+       * @type {Boolean} status del dialogo
+       */
       dialogFinalizarEmpaque: false,
+      /**
+       * Productos faltantes por embalar
+       * @type {Array} datos de los productos
+       */
       productosFaltantes: [],
       /**
        * Columnas de la tabla de los productos de la factura
@@ -373,6 +379,7 @@ export default {
   created () {
     this.$barcodeScanner.init(this.obtenerFactura)
     this.obtenerEmpaques()
+    this.obtenerTipoEntrega()
   },
   computed: {
     /**
@@ -406,6 +413,18 @@ export default {
     async obtenerEmpaques () {
       const { res } = await this.$services.getData(['empaques', ''])
       this.listaTipoEmpaque = res.data.map(element => {
+        return {
+          label: element.nombre,
+          value: element.codigo
+        }
+      })
+    },
+    /**
+     * Obtener lista de tipos de entrega
+     */
+    async obtenerTipoEntrega () {
+      const { res } = await this.$services.getData(['tipos-entrega', ''])
+      this.listaTipoEntrega = res.data.map(element => {
         return {
           label: element.nombre,
           value: element.codigo
@@ -448,7 +467,7 @@ export default {
      */
     async finalizarEmpaque () {
       const { res } = await this.$services.putData(['factura', this.codigoFactura, 1], {
-        tipo_entrega: this.tipoEntrega,
+        tipo_entrega: this.tipoEntrega.value,
         codigo_empleado: this[GETTERS.GET_USER].codigo
       })
       if (res.data === 'Empaque Finalizado') {
