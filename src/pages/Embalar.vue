@@ -1,10 +1,16 @@
 <template>
-  <div class="q-pa-md row q-gutter-y-md row">
+  <div class="q-pa-md row q-gutter-y-xs row">
+    <div class="col-12">
+      <p class="text-h6">
+        Embalar Factura
+      </p>
+    </div>
     <div class="col-12">
       <q-form
         ref="myForm"
         class="row q-gutter-sm"
         @submit="validarEmbalaje"
+        @reset="cancelarFactura"
       >
         <div class="col-sm-3 col-xs-12">
           <q-input
@@ -66,7 +72,7 @@
             </template>
           </q-select>
         </div>
-        <div class="col-sm-3 col-xs-12 text-right">
+        <div class="col-sm-3 col-xs-12 text-right q-gutter-x-sm">
           <q-btn
             color="teal"
             text-color="white"
@@ -74,8 +80,15 @@
             size="15px"
             type="submit"
             :disable="factura.length === 0 ? true : false"
-          >
-          </q-btn>
+          />
+          <q-btn
+            color="negative"
+            text-color="white"
+            icon="close"
+            size="15px"
+            type="reset"
+            v-if="factura.length === 0 ? false : true"
+          />
         </div>
         <div class="col-sm-12 row" v-if="tipoEmpaque.length > 0">
           <div v-for="tipo in tipoEmpaque" :key="tipo.id" class="col-sm-2 col-xs-4">
@@ -93,7 +106,7 @@
         </div>
       </q-form>
     </div>
-    <div class="col-12 q-mt-md" v-if="factura.length > 0">
+    <div class="col-12 q-mt-sm" v-if="factura.length > 0">
       <b-markup-table
         title="Lista de productos"
         labelInput="Código del producto"
@@ -193,7 +206,7 @@
             <q-item-section>
               <q-input
                 type="text"
-                label="Nombre del producto"
+                label="Cantidad"
                 disable
                 filled
                 dense
@@ -440,14 +453,20 @@ export default {
       })
       if (res.data === 'Empaque Finalizado') {
         this.agregarEmpaques()
-        this.factura = []
-        this.codigoFactura = null
-        this.tipoEmpaque = []
-        this.tipoEntrega = null
-        this.cantidadEmpaque = {}
-        await this.resetValidation()
+        this.cancelarFactura()
         this.notify(this, res.data, 'positive', 'thumb_up')
       }
+    },
+    /**
+     * Cancelar empaquetado
+     */
+    cancelarFactura () {
+      this.factura = []
+      this.codigoFactura = null
+      this.tipoEmpaque = []
+      this.tipoEntrega = null
+      this.cantidadEmpaque = {}
+      this.resetValidation()
     },
     /**
      * Guardar el tipo y cantidad de empaque de la factura
