@@ -527,15 +527,15 @@ export default {
       this.loadingFactura = true
       this.$services.getOneData(['factura', this.codigoFactura, 'detalles'])
         .then(({ res }) => {
-          this.factura = res.data
+          res.data.length <= 0 ? this.notify(this, 'Factura no encontrada', 'negative', 'warning') : this.$services.putData(['factura', this.codigoFactura, 0], {})
           this.loadingFactura = false
           this.persistent = false
-          this.$services.putData(['factura', this.codigoFactura, 0], {})
+          this.factura = res.data
         })
         .catch((e) => {
-          this.notify(this, e, 'negative', 'warning')
-          this.factura = []
+          this.notify(this, 'Factura no encontrada', 'negative', 'warning')
           this.loadingFactura = false
+          this.factura = []
         })
     },
     /**
@@ -548,7 +548,7 @@ export default {
         this.productoSelected = producto
         this.product = true
       } else {
-        this.notify(this, 'Producto no encontrada', 'negative', 'warning')
+        this.notify(this, 'Producto no encontrado', 'negative', 'warning')
       }
     }
   }

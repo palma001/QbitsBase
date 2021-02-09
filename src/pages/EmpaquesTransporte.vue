@@ -1,8 +1,23 @@
 <template>
   <div class="q-pa-md q-gutter-y-md row">
-    <div class="col-12 row q-gutter-sm">
-      <div class="col-sm-2 col-xs-12 col-md-1 col-lg-1 col-xl-1 q-mt-md">
-        Filtrar por:
+    <div class="col-12 row q-gutter-sm q-gutter-x-md">
+      <div class="col-sm-3 col-xs-12">
+        <q-input
+          filled
+          dense
+          v-model="codigoFactura"
+          placeholder="Código"
+          @keyup.enter="obtenerFactura"
+        >
+        <template v-slot:append>
+          <q-spinner
+            v-if="loadingFactura"
+            color="primary"
+            :thickness="2"
+          />
+          <q-icon name="search" v-else/>
+        </template>
+        </q-input>
       </div>
       <div class="col-sm-4 col-xs-12">
         <q-input v-model="desde" filled type="date" dense/>
@@ -14,13 +29,25 @@
     <div class="col-12">
       <q-table
         title="Empaques"
+        row-key="name"
         :data="data"
         :columns="columns"
-        row-key="name"
         :loading="loadingTable"
       >
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
+        </template>
+        <template v-slot:top-right>
+          <q-input
+            fill
+            dense
+            debounce="300"
+            placeholder="Buscar"
+          >
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
@@ -53,14 +80,31 @@
       </q-fab>
     </q-page-sticky>
     <b-scanner :show="scanner" @eventScanner="eventScanner"/>
+    <q-dialog v-model="dialogDetallesFactura">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Alert</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
+import { mixins } from '../mixins'
 import BScanner from '../components/BScanner.vue'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
 export default {
+  mixins: [mixins.containerMixin],
   components: {
     BScanner
   },
@@ -74,7 +118,18 @@ export default {
         EC: 'Entregado',
         PD: 'Devuelto'
       },
+      loadingFactura: false,
       loadingTable: false,
+      dialogDetallesFactura: false,
+      /**
+       * Codigo de la factura
+       * @type {String} Codigo de la factura
+       */
+      codigoFactura: '',
+      /**
+       * Status del scanner
+       * @type {Boolean} status del scanner
+       */
       scanner: false,
       /**
        * Valor de la fecha del empaques
@@ -126,13 +181,13 @@ export default {
     ...mapGetters([GETTERS.GET_USER])
   },
   created () {
-    this.obtenerFactura()
+    this.obtenerFacturas()
   },
   methods: {
     /**
      * Obtener todas las facturas del empleado transporte en sesión
      */
-    async obtenerFactura () {
+    async obtenerFacturas () {
       this.loadingTable = true
       const { res } = await this.$services.getOneData(['factura', 'empleado-transporte', this[GETTERS.GET_USER].codigo])
       this.data = res.data
@@ -140,6 +195,24 @@ export default {
     },
     eventScanner (data) {
       console.log(data)
+    },
+    /**
+     * Obtener factura
+     * @param {String} codigo codigo de la factura
+     */
+    obtenerFactura (codigo) {
+      codigo = typeof codigo === 'string' ? codigo : this.codigoFactura
+      this.loadingFactura = true
+      this.$services.getOneData(['factura', codigo])
+        .then(({ res }) => {
+          this.loadingFactura = false
+          this.dialogDetallesFactura = true
+          console.log(res)
+        })
+        .catch((e) => {
+          console.log(e)
+          this.notify(this, 'Factura no encontrada', 'negative', 'warning')
+        })
     }
   }
 }

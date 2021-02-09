@@ -25,7 +25,7 @@ export const getData = function (url, params) {
 }
 
 export const getOneData = function (url) {
-  return axiosInstance.get(`${url[0]}/${url[1]}/${url[2]}`).then((res) => {
+  return axiosInstance.get(url.join('/')).then((res) => {
     return {
       status: true,
       res: res
