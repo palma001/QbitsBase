@@ -1,7 +1,7 @@
 <template>
-  <div class="q-pa-md q-gutter-y-md row">
-    <div class="col-12 row q-gutter-sm q-gutter-x-md">
-      <div class="col-sm-2 col-xs-12">
+  <div class="q-pa-md q-gutter-y-md row justify-between">
+    <div class="col-12 row q-gutter-y-sm q-gutter-x-sm">
+      <div class="col-sm-2 col-xs-5">
         <q-select
           label="Vehiculos"
           ref="tipoTransporte"
@@ -9,10 +9,9 @@
           dense
           v-model="tipoTransporte"
           :options="listaTipoTransporte"
-          :rules="[val => !!val || 'El campo es requerido.']"
         />
       </div>
-      <div class="col-sm-2 col-xs-12">
+      <div class="col-sm-2 col-xs-5">
         <q-select
           label="Rutas"
           ref="ruta"
@@ -20,10 +19,9 @@
           dense
           v-model="ruta"
           :options="rutas"
-          :rules="[val => !!val || 'El campo es requerido.']"
         />
       </div>
-      <div class="col-sm-3 col-xs-12">
+      <div class="col-sm-4 col-xs-5">
         <q-select
           label="Auxiliares"
           input-debounce="0"
@@ -58,7 +56,7 @@
           </template>
         </q-select>
       </div>
-      <div class="col-sm-2 col-xs-12">
+      <div class="col-sm-2 col-xs-5">
         <q-input
           filled
           dense
@@ -90,13 +88,13 @@
         </template>
         </q-input>
       </div>
-      <div class="col-sm-3 col-xs-12">
+      <div class="col-sm-3 col-xs-5">
         <q-input v-model="desde" filled type="date" dense/>
       </div>
-      <div class="col-sm-3 col-xs-12">
+      <div class="col-sm-3 col-xs-5">
         <q-input v-model="hasta" filled type="date" dense/>
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-2  col-xs-1">
         <q-btn
           color="teal"
           text-color="white"
