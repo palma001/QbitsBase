@@ -17,9 +17,31 @@
           ref="ruta"
           filled
           dense
+          multiple
           v-model="ruta"
           :options="rutas"
-        />
+        >
+        <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
+            <q-item
+              v-bind="itemProps"
+              v-on="itemEvents"
+            >
+              <q-item-section>
+                <q-item-label v-html="opt.label" ></q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-toggle :value="selected" @input="toggleOption(opt)" />
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                No results
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
       </div>
       <div class="col-sm-4 col-xs-5">
         <q-select
@@ -193,6 +215,97 @@
             />
           </div>
         </q-card-section>
+        <q-card-section class="q-pt-md q-gutter-xs row justify-between">
+          <div class="col-sm-3 col-xs-5">
+            <q-select
+              label="Vehiculos"
+              ref="tipoTransporte"
+              filled
+              dense
+              v-model="tipoTransporte"
+              :options="listaTipoTransporte"
+            />
+          </div>
+          <div class="col-sm-4 col-xs-5">
+            <q-select
+                label="Rutas"
+                ref="ruta"
+                filled
+                dense
+                multiple
+                v-model="ruta"
+                :options="rutas"
+              >
+              <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
+                  <q-item
+                    v-bind="itemProps"
+                    v-on="itemEvents"
+                  >
+                    <q-item-section>
+                      <q-item-label v-html="opt.label" ></q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-toggle :value="selected" @input="toggleOption(opt)" />
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      No results
+                    </q-item-section>
+                  </q-item>
+                </template>
+            </q-select>
+          </div>
+          <div class="col-sm-4 col-xs-5">
+            <q-select
+              label="Auxiliares"
+              input-debounce="0"
+              filled
+              multiple
+              use-input
+              dense
+              v-model="auxiliar"
+              @filter="filterFn"
+              :options="auxiliaresFilter"
+            >
+              <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
+                <q-item
+                  v-bind="itemProps"
+                  v-on="itemEvents"
+                >
+                  <q-item-section>
+                    <q-item-label v-html="opt.label" ></q-item-label>
+                    <q-item-label caption>Nit: {{ opt.description }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-toggle :value="selected" @input="toggleOption(opt)" />
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+        </q-card-section>
+        <q-card-section class="q-pt-md q-gutter-xs row justify-between">
+          <div class="col-sm-12 col-xs-12">
+            <q-input
+              type="textarea"
+              label="Dirección"
+              filled
+              dense
+              disable
+              :value="detalleFactura.direccion_cliente"
+            />
+          </div>
+        </q-card-section>
         <!-- <q-card-section class="q-pt-md row justify-center">
         </q-card-section> -->
         <q-separator/>
@@ -268,9 +381,9 @@ export default {
       tipoTransporte: null,
       /**
        * Auxiliar seleccionado
-       * @type {Object} Auxiliar seleccionado
+       * @type {Array} Auxiliar seleccionado
        */
-      auxiliar: null,
+      auxiliar: [],
       /**
        * Lista de auxiliares
        * @type {Object} Lista de auxiliares
@@ -278,9 +391,9 @@ export default {
       auxiliares: [],
       /**
        * Ruta seleccioanada
-       * @type {Object} Ruta seleccioanada
+       * @type {Array} Ruta seleccioanada
        */
-      ruta: null,
+      ruta: [],
       /**
        * Lista de rutas
        * @type {Array} Lista de rutas
@@ -361,7 +474,28 @@ export default {
      * Confirmar factura
      */
     confirmar () {
-      console.log('confirmar')
+      this.$services.putData(['facturas', this.codigoFactura, 2], {
+        codigo_empleado: this[GETTERS.GET_USER].codigo,
+        tipo_transporte: this.tipoTransporte
+      })
+        .then(async () => {
+          await this.guardarAuxiliar()
+          await this.guardarRuta()
+        })
+    },
+    async guardarAuxiliar () {
+      await this.auxiliar.forEach(auxiliar => {
+        this.$services.postData(['factura', this.codigoFactura, 'auxiliar'], {
+          codigo_auxiliar: auxiliar.value
+        })
+      })
+    },
+    async guardarRuta () {
+      await this.ruta.forEach(ruta => {
+        this.$services.postData(['factura', this.codigoFactura, 'ruta'], {
+          codigo_auxiliar: ruta.value
+        })
+      })
     },
     /**
      * Filtrar axuluares
