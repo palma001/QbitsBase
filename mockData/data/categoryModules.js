@@ -29,7 +29,7 @@ export const categoryModules = [
         name: 'listaEmpaques',
         route: 'EmpaquesCliente',
         icon: 'receipt',
-        access: ['UC', 'UA'],
+        access: ['UC'],
         devices: ['mobile', 'desktop']
       },
       {
@@ -37,6 +37,13 @@ export const categoryModules = [
         route: 'EmpaquesTransporte',
         icon: 'car',
         access: ['ET'],
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'listaEmpaques',
+        route: 'EmpaquesAdministrador',
+        icon: 'receipt',
+        access: ['UA'],
         devices: ['mobile', 'desktop']
       }
     ]

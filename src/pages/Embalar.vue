@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md row q-gutter-y-xs row">
+  <div class="q-pa-md row q-gutter-y-xs">
     <div class="col-12">
       <p class="text-h6">
         Embalar Empaques

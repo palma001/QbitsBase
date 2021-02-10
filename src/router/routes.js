@@ -40,6 +40,11 @@ const routes = [
         path: '/empaques-cliente',
         component: () => import('pages/EmpaquesCliente.vue'),
         name: 'EmpaquesCliente'
+      },
+      {
+        path: '/empaques',
+        component: () => import('pages/EmpaquesAdministrador.vue'),
+        name: 'EmpaquesAdministrador'
       }
     ]
   },
