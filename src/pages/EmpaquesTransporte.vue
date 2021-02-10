@@ -142,30 +142,24 @@
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
         </template>
-        <template v-slot:top-right>
-          <q-input
-            fill
-            dense
-            debounce="300"
-            placeholder="Buscar"
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="codigo" :props="props">
               {{ props.row.codigo }}
             </q-td>
             <q-td key="status" :props="props">
-              <q-badge :color="props.row.status === 'EC' ? 'green' : 'red'">
-                {{ statusFactura[props.row.status] }}
+              <q-badge :color="statusFactura[props.row.status].color" class="q-pa-xs">
+                {{ statusFactura[props.row.status].text }}
               </q-badge>
             </q-td>
             <q-td key="fecha_emision" :props="props">
               {{ props.row.fecha_emision }}
+            </q-td>
+            <q-td key="fecha_inicio_empaque" :props="props">
+              {{ props.row.fecha_inicio_empaque }}
+            </q-td>
+            <q-td key="fecha_fin_empaque" :props="props">
+              {{ props.row.fecha_fin_empaque }}
             </q-td>
           </q-tr>
         </template>
@@ -340,7 +334,7 @@
         </q-form>
       </q-card>
     </q-dialog>
-        <q-dialog v-model="dialogEntrgarDevolver" persistent>
+    <q-dialog v-model="dialogEntrgarDevolver" persistent>
       <q-card style="min-width: 350px">
         <q-card-section class="row items-center">
           <div class="text-h6">Entregar paquete</div>
@@ -351,7 +345,6 @@
         <q-card-section class="q-pt-md">
           <q-input
             label="Entregado a:"
-            dense
             autofocus
             filled
             v-model="entregadoA"
@@ -360,8 +353,8 @@
         </q-card-section>
         <q-separator />
         <q-card-actions align="right" class="text-primary">
-          <q-btn color="negative" label="Devolver" />
-          <q-btn color="teal" label="Entregar" v-close-popup @click="entregarPaquete"/>
+          <q-btn color="negative" label="Devolver" @click="devolverPaquete"/>
+          <q-btn color="teal" label="Entregar" @click="entregarPaquete"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -387,12 +380,28 @@ export default {
        * @type {Object} estatus y sus codigos
        */
       statusFactura: {
-        PE: 'Por empaquetar',
-        LE: 'Empaquetado',
-        ET: 'En transporte',
-        ER: 'En ruta',
-        EC: 'Entregado',
-        PD: 'Devuelto'
+        PE: {
+          text: 'Por empaquetar'
+        },
+        LE: {
+          text: 'Empaquetado'
+        },
+        ET: {
+          text: 'En transporte',
+          color: 'warning'
+        },
+        ER: {
+          text: 'En ruta',
+          color: 'warning'
+        },
+        EC: {
+          text: 'Entregado',
+          color: 'teal'
+        },
+        PD: {
+          text: 'Devuelto',
+          color: 'negative'
+        }
       },
       /**
        * Loading al buscar la factura
@@ -483,7 +492,7 @@ export default {
         },
         {
           name: 'status',
-          align: 'center',
+          align: 'left',
           label: 'Estado',
           field: 'status',
           sortable: true
@@ -492,7 +501,25 @@ export default {
           name: 'fecha_emision',
           label: 'Fecha de emision',
           field: 'fecha_emision',
-          sortable: true
+          align: 'left',
+          sortable: true,
+          format: val => this.dateFormat(val)
+        },
+        {
+          name: 'fecha_inicio_empaque',
+          label: 'Inicio del empaque',
+          field: 'fecha_inicio_empaque',
+          align: 'left',
+          sortable: true,
+          format: val => this.dateFormat(val)
+        },
+        {
+          name: 'fecha_fin_empaque',
+          label: 'Fin del empaque',
+          field: 'fecha_fin_empaque',
+          align: 'left',
+          sortable: true,
+          format: val => this.dateFormat(val)
         }
       ],
       /**
@@ -527,6 +554,16 @@ export default {
   },
   methods: {
     /**
+     * Cambia el status de la facura a devuelto
+     */
+    async devolverPaquete () {
+      await this.$services.putData(['factura', this.codigoFactura, 5], {})
+      this.dialogEntrgarDevolver = false
+      this.obtenerFacturas()
+      this.notify(this, 'Factura devuelta exitosamente', 'positive', 'thumb_up')
+      this.codigoFactura = null
+    },
+    /**
      * Cambia el status de la facura a entregada
      */
     async entregarPaquete () {
@@ -536,6 +573,7 @@ export default {
       this.dialogEntrgarDevolver = false
       this.obtenerFacturas()
       this.notify(this, 'Factura entregada exitosamente', 'positive', 'thumb_up')
+      this.codigoFactura = null
     },
     /**
      * Confirmar factura
@@ -555,6 +593,7 @@ export default {
           this.loadingConfirmar = false
           this.obtenerFacturas()
           this.notify(this, 'Factura fue agregada al transporte exitosamente', 'positive', 'thumb_up')
+          this.codigoFactura = null
         })
     },
     /**
@@ -693,6 +732,9 @@ export default {
         case 'EC':
           this.notify(this, 'El paquete fue entregado', 'positive', 'thumb_up')
           break
+        case 'PD':
+          this.notify(this, 'El paquete a sido devuelto', 'positive', 'thumb_up')
+          break
         default:
           this.notify(this, 'El paquete no a sido embalado', 'negative', 'warning')
           break
@@ -704,7 +746,7 @@ export default {
      * @param {String} format formato de la fecha
      * @returns {String} fecha con formato
      */
-    dateFormat (fecha, format) {
+    dateFormat (fecha, format = 'DD-MM-YYYY HH:mm:ss') {
       return date.formatDate(fecha, format)
     }
   }

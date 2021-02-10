@@ -246,6 +246,7 @@ import { mixins } from '../mixins'
 import BMarkupTable from '../components/BMarkupTable'
 import { GETTERS } from 'src/store/module-login/name'
 import { mapGetters } from 'vuex'
+import { date } from 'quasar'
 export default {
   mixins: [mixins.containerMixin],
   components: {
@@ -253,6 +254,11 @@ export default {
   },
   data () {
     return {
+      /**
+       * Fecha inicio del empaque
+       * @type {String} fecha de inicio del empaque
+       */
+      fecha_ini: '',
       /**
        * Loading del boton de guardar embalaje del producto
        * @type {Boolean} Loading embalaje del producto
@@ -461,6 +467,7 @@ export default {
      * Finalizar empaque, guarda los cambios en la factura
      */
     async finalizarEmpaque () {
+      await this.$services.putData(['factura', this.codigoFactura, 0], { fecha_ini: this.fecha_ini })
       const { res } = await this.$services.putData(['factura', this.codigoFactura, 1], {
         tipo_entrega: this.tipoEntrega.value,
         codigo_empleado: this[GETTERS.GET_USER].codigo
@@ -522,7 +529,7 @@ export default {
       this.loadingFactura = true
       this.$services.getOneData(['factura', this.codigoFactura, 'detalles'])
         .then(({ res }) => {
-          res.data.length <= 0 ? this.notify(this, 'Factura no encontrada', 'negative', 'warning') : this.$services.putData(['factura', this.codigoFactura, 0], {})
+          res.data.length <= 0 ? this.notify(this, 'Factura no encontrada', 'negative', 'warning') : this.fecha_ini = date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm:ss')
           this.loadingFactura = false
           this.persistent = false
           this.factura = res.data
