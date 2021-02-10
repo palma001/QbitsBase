@@ -153,13 +153,13 @@
               </q-badge>
             </q-td>
             <q-td key="fecha_emision" :props="props">
-              {{ props.row.fecha_emision }}
+              {{ dateFormat(props.row.fecha_emision) }}
             </q-td>
             <q-td key="fecha_inicio_empaque" :props="props">
-              {{ props.row.fecha_inicio_empaque }}
+              {{ dateFormat(props.row.fecha_inicio_empaque) }}
             </q-td>
             <q-td key="fecha_fin_empaque" :props="props">
-              {{ props.row.fecha_fin_empaque }}
+              {{ dateFormat(props.row.fecha_fin_empaque) }}
             </q-td>
           </q-tr>
         </template>
@@ -502,24 +502,21 @@ export default {
           label: 'Fecha de emision',
           field: 'fecha_emision',
           align: 'left',
-          sortable: true,
-          format: val => this.dateFormat(val)
+          sortable: true
         },
         {
           name: 'fecha_inicio_empaque',
           label: 'Inicio del empaque',
           field: 'fecha_inicio_empaque',
           align: 'left',
-          sortable: true,
-          format: val => this.dateFormat(val)
+          sortable: true
         },
         {
           name: 'fecha_fin_empaque',
           label: 'Fin del empaque',
           field: 'fecha_fin_empaque',
           align: 'left',
-          sortable: true,
-          format: val => this.dateFormat(val)
+          sortable: true
         }
       ],
       /**

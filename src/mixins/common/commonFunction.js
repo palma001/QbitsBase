@@ -135,7 +135,7 @@ export const time = (timeFormating) => {
   return `${newDate.getHours()}:${newDate.getMinutes()}:${newDate.getSeconds()}`
 }
 
-export const notify = (self, message, color, icon, position = 'top') => {
+export const notify = (self, message, color, icon, position = 'bottom-right') => {
   self.$q.notify({
     message: ucwords(message),
     color: color,

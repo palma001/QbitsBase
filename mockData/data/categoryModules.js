@@ -33,9 +33,9 @@ export const categoryModules = [
         devices: ['mobile', 'desktop']
       },
       {
-        name: 'listaEmpaques',
+        name: 'transporte',
         route: 'EmpaquesTransporte',
-        icon: 'receipt',
+        icon: 'car',
         access: ['ET'],
         devices: ['mobile', 'desktop']
       }

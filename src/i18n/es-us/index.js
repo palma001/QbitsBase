@@ -13,6 +13,7 @@ export default {
   modules: {
     embalar: 'embalar',
     listaEmpaques: 'lista de empaques',
-    geolocation: 'geolocalización'
+    geolocation: 'geolocalización',
+    transporte: 'transporte'
   }
 }
