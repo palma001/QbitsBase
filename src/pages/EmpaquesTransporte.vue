@@ -1,6 +1,26 @@
 <template>
   <div class="q-pa-md q-gutter-y-md row justify-between">
     <div class="col-12 row q-gutter-y-sm q-gutter-x-sm">
+      <div class="col-md-12 col-sm-3 col-xs-12">
+        <p class="text-h6">
+          Cargar Empaques
+        </p>
+      </div>
+      <div class="col-sm-3 col-xs-5">
+        <q-input v-model="desde" filled type="date" dense/>
+      </div>
+      <div class="col-sm-3 col-xs-5">
+        <q-input v-model="hasta" filled type="date" dense/>
+      </div>
+      <div class="col-md-3 col-md-4 col-xs-1">
+        <q-btn
+          color="teal"
+          text-color="white"
+          icon="search"
+          size="15px"
+          @click="obtenerFacturas"
+        />
+      </div>
       <div class="col-sm-2 col-xs-5">
         <q-select
           label="Vehiculos"
@@ -11,7 +31,7 @@
           :options="listaTipoTransporte"
         />
       </div>
-      <div class="col-sm-2 col-xs-5">
+      <div class="col-sm-3 col-xs-5">
         <q-select
           label="Rutas"
           ref="ruta"
@@ -110,21 +130,6 @@
         </template>
         </q-input>
       </div>
-      <div class="col-sm-3 col-xs-5">
-        <q-input v-model="desde" filled type="date" dense/>
-      </div>
-      <div class="col-sm-3 col-xs-5">
-        <q-input v-model="hasta" filled type="date" dense/>
-      </div>
-      <div class="col-sm-2  col-xs-1">
-        <q-btn
-          color="teal"
-          text-color="white"
-          icon="search"
-          size="15px"
-          @click="obtenerFacturas"
-        />
-      </div>
     </div>
     <div class="col-12">
       <q-table
@@ -167,82 +172,124 @@
       </q-table>
     </div>
     <b-scanner :show="scanner" @eventScanner="eventScanner"/>
-    <q-dialog v-model="dialogDetallesFactura">
+    <q-dialog v-model="dialogDetallesFactura" persistent>
       <q-card style="width: 700px; max-width: 80vw;">
-        <q-card-section>
-          <div class="text-h6">Detalles de la factura</div>
-        </q-card-section>
-        <q-separator />
-        <q-card-section class="q-pt-md q-gutter-sm row justify-between">
-          <div class="col-xs-12 col-sm-2">
-            <q-input
-              type="text"
-              label="Código"
-              disable
-              filled
-              dense
-              :value="detalleFactura.codigo"
-            />
-          </div>
-          <div class="col-xs-12 col-sm-3">
-            <q-input
-              type="text"
-              label="Cliente"
-              disable
-              filled
-              dense
-              :value="detalleFactura.nombre_cliente"
-            />
-          </div>
-          <div class="col-xs-12 col-sm-3">
-            <q-input
-              type="date"
-              label="Fecha de emisión"
-              filled
-              disable
-              dense
-              :value="dateFormat(detalleFactura.fecha_emision, 'YYYY-MM-DD')"
-            />
-          </div>
-          <div class="col-xs-12 col-sm-3">
-            <q-input
-              type="hours"
-              label="Hora de emisión"
-              filled
-              disable
-              dense
-              :value="dateFormat(detalleFactura.fecha_emision, 'HH:mm:ss')"
-            />
-          </div>
-        </q-card-section>
-        <q-card-section class="q-pt-md q-gutter-xs row justify-between">
-          <div class="col-sm-3 col-xs-5">
-            <q-select
-              label="Vehiculos"
-              ref="tipoTransporte"
-              filled
-              dense
-              v-model="tipoTransporte"
-              :options="listaTipoTransporte"
-            />
-          </div>
-          <div class="col-sm-4 col-xs-5">
-            <q-select
-                label="Rutas"
-                ref="ruta"
+        <q-form
+          ref="myForm"
+          @submit="confirmar"
+        >
+          <q-card-section>
+            <div class="text-h6">Detalles de la factura</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section class="q-pt-md q-gutter-sm row justify-between">
+            <div class="col-xs-12 col-sm-2">
+              <q-input
+                type="text"
+                label="Código"
+                disable
                 filled
                 dense
+                :value="detalleFactura.codigo"
+              />
+            </div>
+            <div class="col-xs-12 col-sm-3">
+              <q-input
+                type="text"
+                label="Cliente"
+                disable
+                filled
+                dense
+                :value="detalleFactura.nombre_cliente"
+              />
+            </div>
+            <div class="col-xs-12 col-sm-3">
+              <q-input
+                type="date"
+                label="Fecha de emisión"
+                filled
+                disable
+                dense
+                :value="dateFormat(detalleFactura.fecha_emision, 'YYYY-MM-DD')"
+              />
+            </div>
+            <div class="col-xs-12 col-sm-3">
+              <q-input
+                type="hours"
+                label="Hora de emisión"
+                filled
+                disable
+                dense
+                :value="dateFormat(detalleFactura.fecha_emision, 'HH:mm:ss')"
+              />
+            </div>
+          </q-card-section>
+          <q-card-section class="q-pt-md q-gutter-xs row justify-between">
+            <div class="col-sm-3 col-xs-5">
+              <q-select
+                label="Vehiculos"
+                ref="tipoTransporte"
+                filled
+                dense
+                v-model="tipoTransporte"
+                :options="listaTipoTransporte"
+                :rules="[val => !!val || 'El campo es requerido.']"
+              />
+            </div>
+            <div class="col-sm-4 col-xs-5">
+              <q-select
+                  label="Rutas"
+                  ref="ruta"
+                  filled
+                  dense
+                  multiple
+                  v-model="ruta"
+                  :options="rutas"
+                  :rules="[val => !!val && val.length > 0 || 'El campo es requerido.']"
+                >
+                <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
+                    <q-item
+                      v-bind="itemProps"
+                      v-on="itemEvents"
+                    >
+                      <q-item-section>
+                        <q-item-label v-html="opt.label" ></q-item-label>
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-toggle :value="selected" @input="toggleOption(opt)" />
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        No results
+                      </q-item-section>
+                    </q-item>
+                  </template>
+              </q-select>
+            </div>
+            <div class="col-sm-4 col-xs-5">
+              <q-select
+                label="Auxiliares"
+                input-debounce="0"
+                filled
                 multiple
-                v-model="ruta"
-                :options="rutas"
+                use-input
+                dense
+                v-model="auxiliar"
+                @filter="filterFn"
+                :rules="[val => !!val && val.length > 0 || 'El campo es requerido.']"
+                :options="auxiliaresFilter"
               >
-              <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
+                <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
                   <q-item
                     v-bind="itemProps"
                     v-on="itemEvents"
                   >
                     <q-item-section>
                       <q-item-label v-html="opt.label" ></q-item-label>
+                      <q-item-label caption>Nit: {{ opt.description }}</q-item-label>
                     </q-item-section>
                     <q-item-section side>
                       <q-toggle :value="selected" @input="toggleOption(opt)" />
@@ -256,68 +303,65 @@
                     </q-item-section>
                   </q-item>
                 </template>
-            </q-select>
-          </div>
-          <div class="col-sm-4 col-xs-5">
-            <q-select
-              label="Auxiliares"
-              input-debounce="0"
-              filled
-              multiple
-              use-input
-              dense
-              v-model="auxiliar"
-              @filter="filterFn"
-              :options="auxiliaresFilter"
-            >
-              <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
-                <q-item
-                  v-bind="itemProps"
-                  v-on="itemEvents"
-                >
-                  <q-item-section>
-                    <q-item-label v-html="opt.label" ></q-item-label>
-                    <q-item-label caption>Nit: {{ opt.description }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-toggle :value="selected" @input="toggleOption(opt)" />
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No results
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
-        </q-card-section>
-        <q-card-section class="q-pt-md q-gutter-xs row justify-between">
-          <div class="col-sm-12 col-xs-12">
-            <q-input
-              type="textarea"
-              label="Dirección"
-              filled
-              dense
-              disable
-              :value="detalleFactura.direccion_cliente"
+              </q-select>
+            </div>
+          </q-card-section>
+          <q-card-section class="q-pt-none q-gutter-xs row justify-between">
+            <div class="col-sm-12 col-xs-12">
+              <q-input
+                type="textarea"
+                label="Dirección"
+                filled
+                dense
+                disable
+                :value="detalleFactura.direccion_cliente"
+              />
+            </div>
+          </q-card-section>
+          <q-separator/>
+          <q-card-actions align="right">
+            <q-btn
+              label="Cancelar"
+              color="negative"
+              v-close-popup
             />
-          </div>
+            <q-btn
+              label="Confirmar"
+              color="teal"
+              type="submit"
+              :disable="loadingConfirmar"
+              :loading="loadingConfirmar"
+            >
+              <template v-slot:loading>
+                <q-spinner />
+              </template>
+            </q-btn>
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
+        <q-dialog v-model="dialogEntrgarDevolver" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section class="row items-center">
+          <div class="text-h6">Entregar paquete</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
-        <!-- <q-card-section class="q-pt-md row justify-center">
-        </q-card-section> -->
-        <q-separator/>
-        <q-card-actions align="right">
-          <q-btn
-            label="Cancelar"
-            color="negative"
-            v-close-popup />
-          <q-btn
-            label="Confirmar"
-            color="teal"
-            @click="confirmar"/>
+        <q-separator />
+        <q-card-section class="q-pt-md">
+          <q-input
+            label="Entregado a:"
+            dense
+            autofocus
+            filled
+            v-model="entregadoA"
+            @keyup.enter="prompt = false"
+          />
+        </q-card-section>
+        <q-separator />
+        <q-card-actions align="right" class="text-primary">
+          <q-btn color="negative" label="Devolver" />
+          <q-btn color="teal" label="Entregar" v-close-popup @click="entregarPaquete"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -337,6 +381,7 @@ export default {
   },
   data () {
     return {
+      entregadoA: '',
       /**
        * Lista de estados
        * @type {Object} estatus y sus codigos
@@ -351,12 +396,17 @@ export default {
       },
       /**
        * Loading al buscar la factura
-       * @type {Object} estatus del loading factura
+       * @type {Boolean} estatus del loading factura
        */
       loadingFactura: false,
       /**
+       * Loading de confirmar
+       * @type {Boolean} estatus del loading confirmar
+       */
+      loadingConfirmar: false,
+      /**
        * Loading de la tabla de facturas
-       * @type {Object} estatus del loading de la tabla de facturas
+       * @type {Boolean} estatus del loading de la tabla de facturas
        */
       loadingTable: false,
       /**
@@ -383,7 +433,7 @@ export default {
        * Auxiliar seleccionado
        * @type {Array} Auxiliar seleccionado
        */
-      auxiliar: [],
+      auxiliar: null,
       /**
        * Lista de auxiliares
        * @type {Object} Lista de auxiliares
@@ -393,7 +443,7 @@ export default {
        * Ruta seleccioanada
        * @type {Array} Ruta seleccioanada
        */
-      ruta: [],
+      ruta: null,
       /**
        * Lista de rutas
        * @type {Array} Lista de rutas
@@ -413,12 +463,12 @@ export default {
        * Valor de la fecha del empaques
        * @type {String} fecha desde del empaque
        */
-      desde: null,
+      desde: date.formatDate(Date.now(), 'YYYY-MM-DD'),
       /**
        * Valor de la fecha del empaques
        * @type {String} fecha hasta del empaque
        */
-      hasta: null,
+      hasta: date.formatDate(Date.now(), 'YYYY-MM-DD'),
       /**
        * Columnas de la tabla
        * @type {Array} columnas de la tabla
@@ -454,7 +504,12 @@ export default {
        * Lista de axuliares filtrados
        * @type {Array} lista de auxiliares
        */
-      auxiliaresFilter: []
+      auxiliaresFilter: [],
+      /**
+       * Dialogo de los entregado a devuelto
+       * @type {Object} estatus dialogo de entregado a devuelto
+       */
+      dialogEntrgarDevolver: false
     }
   },
   computed: {
@@ -468,21 +523,43 @@ export default {
     this.obtenerTipoEntrega()
     this.obtenerAxiliares()
     this.obtenerRutas()
+    this.$barcodeScanner.init(this.obtenerFactura)
   },
   methods: {
+    /**
+     * Cambia el status de la facura a entregada
+     */
+    async entregarPaquete () {
+      await this.$services.putData(['factura', this.codigoFactura, 4], {
+        recibir: this.entregadoA
+      })
+      this.dialogEntrgarDevolver = false
+      this.obtenerFacturas()
+      this.notify(this, 'Factura entregada exitosamente', 'positive', 'thumb_up')
+    },
     /**
      * Confirmar factura
      */
     confirmar () {
-      this.$services.putData(['facturas', this.codigoFactura, 2], {
+      this.loadingTable = true
+      this.loadingConfirmar = true
+      this.$services.putData(['factura', this.codigoFactura, 2], {
         codigo_empleado: this[GETTERS.GET_USER].codigo,
-        tipo_transporte: this.tipoTransporte
+        tipo_transporte: this.tipoTransporte.value
       })
-        .then(async () => {
+        .then(async (res) => {
           await this.guardarAuxiliar()
           await this.guardarRuta()
+          this.dialogDetallesFactura = false
+          this.loadingTable = false
+          this.loadingConfirmar = false
+          this.obtenerFacturas()
+          this.notify(this, 'Factura fue agregada al transporte exitosamente', 'positive', 'thumb_up')
         })
     },
+    /**
+     * Guardar los auxiliares de los transporte
+     */
     async guardarAuxiliar () {
       await this.auxiliar.forEach(auxiliar => {
         this.$services.postData(['factura', this.codigoFactura, 'auxiliar'], {
@@ -490,10 +567,13 @@ export default {
         })
       })
     },
+    /**
+     * Guardar las rutas de los transporte
+     */
     async guardarRuta () {
       await this.ruta.forEach(ruta => {
         this.$services.postData(['factura', this.codigoFactura, 'ruta'], {
-          codigo_auxiliar: ruta.value
+          codigo_ruta: ruta.value
         })
       })
     },
@@ -564,8 +644,8 @@ export default {
     async obtenerFacturas () {
       this.loadingTable = true
       const { res } = await this.$services.getData(['factura', 'empleado-transporte', this[GETTERS.GET_USER].codigo], {
-        fecha_ini: this.desde,
-        fecha_fin: this.hasta
+        fecha_ini: `${this.desde} 01:00:00`,
+        fecha_fin: `${this.hasta} 23:59:59`
       })
       this.data = res.data
       this.loadingTable = false
@@ -575,7 +655,7 @@ export default {
      * @param {String} data codigo de la factura
      */
     eventScanner (data) {
-      console.log(data)
+      this.obtenerFactur(data)
     },
     /**
      * Obtener factura
@@ -587,15 +667,36 @@ export default {
       this.$services.getOneData(['factura', codigo])
         .then(({ res }) => {
           if (res.data) {
-            this.loadingFactura = false
-            this.dialogDetallesFactura = true
-            this.detalleFactura = res.data
+            this.validarStatus(res.data)
           }
         })
         .catch((e) => {
           console.log(e)
           this.notify(this, 'Factura no encontrada', 'negative', 'warning')
         })
+    },
+    /**
+     * Valida el status de la factura
+     * @param {String} codigo status del paquete
+     */
+    validarStatus (data) {
+      switch (data.status) {
+        case 'LE':
+          this.loadingFactura = false
+          this.dialogDetallesFactura = true
+          this.detalleFactura = data
+          break
+        case 'ET':
+          this.dialogEntrgarDevolver = true
+          this.entregadoA = data.nombre_cliente
+          break
+        case 'EC':
+          this.notify(this, 'El paquete fue entregado', 'positive', 'thumb_up')
+          break
+        default:
+          this.notify(this, 'El paquete no a sido embalado', 'negative', 'warning')
+          break
+      }
     },
     /**
      * Da dormato a la fecha

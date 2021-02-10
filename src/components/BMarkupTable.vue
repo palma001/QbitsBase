@@ -12,7 +12,22 @@
         dense
         filled
         @keyup.enter="enter"
-      />
+      >
+        <template v-slot:append>
+          <q-btn
+            color="teal"
+            text-color="white"
+            size="xs"
+            icon="qr_code"
+            round
+            @click="clickButton"
+          >
+            <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
+              <strong>Scannear</strong>
+            </q-tooltip>
+          </q-btn>
+        </template>
+      </q-input>
     </q-card-section>
     <q-card-section class="q-pt-none">
       <q-markup-table>
@@ -67,6 +82,9 @@ export default {
   methods: {
     enter () {
       this.$emit('enter', this.text)
+    },
+    clickButton () {
+      this.$emit('clickButton')
     }
   }
 }

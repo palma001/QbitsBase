@@ -2,7 +2,7 @@
   <div class="q-pa-md row q-gutter-y-xs row">
     <div class="col-12">
       <p class="text-h6">
-        Embalar Factura
+        Embalar Empaques
       </p>
     </div>
     <div class="col-12">
@@ -21,16 +21,21 @@
             v-model="codigoFactura"
             ref="codigoFactura"
             :disable="factura.length === 0 ? false : true"
-            :rules="[val => !!val || 'El campo es requerido.']"
             @keyup.enter="obtenerFactura"
           >
             <template v-slot:append>
-              <q-spinner
-                v-if="loadingFactura"
-                color="primary"
-                :thickness="2"
-              />
-              <q-icon name="search" v-else/>
+              <q-btn
+                color="teal"
+                text-color="white"
+                size="xs"
+                icon="qr_code"
+                round
+                @click="persistent = !persistent"
+              >
+                <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
+                  <strong>Scannear</strong>
+                </q-tooltip>
+              </q-btn>
             </template>
           </q-input>
         </div>
@@ -113,21 +118,9 @@
         :data="factura"
         :header="columns"
         @enter="obtenerProducto"
+        @clickButton="persistent = true"
       />
     </div>
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-fab color="purple" icon="keyboard_arrow_up" direction="up" label="Opciones" label-position="left" external-label>
-        <q-fab-action
-          color="amber"
-          icon="qr_code"
-          glossy
-          label="Scanner"
-          label-position="left"
-          external-label
-          @click="persistent = true"
-        />
-      </q-fab>
-    </q-page-sticky>
     <q-dialog v-model="persistent" transition-show="scale" transition-hide="scale">
       <q-card style="width: 352px; height: 336px;" class="q-pa-none">
         <q-card-section class="q-pa-xs">
@@ -235,7 +228,9 @@
           <q-btn
             label="Aceptar"
             color="teal"
-            @click="guardarEmbalaje" :loading="loadingGuardarEmbalaje">
+            @click="guardarEmbalaje"
+            :loading="loadingGuardarEmbalaje"
+          >
             <template v-slot:loading>
               <q-spinner color="teal" />
             </template>
