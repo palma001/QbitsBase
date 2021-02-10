@@ -7,7 +7,7 @@ import config, {
 } from './config'
 
 export const getData = function (url, params) {
-  return axiosInstance.get(`${url[0]}/${url[1]}`, {
+  return axiosInstance.get(url.join('/'), {
     params
   }).then((res) => {
     return {

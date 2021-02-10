@@ -1,7 +1,64 @@
 <template>
   <div class="q-pa-md q-gutter-y-md row">
     <div class="col-12 row q-gutter-sm q-gutter-x-md">
+      <div class="col-sm-2 col-xs-12">
+        <q-select
+          label="Vehiculos"
+          ref="tipoTransporte"
+          filled
+          dense
+          v-model="tipoTransporte"
+          :options="listaTipoTransporte"
+          :rules="[val => !!val || 'El campo es requerido.']"
+        />
+      </div>
+      <div class="col-sm-2 col-xs-12">
+        <q-select
+          label="Rutas"
+          ref="ruta"
+          filled
+          dense
+          v-model="ruta"
+          :options="rutas"
+          :rules="[val => !!val || 'El campo es requerido.']"
+        />
+      </div>
       <div class="col-sm-3 col-xs-12">
+        <q-select
+          label="Auxiliares"
+          input-debounce="0"
+          filled
+          multiple
+          use-input
+          dense
+          v-model="auxiliar"
+          @filter="filterFn"
+          :options="auxiliaresFilter"
+        >
+          <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
+            <q-item
+              v-bind="itemProps"
+              v-on="itemEvents"
+            >
+              <q-item-section>
+                <q-item-label v-html="opt.label" ></q-item-label>
+                <q-item-label caption>Nit: {{ opt.description }}</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-toggle :value="selected" @input="toggleOption(opt)" />
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                No results
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+      </div>
+      <div class="col-sm-2 col-xs-12">
         <q-input
           filled
           dense
@@ -17,13 +74,36 @@
           />
           <q-icon name="search" v-else/>
         </template>
+        <template v-slot:append>
+          <q-btn
+            color="teal"
+            text-color="white"
+            size="xs"
+            icon="qr_code"
+            round
+            @click="scanner = !scanner"
+          >
+          <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
+            <strong>Escannear factura</strong>
+          </q-tooltip>
+          </q-btn>
+        </template>
         </q-input>
       </div>
-      <div class="col-sm-4 col-xs-12">
+      <div class="col-sm-3 col-xs-12">
         <q-input v-model="desde" filled type="date" dense/>
       </div>
-      <div class="col-sm-4 col-xs-12">
+      <div class="col-sm-3 col-xs-12">
         <q-input v-model="hasta" filled type="date" dense/>
+      </div>
+      <div class="col-sm-2">
+        <q-btn
+          color="teal"
+          text-color="white"
+          icon="search"
+          size="15px"
+          @click="obtenerFacturas"
+        />
       </div>
     </div>
     <div class="col-12">
@@ -66,32 +146,67 @@
         </template>
       </q-table>
     </div>
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-fab color="purple" icon="keyboard_arrow_up" direction="up" label="Opciones" label-position="left" external-label>
-        <q-fab-action
-          color="amber"
-          icon="qr_code"
-          glossy
-          label="Scanner"
-          label-position="left"
-          external-label
-          @click="scanner = !scanner"
-        />
-      </q-fab>
-    </q-page-sticky>
     <b-scanner :show="scanner" @eventScanner="eventScanner"/>
     <q-dialog v-model="dialogDetallesFactura">
-      <q-card>
+      <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section>
-          <div class="text-h6">Alert</div>
+          <div class="text-h6">Detalles de la factura</div>
         </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.
+        <q-separator />
+        <q-card-section class="q-pt-md q-gutter-sm row justify-between">
+          <div class="col-xs-12 col-sm-2">
+            <q-input
+              type="text"
+              label="Código"
+              disable
+              filled
+              dense
+              :value="detalleFactura.codigo"
+            />
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <q-input
+              type="text"
+              label="Cliente"
+              disable
+              filled
+              dense
+              :value="detalleFactura.nombre_cliente"
+            />
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <q-input
+              type="date"
+              label="Fecha de emisión"
+              filled
+              disable
+              dense
+              :value="dateFormat(detalleFactura.fecha_emision, 'YYYY-MM-DD')"
+            />
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <q-input
+              type="hours"
+              label="Hora de emisión"
+              filled
+              disable
+              dense
+              :value="dateFormat(detalleFactura.fecha_emision, 'HH:mm:ss')"
+            />
+          </div>
         </q-card-section>
-
+        <!-- <q-card-section class="q-pt-md row justify-center">
+        </q-card-section> -->
+        <q-separator/>
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
+          <q-btn
+            label="Cancelar"
+            color="negative"
+            v-close-popup />
+          <q-btn
+            label="Confirmar"
+            color="teal"
+            @click="confirmar"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -103,6 +218,7 @@ import { mixins } from '../mixins'
 import BScanner from '../components/BScanner.vue'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
+import { date } from 'quasar'
 export default {
   mixins: [mixins.containerMixin],
   components: {
@@ -110,6 +226,10 @@ export default {
   },
   data () {
     return {
+      /**
+       * Lista de estados
+       * @type {Object} estatus y sus codigos
+       */
       statusFactura: {
         PE: 'Por empaquetar',
         LE: 'Empaquetado',
@@ -118,9 +238,56 @@ export default {
         EC: 'Entregado',
         PD: 'Devuelto'
       },
+      /**
+       * Loading al buscar la factura
+       * @type {Object} estatus del loading factura
+       */
       loadingFactura: false,
+      /**
+       * Loading de la tabla de facturas
+       * @type {Object} estatus del loading de la tabla de facturas
+       */
       loadingTable: false,
+      /**
+       * Dialogo de los detalles de factura
+       * @type {Object} estatus dialogo de los detalles de factura
+       */
       dialogDetallesFactura: false,
+      /**
+       * Detalles de la factura
+       * @type {Object} detalles de la factura
+       */
+      detalleFactura: {},
+      /**
+       * Lista de tipos de transportes
+       * @type {Array} Lista de tipos de transportes
+       */
+      listaTipoTransporte: [],
+      /**
+       * Tipo de transporte seleccionado
+       * @type {Object} Tipo de transporte seleccionado
+       */
+      tipoTransporte: null,
+      /**
+       * Auxiliar seleccionado
+       * @type {Object} Auxiliar seleccionado
+       */
+      auxiliar: null,
+      /**
+       * Lista de auxiliares
+       * @type {Object} Lista de auxiliares
+       */
+      auxiliares: [],
+      /**
+       * Ruta seleccioanada
+       * @type {Object} Ruta seleccioanada
+       */
+      ruta: null,
+      /**
+       * Lista de rutas
+       * @type {Array} Lista de rutas
+       */
+      rutas: [],
       /**
        * Codigo de la factura
        * @type {String} Codigo de la factura
@@ -171,7 +338,12 @@ export default {
        * Data de la tabla
        * @type {Array} data de la tabla
        */
-      data: []
+      data: [],
+      /**
+       * Lista de axuliares filtrados
+       * @type {Array} lista de auxiliares
+       */
+      auxiliaresFilter: []
     }
   },
   computed: {
@@ -182,17 +354,94 @@ export default {
   },
   created () {
     this.obtenerFacturas()
+    this.obtenerTipoEntrega()
+    this.obtenerAxiliares()
+    this.obtenerRutas()
   },
   methods: {
+    /**
+     * Confirmar factura
+     */
+    confirmar () {
+      console.log('confirmar')
+    },
+    /**
+     * Filtrar axuluares
+     * @param {String} val valor a filtrar
+     * @param {Function} update modifica la data del select
+     */
+    filterFn (val, update) {
+      if (val === '') {
+        update(() => {
+          this.auxiliaresFilter = this.auxiliares
+
+          // with Quasar v1.7.4+
+          // here you have access to "ref" which
+          // is the Vue reference of the QSelect
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.auxiliaresFilter = this.auxiliares.filter(v => v.label.toLowerCase().indexOf(needle) > -1 || v.description.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    /**
+     * Obtener lista de tipos de transporte
+     */
+    async obtenerTipoEntrega () {
+      const { res } = await this.$services.getData(['tipos-transporte', ''])
+      this.listaTipoTransporte = res.data.map(element => {
+        return {
+          label: element.nombre,
+          value: element.codigo
+        }
+      })
+    },
+    /**
+     * Obtener lista de tipos de transporte
+     */
+    async obtenerRutas () {
+      const { res } = await this.$services.getData(['rutas'])
+      this.rutas = res.data.map(element => {
+        return {
+          label: element.nombre,
+          value: element.codigo
+        }
+      })
+    },
+    /**
+     * Obtener lista de tipos de transporte
+     */
+    async obtenerAxiliares () {
+      const { res } = await this.$services.getData(['usuarios'], {
+        rol: 'AX'
+      })
+      this.auxiliares = res.data.map(element => {
+        return {
+          label: element.nombre,
+          value: element.codigo,
+          description: element.nit
+        }
+      })
+    },
     /**
      * Obtener todas las facturas del empleado transporte en sesión
      */
     async obtenerFacturas () {
       this.loadingTable = true
-      const { res } = await this.$services.getOneData(['factura', 'empleado-transporte', this[GETTERS.GET_USER].codigo])
+      const { res } = await this.$services.getData(['factura', 'empleado-transporte', this[GETTERS.GET_USER].codigo], {
+        fecha_ini: this.desde,
+        fecha_fin: this.hasta
+      })
       this.data = res.data
       this.loadingTable = false
     },
+    /**
+     * Evento al escanear la factura
+     * @param {String} data codigo de la factura
+     */
     eventScanner (data) {
       console.log(data)
     },
@@ -205,14 +454,25 @@ export default {
       this.loadingFactura = true
       this.$services.getOneData(['factura', codigo])
         .then(({ res }) => {
-          this.loadingFactura = false
-          this.dialogDetallesFactura = true
-          console.log(res)
+          if (res.data) {
+            this.loadingFactura = false
+            this.dialogDetallesFactura = true
+            this.detalleFactura = res.data
+          }
         })
         .catch((e) => {
           console.log(e)
           this.notify(this, 'Factura no encontrada', 'negative', 'warning')
         })
+    },
+    /**
+     * Da dormato a la fecha
+     * @param {String} fecha fecha con formato por defecto
+     * @param {String} format formato de la fecha
+     * @returns {String} fecha con formato
+     */
+    dateFormat (fecha, format) {
+      return date.formatDate(fecha, format)
     }
   }
 }
