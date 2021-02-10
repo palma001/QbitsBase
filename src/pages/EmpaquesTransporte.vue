@@ -7,7 +7,7 @@
         </p>
       </div>
       <div class="col-sm-3 col-xs-5">
-        <q-input v-model="desde" filled type="date" dense/>
+        <q-input v-model="desde" filled type="date" dense />
       </div>
       <div class="col-sm-3 col-xs-5">
         <q-input v-model="hasta" filled type="date" dense/>
