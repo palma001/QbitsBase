@@ -381,10 +381,11 @@ export default {
        */
       statusFactura: {
         PE: {
-          text: 'Por empaquetar'
+          text: 'Por embalar'
         },
         LE: {
-          text: 'Empaquetado'
+          text: 'Embalado',
+          color: 'info'
         },
         ET: {
           text: 'En transporte',
