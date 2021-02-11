@@ -1,14 +1,20 @@
 <template>
   <div class="q-pa-md q-gutter-y-md row">
     <div class="col-12 row q-gutter-sm">
-      <div class="col-sm-2 col-xs-12 col-md-1 col-lg-1 col-xl-1 q-mt-md">
-        Filtrar por:
-      </div>
       <div class="col-sm-4 col-xs-12">
         <q-input v-model="desde" filled type="date" dense/>
       </div>
       <div class="col-sm-4 col-xs-12">
         <q-input v-model="hasta" filled type="date" dense/>
+      </div>
+      <div class="col-sm-2 col-xs-12 col-md-1 col-lg-1 col-xl-1">
+        <q-btn
+          color="teal"
+          text-color="white"
+          icon="search"
+          size="15px"
+          @click="obtenerFacturas"
+        />
       </div>
     </div>
     <div class="col-12">
@@ -18,6 +24,7 @@
         :data="data"
         :columns="columns"
         :loading="loadingTable"
+        :pagination.sync="pagination"
       >
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
@@ -28,12 +35,12 @@
               {{ props.row.codigo }}
             </q-td>
             <q-td key="status" :props="props">
-              <q-badge :color="props.row.status === 'EC' ? 'green' : 'red'">
-                {{ statusFactura[props.row.status] }}
+              <q-badge :color="statusFactura[props.row.status].color" class="q-pa-xs">
+                {{ statusFactura[props.row.status].text }}
               </q-badge>
             </q-td>
             <q-td key="fecha_emision" :props="props">
-              {{ props.row.fecha_emision }}
+              {{ dateFormat(props.row.fecha_emision) }}
             </q-td>
             <q-td key="detalles" :props="props">
               <q-btn size="sm"
@@ -90,20 +97,18 @@
                 class="text-white text-center"
               >
                 <q-tab-panel name="mails">
-                  <!-- <div class="row">
-                    <div class="col-4">
-                      fecha de emision : {{ oneFactura.fecha_emision }}
-                    </div>
-                    <div class="col-4">
-                      fecha de emision : {{ oneFactura.fecha_empaque }}
-                    </div>
-                  </div> -->
                   <q-table
                     title="Productos"
                     row-key="name"
                     :data="productos"
                     :columns="columnsProductos"
-                  />
+                    :loading="loadingTableProductos"
+                    :pagination.sync="pagination"
+                  >
+                    <template v-slot:loading>
+                      <q-inner-loading showing color="primary" />
+                    </template>
+                  </q-table>
                 </q-tab-panel>
 
                 <q-tab-panel name="alarms">
@@ -137,18 +142,56 @@
 <script>
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
+import { date } from 'quasar'
 export default {
   data () {
     return {
-      oneFactura: null,
-      statusFactura: {
-        PE: 'Por empaquetar',
-        LE: 'Empaquetado',
-        ET: 'En transporte',
-        ER: 'En ruta',
-        EC: 'Entregado',
-        PD: 'Devuelto'
+      pagination: {
+        page: 1,
+        rowsPerPage: 15
       },
+      /**
+       * Factura seleccionada
+       * @type {Object} factura seleccionada
+       */
+      facturaSeleccionada: null,
+      /**
+       * Loading de la tabla de productos
+       * @type {Boolean} status del loading de la tabla de productos
+       */
+      loadingTableProductos: true,
+      /**
+       * Lista de estados
+       * @type {Object} estatus y sus codigos
+       */
+      statusFactura: {
+        PE: {
+          text: 'Por empaquetar'
+        },
+        LE: {
+          text: 'Empaquetado'
+        },
+        ET: {
+          text: 'En transporte',
+          color: 'warning'
+        },
+        ER: {
+          text: 'En ruta',
+          color: 'warning'
+        },
+        EC: {
+          text: 'Entregado',
+          color: 'teal'
+        },
+        PD: {
+          text: 'Devuelto',
+          color: 'negative'
+        }
+      },
+      /**
+       * Loading table
+       * @type {Boolean} status del loading de la tabla de facturas
+       */
       loadingTable: false,
       /**
        * Productos del empaque
@@ -161,11 +204,11 @@ export default {
        */
       columnsProductos: [
         {
-          name: 'nombre_producto',
+          name: 'descripcion',
           required: true,
           label: 'Nombre del producto',
           align: 'left',
-          field: 'nombre_producto',
+          field: 'descripcion',
           sortable: true
         },
         {
@@ -184,7 +227,7 @@ export default {
         },
         {
           name: 'Subtotal',
-          label: 'subtotal',
+          label: 'Subtotal',
           field: 'subtotal',
           align: 'right',
           sortable: true
@@ -227,12 +270,12 @@ export default {
        * Valor de la fecha del empaques
        * @type {String} fecha desde del empaque
        */
-      desde: null,
+      desde: date.formatDate(date.subtractFromDate(Date.now(), { month: 1 }), 'YYYY-MM-DD'),
       /**
        * Valor de la fecha del empaques
        * @type {String} fecha hasta del empaque
        */
-      hasta: null,
+      hasta: date.formatDate(Date.now(), 'YYYY-MM-DD'),
       /**
        * Columnas de la tabla
        * @type {Array} columnas de la tabla
@@ -247,7 +290,7 @@ export default {
         },
         {
           name: 'status',
-          align: 'center',
+          align: 'left',
           label: 'Estado',
           field: 'status',
           sortable: true
@@ -256,8 +299,17 @@ export default {
           name: 'fecha_emision',
           label: 'Fecha de emision',
           field: 'fecha_emision',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'detalles',
+          label: 'Detalles',
+          field: 'detalles',
+          align: 'left',
           sortable: true
         }
+
       ],
       /**
        * Data de la tabla
@@ -273,15 +325,20 @@ export default {
     ...mapGetters([GETTERS.GET_USER])
   },
   created () {
-    this.obtenerFactura()
+    this.obtenerFacturas()
   },
   methods: {
     /**
      * Obtener todas las facturas del cliente en sesión
      */
-    async obtenerFactura () {
+    async obtenerFacturas () {
       this.loadingTable = true
-      const { res } = await this.$services.getOneData(['factura', 'cliente', this[GETTERS.GET_USER].codigo])
+      const { res } = await this.$services.getData(['factura', 'cliente', this[GETTERS.GET_USER].codigo],
+        {
+          fecha_ini: `${this.desde} 01:00:00`,
+          fecha_fin: `${this.hasta} 23:59:59`
+        }
+      )
       this.data = res.data
       this.loadingTable = false
     },
@@ -291,9 +348,24 @@ export default {
      */
     viewDetails (data) {
       this.detallesFactura = true
-      this.oneFactura = data
-      this.productos = data.detalles
-      console.log(data)
+      this.$services.getOneData(['factura', data.codigo, 'detalles'])
+        .then(({ res }) => {
+          this.productos = res.data.map(detalle => {
+            detalle.subtotal = detalle.cantidad * detalle.precio
+            return detalle
+          })
+          this.loadingTableProductos = false
+          this.facturaSeleccionada = data
+        })
+    },
+    /**
+     * Da dormato a la fecha
+     * @param {String} fecha fecha con formato por defecto
+     * @param {String} format formato de la fecha
+     * @returns {String} fecha con formato
+     */
+    dateFormat (fecha, format = 'DD-MM-YYYY HH:mm:ss') {
+      return date.formatDate(fecha, format) ?? '-'
     }
   }
 }
