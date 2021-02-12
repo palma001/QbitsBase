@@ -7,14 +7,14 @@ export const categoryModules = [
       {
         name: 'geolocation',
         route: 'Geolocation',
-        icon: 'map',
+        icon: 'room',
         access: ['UA'],
         devices: ['mobile', 'desktop']
       },
       {
         name: 'embalar',
         route: 'Embalar',
-        icon: 'map',
+        icon: 'assignment',
         access: ['EE'],
         devices: ['mobile', 'desktop']
       },

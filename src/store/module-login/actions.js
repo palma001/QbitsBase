@@ -7,12 +7,9 @@ import gql from 'graphql-tag'
  */
 
 export const actions = {
-  [ACTIONS.LOGIN]: ({ commit, dispatch }, { self }) => {
+  [ACTIONS.LOGIN]: ({ commit, dispatch }, { self, route, param }) => {
     self.btnDisable = true
-    self.$services.postData(['usuarios', 'login', 'usuario-password'], {
-      email: self.usuario,
-      password: self.password
-    })
+    self.$services.postData(route, param)
       .then(({ res }) => {
         dispatch(ACTIONS.LOGIN_SUCCESS, { data: res.data, self: self })
         self.btnDisable = false

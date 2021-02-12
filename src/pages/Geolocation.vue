@@ -1,10 +1,13 @@
 <template>
   <div class="q-pa-md">
+    <p class="text-h6">
+      Localización de los transportes
+    </p>
     <gmap-map
       :center="{ lat: initialPosition.lat, lng: initialPosition.lng }"
       :zoom="3"
       map-type-id="terrain"
-      style="width: 100%; height: 470px"
+      style="width: 100%; height: 490px"
     >
       <gmap-info-window
         :options="infoOptions"

@@ -125,8 +125,16 @@ export default {
     errorValidation (field) {
       return this.errors.has(field) ? 'is-danger' : null
     },
-    eventScanner (code) {
-      console.log(code)
+    async eventScanner (code) {
+      await this[ACTIONS.LOGIN](
+        {
+          self: this,
+          route: ['usuarios', 'login', 'codigo'],
+          param: {
+            codigo: code
+          }
+        }
+      )
     },
     /**
      * Login app
@@ -137,7 +145,16 @@ export default {
       if (this.$refs.username.hasError || this.$refs.password.hasError) {
         this.formHasError = true
       } else {
-        await this[ACTIONS.LOGIN]({ self: this })
+        await this[ACTIONS.LOGIN](
+          {
+            self: this,
+            route: ['usuarios', 'login', 'usuario-password'],
+            param: {
+              email: this.usuario,
+              password: this.password
+            }
+          }
+        )
       }
     },
 
