@@ -188,7 +188,7 @@ export default {
           label: 'Tiempo de empaque',
           field: 'tiempo_empaque',
           align: 'left',
-          classes: 'bg-grey-2 ellipsis text-dark',
+          classes: 'bg-grey-4 ellipsis text-dark',
           headerClasses: 'bg-teal text-white',
           sortable: true
         },
@@ -211,7 +211,7 @@ export default {
           label: 'Tiempo de entrega',
           field: 'tiempo_entrega',
           align: 'left',
-          classes: 'bg-grey-2 ellipsis text-dark',
+          classes: 'bg-grey-4 ellipsis',
           headerClasses: 'bg-teal text-white',
           sortable: true
         }
