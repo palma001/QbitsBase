@@ -45,6 +45,13 @@ export const categoryModules = [
         icon: 'receipt',
         access: ['UA'],
         devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'listaReclamo',
+        route: 'ListaReclamo',
+        icon: 'list_alt',
+        access: ['UA'],
+        devices: ['mobile', 'desktop']
       }
     ]
   }

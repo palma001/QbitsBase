@@ -73,7 +73,7 @@
           <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
             <q-tooltip v-if="!maximizedToggle" content-class="bg-white text-primary">Maximize</q-tooltip>
           </q-btn>
-          <q-btn dense flat icon="close" v-close-popup>
+          <q-btn dense flat icon="close" v-close-popup @click="tab = 'mails'">
             <q-tooltip content-class="bg-white text-primary">Close</q-tooltip>
           </q-btn>
         </q-bar>
@@ -86,7 +86,8 @@
               class="q-mb-lg"
             >
               <q-tab name="mails" label="Detalles del paquete" />
-              <q-tab name="alarms" label="Ubicación del paquete" />
+              <q-tab name="alarms" label="Ubicación del paquete" v-if="facturaSeleccionada && facturaSeleccionada.status === 'ET'"/>
+              <q-tab name="reclamo" label="Reclamo" />
             </q-tabs>
             <div class="q-gutter-y-sm">
               <q-tab-panels
@@ -110,25 +111,48 @@
                     </template>
                   </q-table>
                 </q-tab-panel>
-
                 <q-tab-panel name="alarms">
-                    <gmap-map
-                      :center="this.coordinates"
-                      :zoom="12"
-                      map-type-id="roadmap"
-                      style="width: 100%; height: 400px"
+                  <gmap-map
+                    :center="this.coordinates"
+                    :zoom="12"
+                    map-type-id="roadmap"
+                    style="width: 100%; height: 390px"
+                  >
+                    <gmap-marker
+                      :position="this.coordinates"
+                      :clickable="true"
+                      :draggable="true"
+                    />
+                  </gmap-map>
+                  <q-inner-loading :showing="visibleMap">
+                    <q-spinner-gears size="50px" color="primary" />
+                  </q-inner-loading>
+                </q-tab-panel>
+
+                <q-tab-panel name="reclamo">
+                  <q-card class="my-card">
+                    <q-form
+                      @submit="guardarReclamo"
                     >
-                      <gmap-marker
-                        :position="this.coordinates"
-                        :clickable="true"
-                        :draggable="true"
-                      />
-                      <gmap-polyline
-                        :path.sync="plPath"
-                        :draggable="true"
-                        :options="{geodesic:true, strokeColor:'#FF0000'}"
-                      />
-                    </gmap-map>
+                      <q-card-section>
+                        <q-input
+                          v-model="reclamo"
+                          filled
+                          label="Escribir reclamo"
+                          type="textarea"
+                          :disable="facturaSeleccionada && facturaSeleccionada.fecha_reclamo ? true : false"
+                        />
+                      </q-card-section>
+                      <q-card-actions vertical align="right">
+                        <q-btn
+                          color="teal"
+                          label="Guardar"
+                          type="submit"
+                          :disable="facturaSeleccionada && facturaSeleccionada.fecha_reclamo ? true : false"
+                        />
+                      </q-card-actions>
+                    </q-form>
+                  </q-card>
                 </q-tab-panel>
               </q-tab-panels>
             </div>
@@ -140,12 +164,16 @@
 </template>
 
 <script>
+import { mixins } from '../mixins'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
 import { date } from 'quasar'
 export default {
+  mixins: [mixins.containerMixin],
   data () {
     return {
+      reclamo: '',
+      visibleMap: false,
       pagination: {
         page: 1,
         rowsPerPage: 15
@@ -240,20 +268,13 @@ export default {
        */
       maximizedToggle: false,
       /**
-       * Coordenadas de la ruta del empaque
-       * @type {Array} coordenadas
-       */
-      plPath: [
-        { lat: 37.772, lng: -122.214 },
-        { lat: 21.291, lng: -157.821 },
-        { lat: -18.142, lng: 178.431 },
-        { lat: -27.467, lng: 153.027 }
-      ],
-      /**
        * Coordenadas de la ubucación de la factura
        * @type {Object} ubicación de la factura
        */
-      coordinates: {},
+      coordinates: {
+        lat: 0,
+        lng: 0
+      },
       /**
        * Valor del tag
        * @type {String} Valor del tag
@@ -326,6 +347,16 @@ export default {
     this.obtenerFacturas()
   },
   methods: {
+    async guardarReclamo () {
+      const res = await this.$services.putData(['factura', this.facturaSeleccionada.codigo, 3], {
+        reclamo: this.reclamo
+      })
+      if (res.status) {
+        this.notify(this, 'Reclamo guardado exitosamente', 'positive', 'thumb_up')
+      } else {
+        this.notify(this, 'A ocurrido un error', 'negative', 'warining')
+      }
+    },
     /**
      * Obtener todas las facturas del cliente en sesión
      */
@@ -355,15 +386,18 @@ export default {
           this.obtenerCoordenadas(data)
           this.loadingTableProductos = false
           this.facturaSeleccionada = data
+          this.reclamo = data.descripcion_reclamo
         })
     },
 
     obtenerCoordenadas (data) {
-      var channel = this.$ably.channels.get(data.codigo)
+      this.visibleMap = true
+      var channel = this.$ably.channels.get(data.codigo_empleado_transporte)
       channel.presence.subscribe('update', (presenceMsg) => {
         channel.presence.get((e, members) => {
           members.forEach(mem => {
             this.coordinates = mem.data.position
+            this.visibleMap = false
           })
         })
       })

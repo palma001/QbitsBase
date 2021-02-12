@@ -45,6 +45,11 @@ const routes = [
         path: '/empaques',
         component: () => import('pages/EmpaquesAdministrador.vue'),
         name: 'EmpaquesAdministrador'
+      },
+      {
+        path: '/lista-reclamo',
+        component: () => import('pages/ListaReclamo.vue'),
+        name: 'ListaReclamo'
       }
     ]
   },
