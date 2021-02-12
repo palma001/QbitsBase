@@ -75,25 +75,25 @@ export default {
     },
     obtenerCoordenadas (data) {
       data.map(element => {
-        if (element.rol.name === 'transporte') {
-          var channel = this.$ably.channels.get(element.id)
-          channel.presence.subscribe('update', (presenceMsg) => {
-            channel.presence.get((e, members) => {
-              this.markers = members.map(mem => {
-                this.infoWindowPos = mem.data.position
-                return {
-                  ...mem.data
-                }
-              })
+        var channel = this.$ably.channels.get(element.codigo)
+        channel.presence.subscribe('update', (presenceMsg) => {
+          channel.presence.get((e, members) => {
+            this.markers = members.map(mem => {
+              this.infoWindowPos = mem.data.position
+              return {
+                ...mem.data
+              }
             })
           })
-        }
+        })
       })
     },
     obtenerCamiones () {
-      this.$mockData.getData('users')
-        .then(({ response }) => {
-          this.obtenerCoordenadas(response.data.content)
+      this.$services.getData(['usuarios'], {
+        rol: 'ET'
+      })
+        .then(({ res }) => {
+          this.obtenerCoordenadas(res.data)
         })
     }
   }

@@ -253,10 +253,7 @@ export default {
        * Coordenadas de la ubucación de la factura
        * @type {Object} ubicación de la factura
        */
-      coordinates: {
-        lat: -27.467,
-        lng: 153.027
-      },
+      coordinates: {},
       /**
        * Valor del tag
        * @type {String} Valor del tag
@@ -355,9 +352,21 @@ export default {
             detalle.subtotal = detalle.cantidad * detalle.precio
             return detalle
           })
+          this.obtenerCoordenadas(data)
           this.loadingTableProductos = false
           this.facturaSeleccionada = data
         })
+    },
+
+    obtenerCoordenadas (data) {
+      var channel = this.$ably.channels.get(data.codigo)
+      channel.presence.subscribe('update', (presenceMsg) => {
+        channel.presence.get((e, members) => {
+          members.forEach(mem => {
+            this.coordinates = mem.data.position
+          })
+        })
+      })
     },
     /**
      * Da dormato a la fecha

@@ -22,8 +22,7 @@ export default {
        *
        * @type {Array} data menu
        */
-      modules: [],
-      coo: 1
+      modules: []
     }
   },
 
@@ -50,7 +49,7 @@ export default {
       })
     },
     validateSession () {
-      return this[GETTERS.GET_USER] && this[GETTERS.GET_USER].rol.name === 'transporte'
+      return this[GETTERS.GET_USER] && this[GETTERS.GET_USER].rol === 'ET'
     },
     /**
      * Get all products
@@ -75,17 +74,20 @@ export default {
         .then(coordinates => {
           const userData = {
             position: {
-              lat: coordinates.lat + this.coo,
+              lat: coordinates.lat,
               lng: coordinates.lng
             },
-            userName: `${this[GETTERS.GET_USER].first_name} ${this[GETTERS.GET_USER].last_name}`
+            userName: this[GETTERS.GET_USER].nombre
           }
           this.updateRoom(userData)
         })
-      this.coo += 1
     },
+    /**
+     * Modificar coordenadas
+     * @type {Object} datos de coordenadas
+    */
     updateRoom (data) {
-      const channel = this.$ably.channels.get(this[GETTERS.GET_USER].id)
+      const channel = this.$ably.channels.get(this[GETTERS.GET_USER].codigo)
       channel.presence.update(data, function (err) {
         if (err) {
           return console.error('Error updating presence data')
