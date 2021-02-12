@@ -14,6 +14,7 @@ export default {
     embalar: 'embalar',
     listaEmpaques: 'lista de empaques',
     geolocation: 'geolocalización',
-    transporte: 'transporte'
+    transporte: 'transporte',
+    listaReclamo: 'Lista Reclamo'
   }
 }

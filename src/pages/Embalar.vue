@@ -533,6 +533,7 @@ export default {
           this.loadingFactura = false
           this.persistent = false
           this.factura = res.data
+          this.$barcodeScanner.destroy()
         })
         .catch((e) => {
           this.notify(this, 'Factura no encontrada', 'negative', 'warning')
