@@ -35,7 +35,7 @@ export const categoryModules = [
       {
         name: 'transporte',
         route: 'EmpaquesTransporte',
-        icon: 'car',
+        icon: 'local_shipping',
         access: ['ET'],
         devices: ['mobile', 'desktop']
       },
