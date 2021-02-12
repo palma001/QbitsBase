@@ -95,13 +95,14 @@
             :key="index"
           >
             <q-item
-              v-if="validateDivice(divice) && validateRole(list.access)"
               clickable
               v-ripple
-              class="q-ml-lg"
-              :active="active">
-              <q-item-section avatar
-                v-if="list.icon">
+              class="q-ml-md"
+              active-class="my-menu-link"
+              v-if="validateDivice(divice) && validateRole(list.access)"
+              :active="list.route === $route.name"
+            >
+              <q-item-section avatar v-if="list.icon">
                 <q-icon :name="list.icon" />
               </q-item-section>
               <q-item-section @click="changeRoute(list.route)">
@@ -118,6 +119,7 @@
       <router-view />
     </q-page-container>
     <q-inner-loading :showing="visible">
+      {{ route }}
       <q-spinner-gears size="100px" color="primary"/>
     </q-inner-loading>
   </q-layout>
@@ -168,6 +170,7 @@ export default {
       dataMenu: [],
       active: true,
       visible: false,
+      route: '',
       sucursales: SessionStorage.getItem('sucursales'),
       /**
        * Status menu
@@ -229,6 +232,7 @@ export default {
      */
     changeRoute (data) {
       this.$router.push({ name: data })
+      this.route = data
     },
     /**
      * Validate divice
@@ -241,9 +245,8 @@ export default {
 }
 </script>
 
-<style>
-.my-menu-link {
-  background-color: #efebe4;
-  color: #f5ad23;
-}
+<style lang="sass">
+.my-menu-link
+  color: white
+  background: #009688
 </style>
