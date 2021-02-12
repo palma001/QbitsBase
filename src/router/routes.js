@@ -8,14 +8,14 @@ const routes = [
   },
   {
     path: '',
+    component: () => import('pages/Login.vue'),
+    name: ''
+  },
+  {
+    path: '',
     component: () => import('layouts/MainLayout.vue'),
     beforeEnter: validationSession,
     children: [
-      {
-        path: '',
-        component: () => import('pages/EmpaquesEmpleado.vue'),
-        name: ''
-      },
       {
         path: '/empaques-empleado',
         component: () => import('pages/EmpaquesEmpleado.vue'),
