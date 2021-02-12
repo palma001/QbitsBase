@@ -7,10 +7,11 @@
       <q-input
         v-model="text"
         type="text"
-        :label="labelInput"
         class="col-4"
         dense
         filled
+        autofocus
+        :label="labelInput"
         @keyup.enter="enter"
       >
         <template v-slot:append>
