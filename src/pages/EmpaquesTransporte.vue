@@ -351,6 +351,15 @@
             @keyup.enter="prompt = false"
           />
         </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-input
+            label="Observación"
+            type="textarea"
+            v-model="observacion"
+            dense
+            filled
+          />
+        </q-card-section>
         <q-separator />
         <q-card-actions align="right" class="text-primary">
           <q-btn color="negative" label="Devolver" @click="devolverPaquete"/>
@@ -374,6 +383,7 @@ export default {
   },
   data () {
     return {
+      observacion: '',
       entregadoA: '',
       /**
        * Lista de estados
@@ -555,7 +565,9 @@ export default {
      * Cambia el status de la facura a devuelto
      */
     async devolverPaquete () {
-      await this.$services.putData(['factura', this.codigoFactura, 5], {})
+      await this.$services.putData(['factura', this.codigoFactura, 5], {
+        observacion_entregado_devuelto: this.observacion
+      })
       this.dialogEntrgarDevolver = false
       this.obtenerFacturas()
       this.notify(this, 'Factura devuelta exitosamente', 'positive', 'thumb_up')
@@ -566,7 +578,8 @@ export default {
      */
     async entregarPaquete () {
       await this.$services.putData(['factura', this.codigoFactura, 4], {
-        recibir: this.entregadoA
+        recibir: this.entregadoA,
+        observacion_entregado_devuelto: this.observacion
       })
       this.dialogEntrgarDevolver = false
       this.obtenerFacturas()

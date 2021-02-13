@@ -95,8 +95,8 @@
             v-if="factura.length === 0 ? false : true"
           />
         </div>
-        <div class="col-sm-12 row" v-if="tipoEmpaque.length > 0">
-          <div v-for="tipo in tipoEmpaque" :key="tipo.id" class="col-sm-2 col-xs-6">
+        <div class="col-sm-8 row" v-if="tipoEmpaque.length > 0">
+          <div v-for="tipo in tipoEmpaque" :key="tipo.id" class="col-sm-3 col-xs-6">
             <q-input
               type="number"
               dense
@@ -135,7 +135,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="dialogFinalizarEmpaque" transition-show="scale" transition-hide="scale">
-      <q-card>
+      <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="q-pb-none">
           <p class="text-h6">
             Finalizar empaque
@@ -143,7 +143,7 @@
         </q-card-section>
         <q-separator/>
         <q-card-section
-          class="row q-gutter-md justify-between"
+          class="row justify-between"
           v-for="producto in productosFaltantes"
           :key="producto.id"
         >
@@ -151,30 +151,45 @@
             :value="producto.descripcion"
             type="text"
             label="Nombre del producto"
-            class="col-3"
+            class="col-4"
             disable
+            dense
+            filled
           />
           <q-input
             :key="producto.id"
             :value="producto.cantidad"
             type="text"
             label="Cantidad"
-            class="col-3"
+            class="col-4 q-pa-xs"
             disable
+            dense
+            filled
           />
           <q-input
             :key="producto.id"
             :value="producto.cantidad_embalado"
             type="text"
             label="Cantidad embalada"
-            class="col-3"
+            class="col-4 q-pa-xs"
             disable
+            dense
+            filled
+          />
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-input
+            label="Observación"
+            type="textarea"
+            v-model="observacion"
+            dense
+            filled
           />
         </q-card-section>
          <q-separator/>
         <q-card-actions align="right">
           <q-btn color="negative" v-close-popup clo label="Cancelar" />
-          <q-btn color="teal" label="Finalizar" />
+          <q-btn color="teal" label="Finalizar" @click="finalizarEmpaque"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -354,6 +369,7 @@ export default {
        * @type {Array} datos de los productos
        */
       productosFaltantes: [],
+      observacion: '',
       /**
        * Columnas de la tabla de los productos de la factura
        * @type {Array} columnas de la tabla
@@ -449,19 +465,8 @@ export default {
           )
         }
       })
-      this.abrirModalFinalizarEmpaque(productos)
-    },
-    /**
-     * Abrir modal de verificación
-     * @param {Array} productos productos faltantes
-    */
-    abrirModalFinalizarEmpaque (productos) {
-      if (productos.length > 0) {
-        this.dialogFinalizarEmpaque = true
-        this.productosFaltantes = productos
-      } else {
-        this.finalizarEmpaque()
-      }
+      this.dialogFinalizarEmpaque = true
+      this.productosFaltantes = productos
     },
     /**
      * Finalizar empaque, guarda los cambios en la factura
@@ -470,11 +475,13 @@ export default {
       await this.$services.putData(['factura', this.codigoFactura, 0], { fecha_ini: this.fecha_ini })
       const { res } = await this.$services.putData(['factura', this.codigoFactura, 1], {
         tipo_entrega: this.tipoEntrega.value,
-        codigo_empleado: this[GETTERS.GET_USER].codigo
+        codigo_empleado: this[GETTERS.GET_USER].codigo,
+        observacion_embalado: this.observacion
       })
       if (res.data === 'Empaque Finalizado') {
         this.agregarEmpaques()
         this.cancelarFactura()
+        this.dialogFinalizarEmpaque = false
         this.notify(this, res.data, 'positive', 'thumb_up')
       }
     },
