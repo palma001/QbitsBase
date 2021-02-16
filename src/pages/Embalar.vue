@@ -177,7 +177,7 @@
             filled
           />
         </q-card-section>
-        <q-card-section class="q-pt-none">
+        <q-card-section class="q-pt-md">
           <q-input
             label="Observación"
             type="textarea"
