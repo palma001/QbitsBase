@@ -118,22 +118,11 @@
         :data="factura"
         :header="columns"
         @enter="obtenerProducto"
-        @clickButton="persistent = true"
+        @clickButton="productoScanner = !productoScanner"
       />
     </div>
-    <q-dialog v-model="persistent" transition-show="scale" transition-hide="scale">
-      <q-card style="width: 352px; height: 336px;" class="q-pa-none">
-        <q-card-section class="q-pa-xs">
-          <q-select dense behavior="menu" v-model="scanner" :options="options" label="Tipo de scanner" />
-        </q-card-section>
-        <qrcode-stream
-          style="width: 100% !important; height: 288px; !important;"
-          @decode="obtenerFactura"
-          v-if="scanner === 'Qr'"
-        />
-        <v-quagga v-else class="full-width" :frequency="0" :onDetected="logIt" :readerTypes="readerTypes"></v-quagga>
-      </q-card>
-    </q-dialog>
+    <b-scanner :show="persistent" @eventScanner="obtenerFactura"/>
+    <b-scanner :show="productoScanner" @eventScanner="obtenerProducto"/>
     <q-dialog v-model="dialogFinalizarEmpaque" transition-show="scale" transition-hide="scale">
       <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="q-pb-none">
@@ -209,8 +198,8 @@
             :value="productoSelected.descripcion"
           />
         </q-card-section>
-        <q-card-actions align="center">
-          <q-item class="q-mb-md">
+        <q-card-actions align="center" class="row">
+          <q-item class="q-mb-md col-6">
             <q-item-section>
               <q-input
                 type="text"
@@ -222,7 +211,7 @@
               />
             </q-item-section>
           </q-item>
-          <q-item class="q-mt-xs">
+          <q-item class="q-mt-xs col-6">
             <q-item-section>
               <q-input
                 type="text"
@@ -258,6 +247,7 @@
 
 <script>
 import { mixins } from '../mixins'
+import BScanner from '../components/BScanner.vue'
 import BMarkupTable from '../components/BMarkupTable'
 import { GETTERS } from 'src/store/module-login/name'
 import { mapGetters } from 'vuex'
@@ -265,10 +255,12 @@ import { date } from 'quasar'
 export default {
   mixins: [mixins.containerMixin],
   components: {
-    BMarkupTable
+    BMarkupTable,
+    BScanner
   },
   data () {
     return {
+      productoScanner: false,
       /**
        * Fecha inicio del empaque
        * @type {String} fecha de inicio del empaque
@@ -516,18 +508,6 @@ export default {
       })
     },
     /**
-     * Obtiene el codigo de barra o Qr
-     * @param {String} data codigo de barra o Qr
-     */
-    logIt (data) {
-      if (this.factura.length <= 0) {
-        this.obtenerFactura(data.codeResult.code)
-      } else {
-        this.obtenerProducto(data.codeResult.code)
-      }
-    },
-
-    /**
      * Obtiene la factura
      * @param {String} code codigo de barra o Qr de la factura
      */
@@ -538,8 +518,8 @@ export default {
         .then(({ res }) => {
           res.data.length <= 0 ? this.notify(this, 'Factura no encontrada', 'negative', 'warning') : this.fecha_ini = date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm:ss')
           this.loadingFactura = false
-          this.persistent = false
           this.factura = res.data
+          this.persistent = false
           this.$barcodeScanner.destroy()
         })
         .catch((e) => {

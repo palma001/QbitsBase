@@ -1,12 +1,12 @@
 <template>
   <div>
     <q-dialog v-model="showScanner" transition-show="scale" transition-hide="scale">
-      <q-card style="width: 352px; height: 336px;" class="q-pa-none">
+      <q-card style="width: 250px; height: 298px;" class="q-pa-none">
         <q-card-section class="q-pa-xs">
           <q-select dense behavior="menu" v-model="value" :options="optionsScanner" label="Tipo de scanner" />
         </q-card-section>
         <qrcode-stream
-          style="width: 100% !important; height: 288px; !important;"
+          style="width: 100% !important; height: 250px; !important;"
           @decode="eventQr"
           v-if="value === 'Qr'"
         />

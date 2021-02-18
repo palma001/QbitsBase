@@ -63,12 +63,16 @@ export default {
     },
     readerTypes: {
       type: Array,
-      default: () => ['code_128_reader']
+      default: () => [
+        'code_128_reader',
+        'ean_8_reader',
+        'ean_reader'
+      ]
     },
     width: {
       type: Object,
       default: () => ({
-        max: 640
+        max: '200'
       })
     },
     height: {
@@ -90,24 +94,34 @@ export default {
     return {
       quaggaState: {
         inputStream: {
+          name: 'Live',
           type: 'LiveStream',
+          size: 250,
           constraints: {
-            width: this.width,
-            height: this.height,
-            facingMode: 'environment',
-            aspectRatio: { min: 1, max: 2 }
+            width: 250,
+            height: 250,
+            facingMode: 'environment'
+          },
+          singleChannel: false,
+          area: {
+            top: '3%',
+            bottom: '3%'
           }
         },
         locator: {
           patchSize: 'medium',
           halfSample: true
         },
-        numOfWorkers: 2,
-        frequency: 10,
+        numOfWorkers: 0,
+        frequency: 1,
         decoder: {
-          readers: this.readerTypes
+          readers: this.readerTypes,
+          drawScanline: true,
+          showPattern: true,
+          showFrequency: true,
+          drawBoundingBox: true
         },
-        locate: true
+        locate: false
       }
     }
   },

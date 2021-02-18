@@ -705,16 +705,16 @@ export default {
      * @param {String} data codigo de la factura
      */
     eventScanner (data) {
-      this.obtenerFactur(data)
+      this.obtenerFactura(data)
     },
     /**
      * Obtener factura
      * @param {String} codigo codigo de la factura
      */
     obtenerFactura (codigo) {
-      codigo = typeof codigo === 'string' ? codigo : this.codigoFactura
+      this.codigoFactura = typeof codigo === 'string' ? codigo : this.codigoFactura
       this.loadingFactura = true
-      this.$services.getOneData(['factura', codigo])
+      this.$services.getOneData(['factura', this.codigoFactura])
         .then(({ res }) => {
           if (res.data) {
             this.validarStatus(res.data)
