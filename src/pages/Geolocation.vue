@@ -1,13 +1,13 @@
 <template>
-  <div class="q-pa-md">
+  <div class="q-pa-md" style="width: 100%; height: 100%">
     <p class="text-h6">
       Localización de los transportes
     </p>
     <gmap-map
-      :center="{ lat: initialPosition.lat, lng: initialPosition.lng }"
-      :zoom="3"
+      :center="markers.length > 0 ? markers[0].position : initialPosition"
+      :zoom="10"
       map-type-id="terrain"
-      style="width: 100%; height: 490px"
+      style="width: 100%; height: 78vh"
     >
       <gmap-info-window
         :options="infoOptions"
@@ -16,11 +16,11 @@
         @closeclick="infoWinOpen=false"
       />
       <gmap-marker
+        v-for="(m, index) in markers"
         :key="index"
         :position="m.position"
         :clickable="true"
         :draggable="false"
-        v-for="(m, index) in markers"
         @click="toggleInfoWindow(m, index)"
       />
     </gmap-map>
