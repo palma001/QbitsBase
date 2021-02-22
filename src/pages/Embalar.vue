@@ -65,7 +65,11 @@
             :rules="[val => !!val || 'El campo es requerido.']"
             :options="listaTipoEmpaque"
             @input="asignarEmpaque"
-          />
+          >
+            <template v-if="tipoEmpaque" v-slot:append>
+              <q-icon name="cancel" @click.stop="tipoEmpaque = null" class="cursor-pointer" />
+            </template>
+          </q-select>
         </div>
         <div class="col-md-2 col-sm-2 col-xs-6">
           <q-input
@@ -195,18 +199,32 @@
           <div class="text-h6">Producto seleccionado</div>
         </q-card-section>
         <q-separator />
-        <q-card-section class="q-pl-lg q-pr-lg">
-          <q-input
-            type="text"
-            label="Nombre del producto"
-            disable
-            filled
-            dense
-            :value="productoSelected.descripcion"
-          />
-        </q-card-section>
-        <q-card-actions align="center" class="row">
-          <q-item class="q-mb-md col-6">
+        <q-card-section class="row">
+          <q-item class="col-6">
+            <q-item-section>
+              <q-input
+                type="text"
+                label="Nombre del producto"
+                disable
+                filled
+                dense
+                :value="productoSelected.descripcion"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item class="col-6">
+            <q-item-section>
+              <q-input
+                type="text"
+                label="Unidad"
+                disable
+                filled
+                dense
+                :value="productoSelected.unidad"
+              />
+            </q-item-section>
+          </q-item>
+          <q-item class="col-6 q-mb-md">
             <q-item-section>
               <q-input
                 type="text"
@@ -218,7 +236,7 @@
               />
             </q-item-section>
           </q-item>
-          <q-item class="q-mt-xs col-6">
+          <q-item class="col-6 q-mt-xs">
             <q-item-section>
               <q-input
                 type="text"
@@ -232,7 +250,7 @@
               />
             </q-item-section>
           </q-item>
-        </q-card-actions>
+        </q-card-section>
         <q-separator />
         <q-card-actions align="right" class="text-primary">
           <q-btn label="Cancelar" color="negative" v-close-popup />
@@ -385,8 +403,8 @@ export default {
           align: 'right'
         },
         {
-          value: 'cantidad_embalado',
-          label: 'Cantidad embalado',
+          value: 'unidad',
+          label: 'Unidad',
           align: 'right'
         }
       ]
