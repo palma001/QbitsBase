@@ -119,7 +119,8 @@ module.exports = function (/* ctx */) {
         'Notify',
         'Loading',
         'LocalStorage',
-        'SessionStorage'
+        'SessionStorage',
+        'BottomSheet'
       ]
     },
 
