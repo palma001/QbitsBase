@@ -12,7 +12,7 @@
         @submit="validarEmbalaje"
         @reset="cancelarFactura"
       >
-        <div class="col-md-3 col-sm-3 col-xs-6">
+        <div class="col-md-3 col-sm-3 col-xs-5">
           <q-input
             filled
             dense
@@ -76,9 +76,9 @@
             </template>
           </q-select>
         </div>
-        <div class="col-md-2 col-sm-2 col-xs-6">
+        <div class="col-md-2 col-sm-2 col-xs-5">
           <q-input
-            label="Cantidad de empaque"
+            label="Cantidad de empaques"
             ref="cantidadEmpaque"
             filled
             dense
@@ -542,11 +542,8 @@ export default {
      * Finalizar empaque, guarda los cambios en la factura
      */
     async finalizarEmpaque () {
-      await this.$services.putData(['factura', this.codigoFactura, 0], { fecha_ini: this.fecha_ini })
       const { res } = await this.$services.putData(['factura', this.codigoFactura, 1], {
-        tipo_entrega: this.tipoEntrega.value,
-        codigo_empleado: this[GETTERS.GET_USER].codigo,
-        observacion_embalado: this.observacion
+        codigo_empleado: this[GETTERS.GET_USER].codigo
       })
       if (res.data === 'Empaque Finalizado') {
         this.cancelarFactura()
