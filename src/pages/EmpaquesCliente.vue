@@ -34,13 +34,20 @@
             <q-td key="codigo" :props="props">
               {{ props.row.codigo }}
             </q-td>
-            <q-td key="status" :props="props">
-              <q-badge :color="statusFactura[props.row.status].color" class="q-pa-xs">
-                {{ statusFactura[props.row.status].text }}
-              </q-badge>
+            <q-td key="cantidad_embalaje" :props="props">
+                {{ props.row.cantidad_embalaje }}
             </q-td>
-            <q-td key="fecha_emision" :props="props">
-              {{ dateFormat(props.row.fecha_emision) }}
+            <q-td key="fecha_entrega" :props="props">
+              {{ props.row.fecha_entrega }}
+            </q-td>
+            <q-td key="hora_entrega" :props="props">
+              {{ props.row.hora_entrega }}
+            </q-td>
+            <q-td key="observacion" :props="props">
+              {{ props.row.observacion }}
+            </q-td>
+            <q-td key="total" :props="props">
+              {{ props.row.total }}
             </q-td>
             <q-td key="detalles" :props="props">
               <q-btn size="sm"
@@ -255,6 +262,13 @@ export default {
           sortable: true
         },
         {
+          name: 'observacion',
+          label: 'Observación',
+          field: 'observacion',
+          align: 'right',
+          sortable: true
+        },
+        {
           name: 'Subtotal',
           label: 'Subtotal',
           field: 'subtotal',
@@ -308,17 +322,38 @@ export default {
           sortable: true
         },
         {
-          name: 'status',
+          name: 'cantidad_embalaje',
+          label: 'Cantidad de embalaje',
+          field: 'cantidad_embalaje',
           align: 'left',
-          label: 'Estado',
-          field: 'status',
           sortable: true
         },
         {
-          name: 'fecha_emision',
-          label: 'Fecha de emision',
-          field: 'fecha_emision',
+          name: 'fecha_entrega',
+          label: 'Fecha de entrega',
+          field: 'fecha_entrega',
           align: 'left',
+          sortable: true
+        },
+        {
+          name: 'hora_entrega',
+          label: 'Hora de entrega',
+          field: 'hora_entrega',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'observacion',
+          label: 'Observación',
+          field: 'observacion',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'total',
+          align: 'left',
+          label: 'Total',
+          field: 'total',
           sortable: true
         },
         {
@@ -362,10 +397,10 @@ export default {
      */
     async obtenerFacturas () {
       this.loadingTable = true
-      const { res } = await this.$services.getData(['factura', 'cliente', this[GETTERS.GET_USER].codigo],
+      const { res } = await this.$services.getData(['factura', 'cliente', this[GETTERS.GET_USER].nit],
         {
-          fecha_ini: `${this.desde} 01:00:00`,
-          fecha_fin: `${this.hasta} 23:59:59`
+          fecha_ini: this.desde,
+          fecha_fin: this.hasta
         }
       )
       this.data = res.data
@@ -377,6 +412,7 @@ export default {
      */
     viewDetails (data) {
       this.detallesFactura = true
+      this.loadingTableProductos = true
       this.$services.getOneData(['factura', data.codigo, 'detalles'])
         .then(({ res }) => {
           this.productos = res.data.map(detalle => {
