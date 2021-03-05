@@ -122,6 +122,7 @@
         labelInput="Código del producto"
         :data="factura"
         :header="columns"
+        :search="true"
         @enter="obtenerProducto"
         @clickButton="productoScanner = !productoScanner"
       />
@@ -319,7 +320,7 @@ export default {
        * Cantiad de empaque del producto seleccionado
        * @type {Object} Producto seleccionado
        */
-      cantidadEmpaque: 0,
+      cantidadEmpaque: null,
       /**
        * Producto seleccionado
        * @type {Object} Producto seleccionado
@@ -478,27 +479,31 @@ export default {
     guardarEmbalaje () {
       this.$refs.cantidadEmbalar.validate()
       if (!this.$refs.cantidadEmbalar.hasError) {
-        this.loadingGuardarEmbalaje = true
-        this.$services.postData(['factura', this.codigoFactura, 'asignar-articulo'], {
-          id_embalaje: this.cantidadEmpaque,
-          cod_articulo: this.productoSelected.codigo_producto,
-          unidad: this.productoSelected.unidad,
-          cantidad: this.cantidadEmbalar
-        })
-          .then(({ res }) => {
-            this.notify(this, 'embalado exitosamente', 'positive', 'thumb_up')
-            this.product = false
-            this.loadingGuardarEmbalaje = false
-            this.obtenerFactura(this.codigoFactura)
-            this.cantidadEmbalar = 1
+        if (this.cantidadEmpaque) {
+          this.loadingGuardarEmbalaje = true
+          this.$services.postData(['factura', this.codigoFactura, 'asignar-articulo'], {
+            id_embalaje: this.cantidadEmpaque,
+            cod_articulo: this.productoSelected.codigo_producto,
+            unidad: this.productoSelected.unidad,
+            cantidad: this.cantidadEmbalar
           })
+            .then(({ res }) => {
+              this.notify(this, 'embalado exitosamente', 'positive', 'thumb_up')
+              this.product = false
+              this.loadingGuardarEmbalaje = false
+              this.obtenerFactura(this.codigoFactura)
+              this.cantidadEmbalar = 1
+            })
+        } else {
+          this.notify(this, 'no a seleccionado un empaque', 'negative', 'warning')
+        }
       }
     },
     /**
      * Obtener lista de tipos de empaques
      */
     async obtenerEmpaques () {
-      const { res } = await this.$services.getData(['empaques', ''])
+      const { res } = await this.$services.getData(['empaques'])
       this.listaTipoEmpaque = res.data.map(element => {
         return {
           label: element.nombre,
@@ -543,7 +548,8 @@ export default {
      */
     async finalizarEmpaque () {
       const { res } = await this.$services.putData(['factura', this.codigoFactura, 1], {
-        codigo_empleado: this[GETTERS.GET_USER].codigo
+        codigo_empleado: this[GETTERS.GET_USER].codigo,
+        codigo_tipo_entrega: this.tipoEntrega.value
       })
       if (res.data === 'Empaque Finalizado') {
         this.cancelarFactura()

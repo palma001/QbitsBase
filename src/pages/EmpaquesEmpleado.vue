@@ -183,7 +183,6 @@ export default {
       this.detallesFactura = true
       this.oneFactura = data
       this.productos = data.detalles
-      console.log(data)
     },
     /**
      * Da dormato a la fecha
