@@ -581,6 +581,7 @@ export default {
             this.dialogFinalizarEmpaque = false
             this.notify(this, res.data, 'positive', 'thumb_up')
             this.loadingFinalizar = false
+            this.tipoEmpaque = null
           }
         })
         .catch(e => {
@@ -596,6 +597,7 @@ export default {
       this.codigoFactura = null
       this.tipoEmpaque = []
       this.tipoEntrega = null
+      this.tipoEmpaque = null
       this.cantidadEmpaque = 0
       this.resetValidation()
     },
