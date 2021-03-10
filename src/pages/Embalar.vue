@@ -8,13 +8,12 @@
     <div class="col-12">
       <q-form
         ref="myForm"
-        class="row justify-evenly"
+        class="row justify-between q-gutter-x-xs"
         @submit="validarEmbalaje"
         @reset="cancelarFactura"
       >
-        <div class="col-md-2 col-sm-3 col-xs-6">
+        <div class="col-md-3 col-sm-3 col-xs-5">
           <q-input
-            style="width: 99%"
             filled
             dense
             autofocus
@@ -45,7 +44,6 @@
           <q-select
             label="Tipos de entrega"
             ref="tipoEntrega"
-            style="width: 99%"
             filled
             dense
             v-model="tipoEntrega"
@@ -57,7 +55,6 @@
           <q-select
             label="Empaque"
             ref="tipoEmpaque"
-            style="width: 99%"
             filled
             dense
             input-debounce="0"
@@ -67,13 +64,21 @@
             @input="asignarEmpaque"
           >
             <template v-if="tipoEmpaque" v-slot:append>
-              <q-icon name="cancel" @click.stop="tipoEmpaque = null" class="cursor-pointer" />
+              <q-icon name="add_circle" color="teal" @click.stop="asignarEmpaque(tipoEmpaque)" class="cursor-pointer">
+                <q-tooltip
+                  anchor="center left"
+                  self="center right"
+                  :offset="[10, 10]"
+                >
+                  <strong>Agregar {{ tipoEmpaque.label }}</strong>
+                </q-tooltip>
+              </q-icon>
             </template>
           </q-select>
         </div>
-        <div class="col-md-2 col-sm-2 col-xs-6">
+        <div class="col-md-2 col-sm-2 col-xs-5">
           <q-input
-            label="Cantidad de empaque"
+            label="Cantidad de empaques"
             ref="cantidadEmpaque"
             filled
             dense
@@ -82,33 +87,18 @@
             v-model="cantidadEmpaque"
           />
         </div>
-        <div class="col-md-1 col-xs-12 text-right q-gutter-x-sm">
-          <q-page-sticky
-            position="bottom-right"
-            :offset="[18, 18]"
-            v-if="$q.screen.lt.md"
-          >
-            <q-btn fab icon="done" color="teal" :disable="factura.length === 0 ? true : false">
-              <q-tooltip
-                anchor="center left"
-                self="center right"
-                :offset="[10, 10]"
-              >
-                <strong>Finalizar Embajale</strong>
-              </q-tooltip>
-            </q-btn>
-          </q-page-sticky>
+        <div class="col-md-12 col-xs-12 text-right q-gutter-x-sm">
           <q-btn
             color="teal"
             text-color="white"
             label="Finalizar"
             size="15px"
             type="submit"
+            v-if="factura.length > 0"
             :disable="factura.length === 0 ? true : false"
-            v-else
           >
             <q-tooltip anchor="center left" self="center right" :offset="[10, 10]">
-              <strong>Finalizar Embajale</strong>
+              <strong>Finalizar Embalaje</strong>
             </q-tooltip>
           </q-btn>
           <q-btn
@@ -118,7 +108,11 @@
             size="15px"
             type="reset"
             v-if="factura.length === 0 ? false : true"
-          />
+          >
+            <q-tooltip anchor="bottom middle" self="top middle">
+              <strong>Cancelar Embalaje</strong>
+            </q-tooltip>
+          </q-btn>
         </div>
       </q-form>
     </div>
@@ -128,6 +122,7 @@
         labelInput="Código del producto"
         :data="factura"
         :header="columns"
+        :search="true"
         @enter="obtenerProducto"
         @clickButton="productoScanner = !productoScanner"
       />
@@ -261,12 +256,26 @@
             :loading="loadingGuardarEmbalaje"
           >
             <template v-slot:loading>
-              <q-spinner color="teal" />
+              <q-spinner color="white" />
             </template>
           </q-btn>
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-page-sticky
+      position="bottom-right"
+      :offset="[18, 18]"
+    >
+      <q-btn fab icon="receipt" color="teal" @click="show()">
+        <q-tooltip
+          anchor="center left"
+          self="center right"
+          :offset="[10, 10]"
+        >
+          <strong>Facturas asociadas</strong>
+        </q-tooltip>
+      </q-btn>
+    </q-page-sticky>
   </div>
 </template>
 
@@ -285,6 +294,7 @@ export default {
   },
   data () {
     return {
+      modalFacturasAsociadas: null,
       productoScanner: false,
       /**
        * Fecha inicio del empaque
@@ -310,7 +320,7 @@ export default {
        * Cantiad de empaque del producto seleccionado
        * @type {Object} Producto seleccionado
        */
-      cantidadEmpaque: 0,
+      cantidadEmpaque: null,
       /**
        * Producto seleccionado
        * @type {Object} Producto seleccionado
@@ -422,6 +432,20 @@ export default {
     ...mapGetters([GETTERS.GET_USER])
   },
   methods: {
+    show () {
+      this.modalFacturasAsociadas = this.$q.bottomSheet({
+        title: 'Facturas Asociadas',
+        actions: [
+          {
+            label: 'Drive',
+            icon: 'receipt',
+            id: 'drive'
+          }
+        ]
+      }).onOk(action => {
+        // console.log('Action chosen:', action.id)
+      })
+    },
     asignarEmpaque (data) {
       if (this.$refs.codigoFactura.validate()) {
         this.loadingPage('Asignando empaque...')
@@ -455,24 +479,31 @@ export default {
     guardarEmbalaje () {
       this.$refs.cantidadEmbalar.validate()
       if (!this.$refs.cantidadEmbalar.hasError) {
-        this.loadingGuardarEmbalaje = true
-        this.$services.putData(['factura', this.codigoFactura, 'detalles', this.productoSelected.codigo_producto], {
-          cantidad_embalada: this.cantidadEmbalar
-        })
-          .then(({ res }) => {
-            this.notify(this, res.data, 'positive', 'thumb_up')
-            this.product = false
-            this.loadingGuardarEmbalaje = false
-            this.obtenerFactura(this.codigoFactura)
-            this.cantidadEmbalar = 1
+        if (this.cantidadEmpaque) {
+          this.loadingGuardarEmbalaje = true
+          this.$services.postData(['factura', this.codigoFactura, 'asignar-articulo'], {
+            id_embalaje: this.cantidadEmpaque,
+            cod_articulo: this.productoSelected.codigo_producto,
+            unidad: this.productoSelected.unidad,
+            cantidad: this.cantidadEmbalar
           })
+            .then(({ res }) => {
+              this.notify(this, 'embalado exitosamente', 'positive', 'thumb_up')
+              this.product = false
+              this.loadingGuardarEmbalaje = false
+              this.obtenerFactura(this.codigoFactura)
+              this.cantidadEmbalar = 1
+            })
+        } else {
+          this.notify(this, 'no a seleccionado un empaque', 'negative', 'warning')
+        }
       }
     },
     /**
      * Obtener lista de tipos de empaques
      */
     async obtenerEmpaques () {
-      const { res } = await this.$services.getData(['empaques', ''])
+      const { res } = await this.$services.getData(['empaques'])
       this.listaTipoEmpaque = res.data.map(element => {
         return {
           label: element.nombre,
@@ -516,11 +547,9 @@ export default {
      * Finalizar empaque, guarda los cambios en la factura
      */
     async finalizarEmpaque () {
-      await this.$services.putData(['factura', this.codigoFactura, 0], { fecha_ini: this.fecha_ini })
       const { res } = await this.$services.putData(['factura', this.codigoFactura, 1], {
-        tipo_entrega: this.tipoEntrega.value,
         codigo_empleado: this[GETTERS.GET_USER].codigo,
-        observacion_embalado: this.observacion
+        codigo_tipo_entrega: this.tipoEntrega.value
       })
       if (res.data === 'Empaque Finalizado') {
         this.cancelarFactura()
@@ -554,6 +583,7 @@ export default {
     obtenerFactura (code) {
       this.codigoFactura = typeof code !== 'string' ? this.codigoFactura : code
       this.loadingFactura = true
+      this.loadingPage('Buscando factura...')
       this.$services.getOneData(['factura', this.codigoFactura, 'detalles'])
         .then(({ res }) => {
           res.data.length <= 0 ? this.notify(this, 'Factura no encontrada', 'negative', 'warning') : this.fecha_ini = date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm:ss')
@@ -561,8 +591,10 @@ export default {
           this.factura = res.data
           this.persistent = false
           this.$barcodeScanner.destroy()
+          this.$q.loading.hide()
         })
         .catch((e) => {
+          this.$q.loading.hide()
           this.notify(this, 'Factura no encontrada', 'negative', 'warning')
           this.loadingFactura = false
           this.factura = []

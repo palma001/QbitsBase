@@ -1,16 +1,17 @@
 <template>
   <q-card class="my-card">
     <q-card-section class="row justify-between">
-      <div class="text-h6 col-4">
+      <div class="text-h6 col-auto">
         {{ title }}
       </div>
       <q-input
         v-model="text"
         type="text"
-        class="col-4"
+        class="col-6"
         dense
         filled
         autofocus
+        v-if="search"
         :label="labelInput"
         @keyup.enter="enter"
       >
@@ -73,6 +74,10 @@ export default {
     labelInput: {
       type: String,
       default: 'Label'
+    },
+    search: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

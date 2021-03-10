@@ -29,56 +29,23 @@
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
         </template>
-         <template v-slot:top>
-          <div class="col-2 q-table__title">Empaques</div>
-          <q-space />
-          <q-select
-            option-value="name"
-            style="min-width: 200px"
-            multiple
-            outlined
-            dense
-            options-dense
-            emit-value
-            map-options
-            options-cover
-            v-model="visibleColumns"
-            :display-value="$q.lang.table.columns"
-            :options="columns"
-          />
-         </template>
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td key="codigo" :props="props">
-              {{ props.row.codigo }}
-            </q-td>
-            <q-td key="status" :props="props">
-              <q-badge :color="statusFactura[props.row.status].color" class="q-pa-xs">
-                {{ statusFactura[props.row.status].text }}
-              </q-badge>
-            </q-td>
-            <q-td key="fecha_emision" :props="props">
-              {{ dateFormat(props.row.fecha_emision) }}
-            </q-td>
-            <q-td key="fecha_inicio_empaque" :props="props">
-              {{ dateFormat(props.row.fecha_inicio_empaque) }}
-            </q-td>
-            <q-td key="fecha_fin_empaque" :props="props">
-              {{ dateFormat(props.row.fecha_fin_empaque) }}
-            </q-td>
-            <q-td key="tiempo_empaque" :props="props">
-              {{ dateDiff(props.row.fecha_inicio_empaque, props.row.fecha_fin_empaque) }}
-            </q-td>
-            <q-td key="fecha_entrega_transporte" :props="props">
-              {{ dateFormat(props.row.fecha_entrega_transporte) }}
-            </q-td>
-            <q-td key="fecha_entrega_cliente" :props="props">
-              {{ dateFormat(props.row.fecha_entrega_cliente) }}
-            </q-td>
-            <q-td key="tiempo_entrega" :props="props">
-              {{ dateDiff(props.row.fecha_entrega_transporte, props.row.fecha_entrega_cliente) }}
-            </q-td>
-          </q-tr>
+        <template v-slot:top>
+        <div class="col-2 q-table__title">Empaques</div>
+        <q-space />
+        <q-select
+          option-value="name"
+          style="min-width: 200px"
+          multiple
+          outlined
+          dense
+          options-dense
+          emit-value
+          map-options
+          options-cover
+          v-model="visibleColumns"
+          :display-value="$q.lang.table.columns"
+          :options="columns"
+        />
         </template>
       </q-table>
     </div>
@@ -96,12 +63,15 @@ export default {
   data () {
     return {
       visibleColumns: [
-        'status',
-        'fecha_emision',
-        'fecha_inicio_empaque',
-        'iron',
+        'codigo',
+        'fecha_asignado_entregador',
+        'fecha_registro',
+        'tiempo_alistamiento',
         'fecha_fin_empaque',
-        'tiempo_empaque'
+        'tiempo_empaque',
+        'tiempo_embalaje',
+        'tiempo_entrega',
+        'monto'
       ],
       /**
        * Lista de estados
@@ -156,53 +126,37 @@ export default {
           sortable: true
         },
         {
-          name: 'status',
+          name: 'fecha_asignado_entregador',
           align: 'left',
-          label: 'Estado',
-          field: 'status',
+          label: 'Fecha de entrega al empacador',
+          field: 'fecha_asignado_entregador',
           sortable: true
         },
         {
-          name: 'fecha_emision',
+          name: 'fecha_registro',
           label: 'Fecha de emision',
-          field: 'fecha_emision',
+          field: 'fecha_registro',
           align: 'left',
           sortable: true
         },
         {
-          name: 'fecha_inicio_empaque',
-          label: 'Inicio del empaque',
-          field: 'fecha_inicio_empaque',
-          align: 'left',
-          sortable: true
-        },
-        {
-          name: 'fecha_fin_empaque',
-          label: 'Fin del empaque',
-          field: 'fecha_fin_empaque',
-          align: 'left',
-          sortable: true
-        },
-        {
-          name: 'tiempo_empaque',
+          name: 'tiempo_alistamiento',
           label: 'Tiempo de empaque',
-          field: 'tiempo_empaque',
-          align: 'left',
-          classes: 'bg-grey-4 ellipsis text-dark',
-          headerClasses: 'bg-teal text-white',
-          sortable: true
-        },
-        {
-          name: 'fecha_entrega_transporte',
-          label: 'Fecha de entrega en transporte',
-          field: 'fecha_entrega_transporte',
+          field: 'tiempo_alistamiento',
           align: 'left',
           sortable: true
         },
         {
-          name: 'fecha_entrega_cliente',
-          label: 'Fecha de entrega',
-          field: 'fecha_entrega_cliente',
+          name: 'tiempo_confirmacion',
+          label: 'Tiempo de confirmación',
+          field: 'tiempo_confirmacion',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'tiempo_embalaje',
+          label: 'Tiempo de embalaje',
+          field: 'tiempo_embalaje',
           align: 'left',
           sortable: true
         },
@@ -211,8 +165,13 @@ export default {
           label: 'Tiempo de entrega',
           field: 'tiempo_entrega',
           align: 'left',
-          classes: 'bg-grey-4 ellipsis',
-          headerClasses: 'bg-teal text-white',
+          sortable: true
+        },
+        {
+          name: 'monto',
+          label: 'Total',
+          field: 'monto',
+          align: 'left',
           sortable: true
         }
       ],
@@ -240,8 +199,8 @@ export default {
       this.loadingTable = true
       const { res } = await this.$services.getData(['factura'],
         {
-          fecha_ini: `${this.desde} 01:00:00`,
-          fecha_fin: `${this.hasta} 23:59:59`
+          fecha: this.desde,
+          entregado: 'N'
         }
       )
       console.log(res.data)

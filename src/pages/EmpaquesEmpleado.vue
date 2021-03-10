@@ -28,27 +28,6 @@
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
         </template>
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td key="codigo" :props="props">
-              {{ props.row.codigo }}
-            </q-td>
-            <q-td key="status" :props="props">
-              <q-badge :color="statusFactura[props.row.status].color" class="q-pa-xs">
-                {{ statusFactura[props.row.status].text }}
-              </q-badge>
-            </q-td>
-            <q-td key="fecha_emision" :props="props">
-              {{ dateFormat(props.row.fecha_emision) }}
-            </q-td>
-            <q-td key="fecha_inicio_empaque" :props="props">
-              {{ dateFormat(props.row.fecha_inicio_empaque) }}
-            </q-td>
-            <q-td key="fecha_fin_empaque" :props="props">
-              {{ dateFormat(props.row.fecha_fin_empaque) }}
-            </q-td>
-          </q-tr>
-        </template>
       </q-table>
     </div>
   </div>
@@ -116,30 +95,51 @@ export default {
           sortable: true
         },
         {
-          name: 'status',
+          name: 'fecha_asignado_entregador',
           align: 'left',
-          label: 'Estado',
-          field: 'status',
+          label: 'Fecha de entrega al empacador',
+          field: 'fecha_asignado_entregador',
           sortable: true
         },
         {
-          name: 'fecha_emision',
+          name: 'fecha_registro',
           label: 'Fecha de emision',
-          field: 'fecha_emision',
+          field: 'fecha_registro',
           align: 'left',
           sortable: true
         },
         {
-          name: 'fecha_inicio_empaque',
-          label: 'Inicio del empaque',
-          field: 'fecha_inicio_empaque',
+          name: 'tiempo_alistamiento',
+          label: 'Tiempo de empaque',
+          field: 'tiempo_alistamiento',
           align: 'left',
           sortable: true
         },
         {
-          name: 'fecha_fin_empaque',
-          label: 'Fin del empaque',
-          field: 'fecha_fin_empaque',
+          name: 'tiempo_confirmacion',
+          label: 'Tiempo de confirmación',
+          field: 'tiempo_confirmacion',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'tiempo_embalaje',
+          label: 'Tiempo de embalaje',
+          field: 'tiempo_embalaje',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'tiempo_entrega',
+          label: 'Tiempo de entrega',
+          field: 'tiempo_entrega',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'total',
+          label: 'Total',
+          field: 'total',
           align: 'left',
           sortable: true
         }
@@ -168,11 +168,10 @@ export default {
       this.loadingTable = true
       const { res } = await this.$services.getData(['factura', 'empleado-empaque', this[GETTERS.GET_USER].codigo],
         {
-          fecha_ini: `${this.desde} 01:00:00`,
-          fecha_fin: `${this.hasta} 23:59:59`
+          fecha_ini: this.desde,
+          fecha_fin: this.hasta
         }
       )
-      console.log(res.data)
       this.data = res.data
       this.loadingTable = false
     },
@@ -184,7 +183,6 @@ export default {
       this.detallesFactura = true
       this.oneFactura = data
       this.productos = data.detalles
-      console.log(data)
     },
     /**
      * Da dormato a la fecha
