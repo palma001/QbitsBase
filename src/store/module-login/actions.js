@@ -47,7 +47,7 @@ export const actions = {
         self.$router.push({ name: 'EmpaquesCliente' })
         break
       case 'UA':
-        self.$router.push({ name: 'EmpaquesAdministrador' })
+        self.$router.push({ name: 'Geolocation' })
         break
       default:
         self.$router.push({ name: 'EmpaquesTransporte' })

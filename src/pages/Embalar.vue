@@ -640,8 +640,8 @@ export default {
       this.loadingFactura = false
       data.forEach(productsAll => {
         res.data.forEach(productEmbalados => {
-          if (Number(productEmbalados.codigo_producto) === Number(productsAll.codigo_producto)) {
-            productsAll.cantidad_embalado += Number(productEmbalados.cantidad)
+          if (productEmbalados.codigo_producto === productsAll.codigo_producto) {
+            productsAll.cantidad_embalado += productEmbalados.cantidad
           }
         })
         this.factura.push(productsAll)
