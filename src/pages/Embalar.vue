@@ -1,46 +1,46 @@
 <template>
   <div class="q-pa-md row q-gutter-y-xs">
-    <div class="col-12 q-ml-md">
+    <div class="col-12">
       <p class="text-h6">
         Embalar Empaques
       </p>
     </div>
-    <div class="col-12">
+    <div class="col-12 row justify-between">
+      <div class="col-md-3 col-sm-3 col-xs-12 q-col-gutter-x-sm">
+        <q-input
+          filled
+          dense
+          autofocus
+          label="Código Factura"
+          v-model="codigoFactura"
+          ref="codigoFactura"
+          :disable="factura.length === 0 ? false : true"
+          :rules="[val => !!val || 'Agregar codigo de factura']"
+          @keyup.enter="obtenerFactura"
+        >
+          <template v-slot:append>
+            <q-btn
+              color="teal"
+              text-color="white"
+              size="xs"
+              icon="qr_code"
+              round
+              @click="persistent = !persistent"
+            >
+              <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
+                <strong>Scannear</strong>
+              </q-tooltip>
+            </q-btn>
+          </template>
+        </q-input>
+      </div>
       <q-form
         ref="myForm"
-        class="row justify-between q-gutter-x-xs"
+        class="col-md-9 col-sm-9 col-xs-12 row q-col-gutter-x-sm"
         @submit="validarEmbalaje"
         @reset="cancelarFactura"
       >
-        <div class="col-md-3 col-sm-3 col-xs-5">
-          <q-input
-            filled
-            dense
-            autofocus
-            label="Código Factura"
-            v-model="codigoFactura"
-            ref="codigoFactura"
-            :disable="factura.length === 0 ? false : true"
-            :rules="[val => !!val || 'Agregar codigo de factura']"
-            @keyup.enter="obtenerFactura"
-          >
-            <template v-slot:append>
-              <q-btn
-                color="teal"
-                text-color="white"
-                size="xs"
-                icon="qr_code"
-                round
-                @click="persistent = !persistent"
-              >
-                <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
-                  <strong>Scannear</strong>
-                </q-tooltip>
-              </q-btn>
-            </template>
-          </q-input>
-        </div>
-        <div class="col-md-3 col-sm-3 col-xs-6">
+        <div class="col-md-3 col-sm-4 col-xs-6">
           <q-select
             label="Tipos de entrega"
             ref="tipoEntrega"
@@ -51,7 +51,7 @@
             :rules="[val => !!val || 'El campo es requerido.']"
           />
         </div>
-        <div class="col-md-3 col-sm-3 col-xs-6">
+        <div class="col-md-3 col-sm-4 col-xs-6">
           <q-select
             label="Empaque"
             ref="tipoEmpaque"
@@ -75,22 +75,12 @@
             </template>
           </q-select>
         </div>
-        <div class="col-md-2 col-sm-2 col-xs-5">
-          <q-input
-            label="Cantidad de empaques"
-            ref="cantidadEmpaque"
-            filled
-            dense
-            input-debounce="0"
-            disable
-            v-model="cantidadEmpaque"
-          />
-        </div>
-        <div class="col-md-12 col-xs-12 text-right q-gutter-x-sm">
+        <q-space/>
+        <div class="col-md-6 col-sm-4 col-xs-12 text-right q-gutter-x-sm">
           <q-btn
             color="teal"
             text-color="white"
-            label="Finalizar"
+            icon="check"
             size="15px"
             type="submit"
             v-if="factura.length > 0"
@@ -333,7 +323,7 @@ export default {
        * Cantiad de empaque del producto seleccionado
        * @type {Object} Producto seleccionado
        */
-      cantidadEmpaque: null,
+      cantidadEmpaque: [],
       /**
        * Producto seleccionado
        * @type {Object} Producto seleccionado
@@ -381,7 +371,7 @@ export default {
       codigoFactura: null,
       /**
        * Valor del tipo de empaque
-       * @type {Array} tipo de empaque
+       * @type {Object} tipo de empaque
        */
       tipoEmpaque: null,
       /**
@@ -409,6 +399,10 @@ export default {
        * @type {Array} datos de los productos
        */
       productosFaltantes: [],
+      /**
+       * Observacion del embalaje
+       * @type{String}
+       */
       observacion: '',
       /**
        * Columnas de la tabla de los productos de la factura
@@ -464,24 +458,20 @@ export default {
         // console.log('Action chosen:', action.id)
       })
     },
+    /**
+     * Asignar el empaque a la factura
+     */
     asignarEmpaque (data) {
-      if (this.$refs.codigoFactura.validate()) {
-        this.loadingPage('Asignando empaque...')
-        this.$services.postData(['factura', this.codigoFactura, 'asignar-embalaje'], {
-          cod_alistador: this[GETTERS.GET_USER].codigo,
-          cod_empaque: data.value
-        })
-          .then(({ res }) => {
-            this.cantidadEmpaque = res.data.item
-            this.$q.loading.hide()
-            this.notify(this, 'Empaque asignado', 'positive', 'thumb_up')
-          })
-          .catch(e => {
-            this.$q.loading.hide()
-            this.notify(this, 'algo ha salido mal', 'negative', 'warning')
-          })
+      const product = {
+        ...data,
+        productos: []
       }
+      this.cantidadEmpaque.push(product)
     },
+    /**
+     * Loading
+     * @type {String} mensaje del liading
+     */
     loadingPage (message) {
       this.$q.loading.show({
         spinner: QSpinnerGears,
@@ -492,34 +482,52 @@ export default {
       })
     },
     /**
+     * Mostar los productos embalados
+     */
+    mostrarProductosEmbalados () {
+      this.factura.map(productsAll => {
+        productsAll.cantidad_embalado = 0
+        this.cantidadEmpaque.forEach(element => {
+          const product = element.productos.find(productEmbalados => Number(productsAll.codigo_producto) === Number(productEmbalados.codigo_producto))
+          if (product && Number(productsAll.codigo_producto) === Number(product.codigo_producto)) {
+            productsAll.cantidad_embalado += product.cantidad_embalado
+            return productsAll
+          }
+        })
+      })
+    },
+    /**
      * Guardar embalaje del producto
      */
     guardarEmbalaje () {
-      this.$refs.cantidadEmbalar.validate()
-      this.valueText = null
-      if (!this.$refs.cantidadEmbalar.hasError) {
-        if (this.cantidadEmpaque) {
-          this.loadingGuardarEmbalaje = true
-          this.loadingProductos = true
-          this.$services.postData(['factura', this.codigoFactura, 'asignar-articulo'], {
-            id_embalaje: this.cantidadEmpaque,
-            cod_articulo: this.productoSelected.codigo_producto,
-            unidad: this.productoSelected.unidad,
-            cantidad: this.cantidadEmbalar
-          })
-            .then(({ res }) => {
-              this.notify(this, 'embalado exitosamente', 'positive', 'thumb_up')
-              this.product = false
-              this.loadingGuardarEmbalaje = false
-              this.loadingProductos = false
-              this.obtenerFactura(this.codigoFactura)
-              this.cantidadEmbalar = 1
-              this.productoSelected = {}
-              this.valueText = ''
-            })
-        } else {
-          this.notify(this, 'no a seleccionado un empaque', 'negative', 'warning')
-        }
+      if (this.cantidadEmpaque.length > 0) {
+        this.valueText = null
+        this.loadingGuardarEmbalaje = true
+        this.loadingProductos = true
+        setTimeout(() => {
+          if (this.productoSelected.cantidad > this.productoSelected.cantidad_embalado && this.$refs.cantidadEmbalar.validate()) {
+            const product = {
+              codigo_producto: this.productoSelected.codigo_producto,
+              cantidad_embalado: Number(this.cantidadEmbalar),
+              unidad: this.productoSelected.unidad
+            }
+            this.cantidadEmpaque[this.cantidadEmpaque.length - 1].productos.push(product)
+            this.product = false
+            this.productoSelected = {}
+            this.cantidadEmbalar = 1
+            this.loadingGuardarEmbalaje = false
+            this.loadingProductos = false
+            this.valueText = ''
+            this.mostrarProductosEmbalados()
+            this.notify(this, 'embalado exitosamente', 'positive', 'thumb_up')
+          } else {
+            this.notify(this, 'La cantidad a embalar es mayor a la cantidad de la factura', 'negative', 'warning')
+            this.loadingGuardarEmbalaje = false
+            this.loadingProductos = false
+          }
+        }, 500)
+      } else {
+        this.notify(this, 'no a seleccionado un empaque', 'negative', 'warning')
       }
     },
     /**
@@ -571,9 +579,10 @@ export default {
      */
     finalizarEmpaque () {
       this.loadingFinalizar = true
-      this.$services.putData(['factura', this.codigoFactura, 1], {
+      this.$services.putData(['factura', this.codigoFactura, 'finalizar'], {
         codigo_empleado: this[GETTERS.GET_USER].codigo,
-        codigo_tipo_entrega: this.tipoEntrega.value
+        codigo_tipo_entrega: this.tipoEntrega.value,
+        empaquetado: this.cantidadEmpaque
       })
         .then(({ res }) => {
           if (res.data) {
@@ -581,7 +590,6 @@ export default {
             this.dialogFinalizarEmpaque = false
             this.notify(this, res.data, 'positive', 'thumb_up')
             this.loadingFinalizar = false
-            this.tipoEmpaque = null
           }
         })
         .catch(e => {
@@ -595,10 +603,9 @@ export default {
     cancelarFactura () {
       this.factura = []
       this.codigoFactura = null
-      this.tipoEmpaque = []
       this.tipoEntrega = null
       this.tipoEmpaque = null
-      this.cantidadEmpaque = 0
+      this.cantidadEmpaque = []
       this.resetValidation()
     },
     /**
@@ -656,7 +663,7 @@ export default {
      * @param {String} codigo codigo del producto
      */
     obtenerProducto (codigo) {
-      const producto = this.factura.filter(row => Number(row.codigo_producto) === Number(codigo))[0]
+      const producto = this.factura.find(row => Number(row.codigo_producto) === Number(codigo))
       if (producto) {
         this.productoSelected = producto
         this.product = true
