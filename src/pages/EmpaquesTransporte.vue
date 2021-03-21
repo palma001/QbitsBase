@@ -37,23 +37,9 @@
           ref="ruta"
           filled
           dense
-          multiple
           v-model="ruta"
           :options="rutas"
         >
-        <template v-slot:option="{ itemProps, itemEvents, opt, selected, toggleOption }">
-            <q-item
-              v-bind="itemProps"
-              v-on="itemEvents"
-            >
-              <q-item-section>
-                <q-item-label v-html="opt.label" ></q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-toggle :value="selected" @input="toggleOption(opt)" />
-              </q-item-section>
-            </q-item>
-          </template>
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">
@@ -555,7 +541,7 @@ export default {
   },
   created () {
     this.obtenerFacturas()
-    this.obtenerTipoEntrega()
+    this.obtenerVehiculos()
     this.obtenerAxiliares()
     this.obtenerRutas()
     this.$barcodeScanner.init(this.obtenerFactura)
@@ -652,11 +638,11 @@ export default {
     /**
      * Obtener lista de tipos de transporte
      */
-    async obtenerTipoEntrega () {
+    async obtenerVehiculos () {
       const { res } = await this.$services.getData(['tipos-transporte', ''])
       this.listaTipoTransporte = res.data.map(element => {
         return {
-          label: element.nombre,
+          label: `${element.tipo_vehiculo} (${element.nombre})`,
           value: element.codigo
         }
       })
