@@ -372,35 +372,6 @@ export default {
       observacion: '',
       entregadoA: '',
       /**
-       * Lista de estados
-       * @type {Object} estatus y sus codigos
-       */
-      statusFactura: {
-        PE: {
-          text: 'Por embalar'
-        },
-        LE: {
-          text: 'Embalado',
-          color: 'info'
-        },
-        ET: {
-          text: 'En transporte',
-          color: 'warning'
-        },
-        ER: {
-          text: 'En ruta',
-          color: 'warning'
-        },
-        EC: {
-          text: 'Entregado',
-          color: 'teal'
-        },
-        PD: {
-          text: 'Devuelto',
-          color: 'negative'
-        }
-      },
-      /**
        * Loading al buscar la factura
        * @type {Boolean} estatus del loading factura
        */
