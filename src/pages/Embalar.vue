@@ -104,18 +104,86 @@
       </q-form>
     </div>
     <div class="col-12 q-mt-sm">
-      <b-markup-table
-        title="Lista de productos"
-        labelInput="Código del producto"
-        :data="factura"
-        :header="columns"
-        :search="true"
-        :loading="loadingProductos"
-        :valueText="valueText"
-        @enter="obtenerProducto"
-        @clickButton="productoScanner = !productoScanner"
-        @check="fourth = !fourth"
-      />
+      <q-tabs
+          v-model="tab"
+          align="left"
+          narrow-indicator
+          class="q-mb-lg"
+        >
+          <q-tab name="productosPorEmbalar" label="Productos por embalar" />
+          <q-tab name="detallesDeEmbalaje" label="Detalles de embalaje" />
+      </q-tabs>
+      <q-tab-panels
+          v-model="tab"
+          animated
+          transition-prev="scale"
+          transition-next="scale"
+        >
+          <q-tab-panel name="productosPorEmbalar" class="q-pa-none">
+            <b-markup-table
+              title="Lista de productos"
+              labelInput="Código del producto"
+              :data="factura"
+              :header="columns"
+              :search="true"
+              :loading="loadingProductos"
+              :valueText="valueText"
+              @enter="obtenerProducto"
+              @clickButton="productoScanner = !productoScanner"
+              @check="fourth = !fourth"
+            />
+          </q-tab-panel>
+          <q-tab-panel name="detallesDeEmbalaje" class="row q-col-gutter-md">
+            <div
+              class="col-md-4 col-sm-6 col-xs-12"
+              v-for="(empaque, index) in cantidadEmpaque"
+              :key="empaque.id"
+            >
+              <q-list
+                class="shadow-3 rounded-borders"
+                style="width: 100%;"
+              >
+                <q-item>
+                  <q-item-section avatar>
+                    <q-avatar>
+                      <q-icon name="archive" size="30px"></q-icon>
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>
+                    {{ empaque.label }} - {{ index + 1 }}
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-badge color="negative" :label="empaque.productos.length" rounded/>
+                    <q-tooltip anchor="bottom middle" self="top middle">
+                      <strong>Cantidad de items</strong>
+                    </q-tooltip>
+                  </q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item
+                  class="q-ml-md"
+                  v-for="producto in empaque.productos"
+                  :key="producto.id"
+                >
+                  <q-item-section>
+                    <q-item-label lines="4">
+                      {{ producto.descripcion }}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-badge color="teal" :label="producto.cantidad_embalado" rounded/>
+                    <q-tooltip anchor="bottom middle" self="top middle">
+                      <strong>Cantidad Embalada</strong>
+                    </q-tooltip>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
+            <p class="text-h5" v-if="cantidadEmpaque.length <= 0">
+              No hay empaques seleccionado
+            </p>
+          </q-tab-panel>
+      </q-tab-panels>
     </div>
     <b-scanner :show="persistent" @eventScanner="obtenerFactura"/>
     <b-scanner :show="productoScanner" @eventScanner="obtenerProducto"/>
@@ -265,7 +333,14 @@
       position="bottom-right"
       :offset="[18, 18]"
     >
-      <q-btn fab icon="receipt" color="teal" @click="show()">
+      <q-btn
+        fab
+        icon="receipt"
+        color="teal"
+        :loading="loadingFacturasAsociadas"
+        @click="show()"
+        :disable="loadingFacturasAsociadas"
+      >
         <q-tooltip
           anchor="center left"
           self="center right"
@@ -273,6 +348,10 @@
         >
           <strong>Facturas asociadas</strong>
         </q-tooltip>
+        <q-badge color="red" floating transparent rounded>{{ facturasAsociadas.length }}</q-badge>
+        <template v-slot:loading>
+          <q-spinner color="white" />
+        </template>
       </q-btn>
     </q-page-sticky>
   </div>
@@ -293,12 +372,46 @@ export default {
   },
   data () {
     return {
+      tab: 'productosPorEmbalar',
+      /**
+       * Id de la factura
+       * @type {Number} id de la factura
+       */
       factId: 0,
+      /**
+       * Estado para el input de agregar cantidad del producto
+       * @type {Boolean} estado del input
+       */
       fourth: false,
+      /**
+       * Loading de las facturas asociadas
+       * @type {Boolean} loading de facturas asociadas
+       */
+      loadingFacturasAsociadas: false,
+      /**
+       * Codigo del producto
+       * @type {String} codigo del producto
+       */
       valueText: '',
+      /**
+       * Loadind de la tabla de productos
+       * @type {Boolean} loading de productos
+       */
       loadingProductos: false,
+      /**
+       * Modal de facturas
+       * @type {Array} modal de facturas asociadas
+       */
       modalFacturasAsociadas: null,
+      /**
+       * Scanner de productos
+       * @type {Boolan} estado del escaner de producto
+       */
       productoScanner: false,
+      /**
+       * Loading al finalizar el embalaje
+       * @type {Boolean} loading finalizar embalaje
+       */
       loadingFinalizar: false,
       /**
        * Fecha inicio del empaque
@@ -430,7 +543,12 @@ export default {
           label: 'Cantidad embalado',
           align: 'right'
         }
-      ]
+      ],
+      /**
+       * Lista de facturas asociadas
+       * @type {String} facturas asociadas
+       */
+      facturasAsociadas: []
     }
   },
   created () {
@@ -445,18 +563,23 @@ export default {
     ...mapGetters([GETTERS.GET_USER])
   },
   methods: {
+    /**
+     * Facturas asociadas
+     */
     show () {
       this.modalFacturasAsociadas = this.$q.bottomSheet({
         title: 'Facturas Asociadas',
-        actions: [
-          {
-            label: 'Drive',
-            icon: 'receipt',
-            id: 'drive'
-          }
-        ]
+        actions: (() => {
+          return this.facturasAsociadas.map(factura => {
+            return {
+              label: `${factura.PREFIJO}-${factura.codigo}`,
+              icon: 'receipt',
+              id: `${factura.PREFIJO}-${factura.codigo}`
+            }
+          })
+        })()
       }).onOk(action => {
-        // console.log('Action chosen:', action.id)
+        this.obtenerFactura(action.id)
       })
     },
     /**
@@ -522,6 +645,7 @@ export default {
         setTimeout(() => {
           if (this.productoSelected.cantidad > this.productoSelected.cantidad_embalado) {
             const product = {
+              descripcion: this.productoSelected.descripcion,
               codigo_producto: this.productoSelected.codigo_producto,
               cantidad_embalado: Number(this.cantidadEmbalar),
               unidad: this.productoSelected.unidad
@@ -625,12 +749,18 @@ export default {
         this.$refs.myForm.resetValidation()
       })
     },
+    /**
+     * Obtener las facturas por clientes
+     * @type {String} nit del cliente
+     */
     async getFacturaPorCliente (nit) {
+      this.loadingFacturasAsociadas = true
       const { res } = await this.$services.getData(['factura', 'cliente', nit], {
         fecha_ini: date.formatDate(date.subtractFromDate(Date.now(), { month: 2 }), 'YYYY-MM-DD'),
         fecha_fin: date.formatDate(Date.now(), 'YYYY-MM-DD')
       })
-      console.log(res)
+      this.loadingFacturasAsociadas = false
+      this.facturasAsociadas = res.data.filter(element => element.ESTADO === 'POR EMBALAR')
     },
     /**
      * Obtiene la factura
@@ -656,16 +786,15 @@ export default {
             this.loadingProductos = false
             this.factura = res.data
             this.$barcodeScanner.destroy()
-            this.$q.loading.hide()
           })
           .catch((e) => {
-            this.$q.loading.hide()
             this.notify(this, 'Factura no encontrada', 'negative', 'warning')
             this.loadingFactura = false
             this.factura = []
+            this.loadingProductos = false
           })
       } else {
-        this.notify(this, `La factura ya fue ${res.data.estado}`, 'negative', 'warning')
+        this.notify(this, `Factura ${res.data.estado}`, 'negative', 'warning')
       }
     },
     /**
