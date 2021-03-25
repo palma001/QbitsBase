@@ -14,6 +14,7 @@
           label="Código Factura"
           v-model="codigoFactura"
           ref="codigoFactura"
+          mask="XXXX-########"
           :disable="factura.length === 0 ? false : true"
           :rules="[val => !!val || 'Agregar codigo de factura']"
           @keyup.enter="obtenerFactura"
@@ -491,10 +492,11 @@ export default {
           const product = element.productos.find(productEmbalados => Number(productsAll.codigo_producto) === Number(productEmbalados.codigo_producto))
           if (product && Number(productsAll.codigo_producto) === Number(product.codigo_producto)) {
             productsAll.cantidad_embalado += product.cantidad_embalado
-            return productsAll
           }
         })
       })
+
+      this.factura = this.factura.filter(product => product.cantidad !== product.cantidad_embalado)
     },
     /**
      * Guardar embalaje del producto
@@ -620,15 +622,22 @@ export default {
      * Obtiene la factura
      * @param {String} code codigo de barra o Qr de la factura
      */
-    obtenerFactura (code) {
+    async obtenerFactura (code) {
       this.codigoFactura = typeof code !== 'string' ? this.codigoFactura : code
-      this.loadingFactura = true
       this.factura = []
+      this.loadingFactura = true
       this.loadingProductos = true
-      this.$services.getOneData(['factura', this.codigoFactura, 'detalles'])
+      const prefijoCodigo = this.codigoFactura.split('-')
+      const codigo = prefijoCodigo[1].toString().padStart(8, '0')
+      const prefijo = prefijoCodigo[0]
+      const { res } = await this.$services.getOneData(['factura', codigo, prefijo])
+      this.$services.getOneData(['factura', res.data.fact_id, 'detalles'])
         .then(({ res }) => {
           res.data.length <= 0 ? this.notify(this, 'Factura no encontrada', 'negative', 'warning') : this.fecha_ini = date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm:ss')
-          this.obtenerDetalleFacturaEmpacada(this.codigoFactura, res.data)
+          this.loadingProductos = false
+          this.factura = res.data
+          this.$barcodeScanner.destroy()
+          this.$q.loading.hide()
         })
         .catch((e) => {
           this.$q.loading.hide()
@@ -636,27 +645,6 @@ export default {
           this.loadingFactura = false
           this.factura = []
         })
-    },
-
-    /**
-     * Obtiene la factura
-     * @param {String} code codigo de barra o Qr de la factura
-     */
-    async obtenerDetalleFacturaEmpacada (code, data) {
-      const { res } = await this.$services.getOneData(['factura', code, 'articulos-embalados'])
-      this.loadingFactura = false
-      data.forEach(productsAll => {
-        res.data.forEach(productEmbalados => {
-          if (productEmbalados.codigo_producto === productsAll.codigo_producto) {
-            productsAll.cantidad_embalado += productEmbalados.cantidad
-          }
-        })
-        this.factura.push(productsAll)
-        this.loadingProductos = false
-      })
-      this.persistent = false
-      this.$barcodeScanner.destroy()
-      this.$q.loading.hide()
     },
     /**
      * Obtener producto

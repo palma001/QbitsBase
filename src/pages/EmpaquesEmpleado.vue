@@ -102,13 +102,6 @@ export default {
           sortable: true
         },
         {
-          name: 'fecha_registro',
-          label: 'Fecha de emision',
-          field: 'fecha_registro',
-          align: 'left',
-          sortable: true
-        },
-        {
           name: 'tiempo_alistamiento',
           label: 'Tiempo de empaque',
           field: 'tiempo_alistamiento',
@@ -137,9 +130,9 @@ export default {
           sortable: true
         },
         {
-          name: 'total',
-          label: 'Total',
-          field: 'total',
+          name: 'Items',
+          label: 'items',
+          field: 'items',
           align: 'left',
           sortable: true
         }
