@@ -194,7 +194,7 @@
                       color="negative"
                       size="sm"
                       style="width: 50px;"
-                      @click="eliminarProducto(index, empaque, producto)"
+                      @click="eliminarProducto(index, empaque)"
                     >
                       <q-tooltip anchor="bottom middle" self="top middle">
                         <strong>Eliminar producto</strong>
@@ -598,9 +598,11 @@ export default {
      * Eliminar empaque
      * @type {Number} index empaque
      */
-    eliminarProducto (index, empaque, producto) {
+    eliminarProducto (index, empaque) {
       empaque.productos.splice(index, 1)
-      this.obtenerFactura()
+      if (this.codigoFactura) {
+        this.obtenerFactura()
+      }
     },
     /**
      * Eliminar producto
@@ -608,7 +610,9 @@ export default {
      */
     eliminarEmbalaje (index) {
       this.cantidadEmpaque.splice(index, 1)
-      this.obtenerFactura()
+      if (this.codigoFactura) {
+        this.obtenerFactura()
+      }
     },
     /**
      * Facturas asociadas
