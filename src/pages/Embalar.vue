@@ -150,10 +150,28 @@
                     </q-avatar>
                   </q-item-section>
                   <q-item-section>
-                    {{ empaque.label }} - {{ index + 1 }}
+                    <q-item-label lines="4">
+                      {{ empaque.label }} - {{ index + 1 }}
+                    </q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    <q-badge color="negative" :label="empaque.productos.length" rounded/>
+                    <q-btn
+                      icon="delete"
+                      color="negative"
+                      size="sm"
+                      @click="eliminarEmbalaje(index)"
+                    >
+                      <q-tooltip anchor="bottom middle" self="top middle">
+                        <strong>Eliminar emppaque</strong>
+                      </q-tooltip>
+                    </q-btn>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-badge
+                      color="teal"
+                      rounded
+                      :label="empaque.productos.length"
+                    />
                     <q-tooltip anchor="bottom middle" self="top middle">
                       <strong>Cantidad de items</strong>
                     </q-tooltip>
@@ -162,13 +180,26 @@
                 <q-separator />
                 <q-item
                   class="q-ml-md"
-                  v-for="producto in empaque.productos"
+                  v-for="(producto, index) in empaque.productos"
                   :key="producto.id"
                 >
                   <q-item-section>
                     <q-item-label lines="4">
                       {{ producto.descripcion }}
                     </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn
+                      icon="delete"
+                      color="negative"
+                      size="sm"
+                      style="width: 50px;"
+                      @click="eliminarProducto(index, empaque)"
+                    >
+                      <q-tooltip anchor="bottom middle" self="top middle">
+                        <strong>Eliminar emppaque</strong>
+                      </q-tooltip>
+                    </q-btn>
                   </q-item-section>
                   <q-item-section side>
                     <q-badge color="teal" :label="producto.cantidad_embalado" rounded/>
@@ -563,6 +594,20 @@ export default {
     ...mapGetters([GETTERS.GET_USER])
   },
   methods: {
+    /**
+     * Eliminar empaque
+     * @type {Number} index empaque
+     */
+    eliminarProducto (index, empaque) {
+      empaque.productos.splice(index, 1)
+    },
+    /**
+     * Eliminar producto
+     * @type {Number} index producto
+     */
+    eliminarEmbalaje (index) {
+      this.cantidadEmpaque.splice(index, 1)
+    },
     /**
      * Facturas asociadas
      */
