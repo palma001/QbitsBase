@@ -4,7 +4,7 @@
       <div class="text-h6 col-auto">
         {{ title }}
       </div>
-      <div class="col-6">
+      <div class="col-xs-12 col-sm-12 col-md-6">
         <q-input
           v-model="text"
           type="text"
@@ -16,6 +16,19 @@
           @keyup.enter="enter"
         >
           <template v-slot:append>
+            <div>
+              <q-toggle
+                v-model="fourth"
+                checked-icon="check"
+                color="positive"
+                unchecked-icon="clear"
+                @input="check"
+              >
+                <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
+                  <strong>Agregar Cantidad</strong>
+                </q-tooltip>
+              </q-toggle>
+            </div>
             <q-btn
               color="teal"
               text-color="white"
@@ -93,6 +106,7 @@ export default {
   },
   data () {
     return {
+      fourth: false,
       text: ''
     }
   },
@@ -102,7 +116,11 @@ export default {
     }
   },
   methods: {
+    check (data) {
+      this.$emit('check', data)
+    },
     enter () {
+      console.log(this.text)
       this.$emit('enter', this.text)
     },
     clickButton () {

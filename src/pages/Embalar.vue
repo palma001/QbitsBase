@@ -117,6 +117,7 @@
         :valueText="valueText"
         @enter="obtenerProducto"
         @clickButton="productoScanner = !productoScanner"
+        @check="fourth = !fourth"
       />
     </div>
     <b-scanner :show="persistent" @eventScanner="obtenerFactura"/>
@@ -295,6 +296,7 @@ export default {
   },
   data () {
     return {
+      fourth: false,
       valueText: '',
       loadingProductos: false,
       modalFacturasAsociadas: null,
@@ -492,11 +494,13 @@ export default {
           const product = element.productos.find(productEmbalados => Number(productsAll.codigo_producto) === Number(productEmbalados.codigo_producto))
           if (product && Number(productsAll.codigo_producto) === Number(product.codigo_producto)) {
             productsAll.cantidad_embalado += product.cantidad_embalado
+            console.log(productsAll)
+            return productsAll
           }
         })
       })
-
-      this.factura = this.factura.filter(product => product.cantidad !== product.cantidad_embalado)
+      console.log(this.cantidadEmpaque)
+      // this.factura = this.factura.filter(product => product.cantidad !== product.cantidad_embalado)
     },
     /**
      * Guardar embalaje del producto
@@ -507,7 +511,7 @@ export default {
         this.loadingGuardarEmbalaje = true
         this.loadingProductos = true
         setTimeout(() => {
-          if (this.productoSelected.cantidad > this.productoSelected.cantidad_embalado && this.$refs.cantidadEmbalar.validate()) {
+          if (this.productoSelected.cantidad > this.productoSelected.cantidad_embalado) {
             const product = {
               codigo_producto: this.productoSelected.codigo_producto,
               cantidad_embalado: Number(this.cantidadEmbalar),
@@ -618,6 +622,13 @@ export default {
         this.$refs.myForm.resetValidation()
       })
     },
+    async getFacturaPorCliente (nit) {
+      const { res } = await this.$services.getData(['factura', 'cliente', nit], {
+        fecha_ini: date.formatDate(date.subtractFromDate(Date.now(), { month: 2 }), 'YYYY-MM-DD'),
+        fecha_fin: date.formatDate(Date.now(), 'YYYY-MM-DD')
+      })
+      console.log(res)
+    },
     /**
      * Obtiene la factura
      * @param {String} code codigo de barra o Qr de la factura
@@ -631,9 +642,12 @@ export default {
       const codigo = prefijoCodigo[1].toString().padStart(8, '0')
       const prefijo = prefijoCodigo[0]
       const { res } = await this.$services.getOneData(['factura', codigo, prefijo])
+      this.getFacturaPorCliente(res.data.nit_cliente)
       this.$services.getOneData(['factura', res.data.fact_id, 'detalles'])
         .then(({ res }) => {
-          res.data.length <= 0 ? this.notify(this, 'Factura no encontrada', 'negative', 'warning') : this.fecha_ini = date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm:ss')
+          if (res.data.length <= 0) {
+            this.notify(this, 'Factura no encontrada', 'negative', 'warning')
+          }
           this.loadingProductos = false
           this.factura = res.data
           this.$barcodeScanner.destroy()
@@ -652,9 +666,15 @@ export default {
      */
     obtenerProducto (codigo) {
       const producto = this.factura.find(row => Number(row.codigo_producto) === Number(codigo))
+      console.log(producto, this.factura, codigo)
       if (producto) {
         this.productoSelected = producto
-        this.product = true
+        console.log(this.fourth)
+        if (this.fourth) {
+          this.product = this.fourth
+        } else {
+          this.guardarEmbalaje()
+        }
       } else {
         this.notify(this, 'Producto no encontrado', 'negative', 'warning')
       }
