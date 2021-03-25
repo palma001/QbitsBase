@@ -194,10 +194,10 @@
                       color="negative"
                       size="sm"
                       style="width: 50px;"
-                      @click="eliminarProducto(index, empaque)"
+                      @click="eliminarProducto(index, empaque, producto)"
                     >
                       <q-tooltip anchor="bottom middle" self="top middle">
-                        <strong>Eliminar emppaque</strong>
+                        <strong>Eliminar producto</strong>
                       </q-tooltip>
                     </q-btn>
                   </q-item-section>
@@ -598,8 +598,9 @@ export default {
      * Eliminar empaque
      * @type {Number} index empaque
      */
-    eliminarProducto (index, empaque) {
+    eliminarProducto (index, empaque, producto) {
       empaque.productos.splice(index, 1)
+      this.obtenerFactura()
     },
     /**
      * Eliminar producto
@@ -607,6 +608,7 @@ export default {
      */
     eliminarEmbalaje (index) {
       this.cantidadEmpaque.splice(index, 1)
+      this.obtenerFactura()
     },
     /**
      * Facturas asociadas
@@ -692,6 +694,7 @@ export default {
             const product = {
               descripcion: this.productoSelected.descripcion,
               codigo_producto: this.productoSelected.codigo_producto,
+              cantidad: this.productoSelected.cantidad,
               cantidad_embalado: Number(this.cantidadEmbalar),
               unidad: this.productoSelected.unidad
             }
@@ -813,7 +816,6 @@ export default {
      */
     async obtenerFactura (code) {
       this.codigoFactura = typeof code !== 'string' ? this.codigoFactura : code
-      this.factura = []
       this.loadingFactura = true
       this.loadingProductos = true
       const prefijoCodigo = this.codigoFactura.split('-')
@@ -830,6 +832,7 @@ export default {
             }
             this.loadingProductos = false
             this.factura = res.data
+            this.mostrarProductosEmbalados()
             this.$barcodeScanner.destroy()
           })
           .catch((e) => {
@@ -847,7 +850,8 @@ export default {
      * @param {String} codigo codigo del producto
      */
     obtenerProducto (codigo) {
-      const producto = this.factura.find(row => Number(row.codigo_producto) === Number(codigo))
+      console.log(this.factura)
+      const producto = this.factura.find(row => Number(row.cod_bar) === Number(codigo))
       if (producto) {
         this.productoSelected = producto
         if (this.fourth) {
