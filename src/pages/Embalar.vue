@@ -489,18 +489,29 @@ export default {
      */
     mostrarProductosEmbalados () {
       this.factura.map(productsAll => {
-        productsAll.cantidad_embalado = 0
         this.cantidadEmpaque.forEach(element => {
-          const product = element.productos.find(productEmbalados => Number(productsAll.codigo_producto) === Number(productEmbalados.codigo_producto))
-          if (product && Number(productsAll.codigo_producto) === Number(product.codigo_producto)) {
-            productsAll.cantidad_embalado += product.cantidad_embalado
-            console.log(productsAll)
-            return productsAll
+          const product = element.productos.reduce((contador, producto) => {
+            contador[producto.codigo_producto] = (contador[producto.codigo_producto] || 0) + producto.cantidad_embalado
+            return contador
+          }, {})
+
+          for (const key in product) {
+            if (Object.hasOwnProperty.call(product, key)) {
+              if (Number(productsAll.codigo_producto) === Number(key)) {
+                productsAll.cantidad_embalado = product[key]
+                return productsAll
+              }
+            }
           }
         })
       })
-      console.log(this.cantidadEmpaque)
-      // this.factura = this.factura.filter(product => product.cantidad !== product.cantidad_embalado)
+      this.product = false
+      this.productoSelected = {}
+      this.loadingGuardarEmbalaje = false
+      this.loadingProductos = false
+      this.valueText = ''
+      this.cantidadEmbalar = 1
+      this.factura = this.factura.filter(product => product.cantidad !== product.cantidad_embalado)
     },
     /**
      * Guardar embalaje del producto
@@ -518,12 +529,6 @@ export default {
               unidad: this.productoSelected.unidad
             }
             this.cantidadEmpaque[this.cantidadEmpaque.length - 1].productos.push(product)
-            this.product = false
-            this.productoSelected = {}
-            this.cantidadEmbalar = 1
-            this.loadingGuardarEmbalaje = false
-            this.loadingProductos = false
-            this.valueText = ''
             this.mostrarProductosEmbalados()
             this.notify(this, 'embalado exitosamente', 'positive', 'thumb_up')
           } else {
@@ -666,10 +671,8 @@ export default {
      */
     obtenerProducto (codigo) {
       const producto = this.factura.find(row => Number(row.codigo_producto) === Number(codigo))
-      console.log(producto, this.factura, codigo)
       if (producto) {
         this.productoSelected = producto
-        console.log(this.fourth)
         if (this.fourth) {
           this.product = this.fourth
         } else {
