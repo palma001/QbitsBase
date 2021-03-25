@@ -84,8 +84,6 @@
             icon="check"
             size="15px"
             type="submit"
-            v-if="factura.length > 0"
-            :disable="factura.length === 0 ? true : false"
           >
             <q-tooltip anchor="center left" self="center right" :offset="[10, 10]">
               <strong>Finalizar Embalaje</strong>
@@ -97,7 +95,6 @@
             icon="close"
             size="15px"
             type="reset"
-            v-if="factura.length === 0 ? false : true"
           >
             <q-tooltip anchor="bottom middle" self="top middle">
               <strong>Cancelar Embalaje</strong>
@@ -296,6 +293,7 @@ export default {
   },
   data () {
     return {
+      factId: 0,
       fourth: false,
       valueText: '',
       loadingProductos: false,
@@ -590,7 +588,7 @@ export default {
      */
     finalizarEmpaque () {
       this.loadingFinalizar = true
-      this.$services.putData(['factura', this.codigoFactura, 'finalizar'], {
+      this.$services.putData(['factura', this.factId, 'finalizar'], {
         codigo_empleado: this[GETTERS.GET_USER].codigo,
         codigo_tipo_entrega: this.tipoEntrega.value,
         empaquetado: this.cantidadEmpaque
@@ -647,23 +645,28 @@ export default {
       const codigo = prefijoCodigo[1].toString().padStart(8, '0')
       const prefijo = prefijoCodigo[0]
       const { res } = await this.$services.getOneData(['factura', codigo, prefijo])
-      this.getFacturaPorCliente(res.data.nit_cliente)
-      this.$services.getOneData(['factura', res.data.fact_id, 'detalles'])
-        .then(({ res }) => {
-          if (res.data.length <= 0) {
+      if (res.data.estado === 'POR EMBALAR') {
+        this.getFacturaPorCliente(res.data.nit_cliente)
+        this.factId = res.data.fact_id
+        this.$services.getOneData(['factura', res.data.fact_id, 'detalles'])
+          .then(({ res }) => {
+            if (res.data.length <= 0) {
+              this.notify(this, 'Factura no encontrada', 'negative', 'warning')
+            }
+            this.loadingProductos = false
+            this.factura = res.data
+            this.$barcodeScanner.destroy()
+            this.$q.loading.hide()
+          })
+          .catch((e) => {
+            this.$q.loading.hide()
             this.notify(this, 'Factura no encontrada', 'negative', 'warning')
-          }
-          this.loadingProductos = false
-          this.factura = res.data
-          this.$barcodeScanner.destroy()
-          this.$q.loading.hide()
-        })
-        .catch((e) => {
-          this.$q.loading.hide()
-          this.notify(this, 'Factura no encontrada', 'negative', 'warning')
-          this.loadingFactura = false
-          this.factura = []
-        })
+            this.loadingFactura = false
+            this.factura = []
+          })
+      } else {
+        this.notify(this, `La factura ya fue ${res.data.estado}`, 'negative', 'warning')
+      }
     },
     /**
      * Obtener producto
