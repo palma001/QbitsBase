@@ -58,25 +58,14 @@ export const actions = {
    * Valiad session active
    */
   [ACTIONS.VALID_SESSION]: ({ commit, dispatch }) => {
-    // const token = localStorage.getItem('TOKEN')
-    // const expireIn = new Date(localStorage.getItem('expires_in'))
-    // const now = new Date()
     const user = JSON.parse(localStorage.getItem('user_session'))
-    // const refreshToken = localStorage.getItem('REFRESH_TOKEN')
-    // const id = localStorage.getItem('id_session')
-    // const invalidToken = !token || token === 'null'
-    // const invalidRefreshToken = !refreshToken || refreshToken === 'null'
-    // const invalidDate = !expireIn || expireIn === 'null' || now.getTime() >= expireIn.getTime()
-    const invalidUser = !user || user === 'null'
+    const userActive = localStorage.getItem('session_active')
+    const invalidUser = !userActive || userActive === 'false'
     if (invalidUser) {
       commit(MUTATIONS.CLEAR_ACCOUNT_STATE)
       return false
     }
-    // commit(MUTATIONS.SET_TOKEN, token)
-    // commit(MUTATIONS.SET_REFRESH_TOKEN, refreshToken)
     commit(MUTATIONS.SET_USER, user)
-    // commit(MUTATIONS.SET_EXPIRE_IN, expireIn)
-    // commit(MUTATIONS.SET_ID, Number(id))
     return true
   },
   /**

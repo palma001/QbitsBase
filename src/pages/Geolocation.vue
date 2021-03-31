@@ -4,10 +4,11 @@
       Localización de los transportes
     </p>
     <gmap-map
-      :center="markers.length > 0 ? markers[0].position : initialPosition"
-      :zoom="10"
+      v-if="userData"
       map-type-id="terrain"
       style="width: 100%; height: 78vh"
+      :center="userData.position"
+      :zoom="10"
     >
       <gmap-info-window
         :options="infoOptions"
@@ -34,18 +35,10 @@ export default {
   name: 'Geolocation',
   data () {
     return {
+      userData: null,
       infoWinOpen: false,
-      usersName: null,
-      gettingLocation: true,
-      initialPosition: {
-        lat: 10,
-        lng: 10
-      },
       zoom: 11,
       markers: [],
-      userlocation: [],
-      onlineUsers: [],
-      channelName: null,
       infoWindowPos: null,
       infoOptions: {
         content: '',
@@ -64,6 +57,7 @@ export default {
   },
   mounted () {
     this.obtenerCamiones()
+    this.location()
   },
   methods: {
     toggleInfoWindow (marker, idx) {
@@ -97,6 +91,21 @@ export default {
       })
         .then(({ res }) => {
           this.obtenerCoordenadas(res.data)
+        })
+    },
+    /**
+     * Enviar localización
+    */
+    location () {
+      this.$getLocation({})
+        .then(coordinates => {
+          this.userData = {
+            position: {
+              lat: coordinates.lat,
+              lng: coordinates.lng
+            },
+            userName: this[GETTERS.GET_USER].nombre
+          }
         })
     }
   }

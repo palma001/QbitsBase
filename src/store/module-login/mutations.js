@@ -1,17 +1,7 @@
 import { MUTATIONS } from './name'
 export const mutations = {
   [MUTATIONS.CLEAR_ACCOUNT_STATE]: (state, payload) => {
-    state.user_session = null
-    state.TOKEN = null
-    state.REFRESH_TOKEN = null
-    state.id_session = null
-    state.expires_in = null
-    state.token_type = null
-    localStorage.setItem('TOKEN', null)
-    localStorage.setItem('REFRESH_TOKEN', null)
-    localStorage.setItem('expires_in', null)
-    localStorage.setItem('user_session', null)
-    localStorage.setItem('id_session', null)
+    localStorage.setItem('session_active', false)
   },
 
   [MUTATIONS.SET_TOKEN]: (state, token) => {
@@ -27,6 +17,7 @@ export const mutations = {
   [MUTATIONS.SET_USER]: (state, user) => {
     state.user_session = user
     localStorage.setItem('user_session', JSON.stringify(user))
+    localStorage.setItem('session_active', true)
   },
 
   [MUTATIONS.SET_ID]: (state, id) => {
