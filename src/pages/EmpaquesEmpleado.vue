@@ -2,10 +2,10 @@
   <div class="q-pa-md q-gutter-y-md row">
     <div class="col-12 row">
       <div class="col-sm-3 col-xs-5">
-        <q-input v-model="desde" filled type="date" dense style="width: 97%"/>
+        <q-input v-model="desde" filled type="date" dense style="width: 97%" label="Desde"/>
       </div>
       <div class="col-sm-3 col-xs-5">
-        <q-input v-model="hasta" filled type="date" dense style="width: 97%"/>
+        <q-input v-model="hasta" filled type="date" dense style="width: 97%" label="Hasta"/>
       </div>
       <div class="col-sm-3 col-xs-2">
         <q-btn
@@ -13,8 +13,13 @@
           text-color="white"
           icon="search"
           size="15px"
+          aria-label="buscar"
           @click="obtenerFacturas"
-        />
+        >
+          <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
+            <strong>Buscar</strong>
+          </q-tooltip>
+        </q-btn>
       </div>
     </div>
     <div class="col-12">
@@ -98,7 +103,7 @@ export default {
           name: 'fecha_asignado_entregador',
           align: 'left',
           label: 'Fecha de entrega al empacador',
-          field: 'fecha_asignado_entregador',
+          field: (row) => `${row.fecha_asignado_entregador} ${row.hora_asignado_entregador}`,
           sortable: true
         },
         {

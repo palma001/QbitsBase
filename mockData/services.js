@@ -26,7 +26,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
       case 'products': {
@@ -44,7 +44,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
       case 'modules': {
@@ -62,7 +62,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
       case 'permissions': {
@@ -80,7 +80,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
       case 'facturas': {
@@ -98,7 +98,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
       case 'branch-offices': {
@@ -116,7 +116,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
       case 'roles': {
@@ -134,7 +134,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
       case 'category-modules': {
@@ -152,7 +152,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
       case 'authorizations': {
@@ -170,7 +170,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
     }
@@ -193,7 +193,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
       case 'auth': {
@@ -207,7 +207,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
     }
@@ -225,7 +225,7 @@ const mockData = {
                 }
               }
             })
-          }, 1000)
+          }, 200)
         })
       }
     }

@@ -20,8 +20,11 @@
               <q-toggle
                 v-model="fourth"
                 checked-icon="check"
-                color="positive"
+                color="teal"
                 unchecked-icon="clear"
+                size="lg"
+                dense
+                aria-label="Agregar Cantidad"
                 @input="check"
               >
                 <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
@@ -32,9 +35,10 @@
             <q-btn
               color="teal"
               text-color="white"
-              size="xs"
+              size="sm"
               icon="qr_code"
               round
+              aria-label="Scannear"
               @click="clickButton"
             >
               <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">

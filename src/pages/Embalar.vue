@@ -23,8 +23,9 @@
             <q-btn
               color="teal"
               text-color="white"
-              size="xs"
+              size="sm"
               icon="qr_code"
+              aria-label="qr_code"
               round
               @click="persistent = !persistent"
             >
@@ -83,6 +84,7 @@
             text-color="white"
             icon="check"
             size="15px"
+            aria-label="finalizar"
             type="submit"
           >
             <q-tooltip anchor="center left" self="center right" :offset="[10, 10]">
@@ -95,6 +97,7 @@
             icon="close"
             size="15px"
             type="reset"
+            aria-label="reset"
           >
             <q-tooltip anchor="bottom middle" self="top middle">
               <strong>Cancelar Embalaje</strong>
@@ -403,6 +406,7 @@ export default {
   },
   data () {
     return {
+      fechaInicio: {},
       tab: 'productosPorEmbalar',
       /**
        * Id de la factura
@@ -767,7 +771,9 @@ export default {
       this.$services.putData(['factura', this.factId, 'finalizar'], {
         codigo_empleado: this[GETTERS.GET_USER].codigo,
         codigo_tipo_entrega: this.tipoEntrega.value,
-        empaquetado: this.cantidadEmpaque
+        empaquetado: this.cantidadEmpaque,
+        fecha: this.fechaInicio.fecha,
+        hora: this.fechaInicio.hora
       })
         .then(({ res }) => {
           if (res.data) {
@@ -826,6 +832,7 @@ export default {
       const codigo = prefijoCodigo[1].toString().padStart(8, '0')
       const prefijo = prefijoCodigo[0]
       const { res } = await this.$services.getOneData(['factura', codigo, prefijo])
+      this.fechaInicio = { fecha: date.formatDate(Date.now(), 'YYYY-MM-DD'), hora: date.formatDate(Date.now(), 'HH:mm:ss') }
       if (res.data.estado === 'POR EMBALAR') {
         this.getFacturaPorCliente(res.data.nit_cliente)
         this.factId = res.data.fact_id
@@ -854,7 +861,6 @@ export default {
      * @param {String} codigo codigo del producto
      */
     obtenerProducto (codigo) {
-      console.log(this.factura)
       const producto = this.factura.find(row => Number(row.cod_bar) === Number(codigo))
       if (producto) {
         this.productoSelected = producto

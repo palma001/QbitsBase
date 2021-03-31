@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr lff" class="shadow-2 rounded-borders">
     <q-header elevated>
       <q-toolbar class="bg-teal glossy">
         <q-btn flat
@@ -18,6 +18,7 @@
           dense
           round
           icon="person"
+          aria-label="person"
           class="q-mr-sm q-ml-sm">
           <q-menu>
             <q-list style="min-width: 180px;">
@@ -75,8 +76,9 @@
     </q-header>
 
     <q-drawer
-      v-model="leftDrawerOpen"
       bordered
+      show-if-above
+      v-model="leftDrawerOpen"
     >
       <q-expansion-item
         expand-separator
@@ -177,7 +179,8 @@ export default {
        *
        * @type {Bollean} status menu
        */
-      leftDrawerOpen: !this.$q.screen.sm
+      leftDrawerOpen: false,
+      miniState: false
     }
   },
   watch: {
