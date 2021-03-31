@@ -64,6 +64,7 @@
             <q-space/>
             <q-btn
               color="teal glossy"
+              aria-label="inicio"
               @click="login"
               :disable="btnDisable">
               <span v-if="btnDisable">

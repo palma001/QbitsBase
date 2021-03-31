@@ -7,10 +7,10 @@
         </p>
       </div>
       <div class="col-sm-3 col-xs-5">
-        <q-input v-model="desde" filled type="date" dense />
+        <q-input v-model="desde" filled type="date" dense label="Desde"/>
       </div>
       <div class="col-sm-3 col-xs-5">
-        <q-input v-model="hasta" filled type="date" dense/>
+        <q-input v-model="hasta" filled type="date" dense label="Hasta"/>
       </div>
       <div class="col-md-3 col-md-4 col-xs-1">
         <q-btn
@@ -18,6 +18,7 @@
           text-color="white"
           icon="search"
           size="15px"
+          aria-label="search"
           @click="obtenerFacturas"
         />
       </div>
@@ -107,6 +108,7 @@
             size="xs"
             icon="qr_code"
             round
+            aria-label="search"
             @click="scanner = !scanner"
           >
           <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
@@ -304,10 +306,12 @@
               label="Cancelar"
               color="negative"
               v-close-popup
+              aria-label="cancelar"
             />
             <q-btn
               label="Confirmar"
               color="teal"
+              aria-label="confirmar"
               type="submit"
               :disable="loadingConfirmar"
               :loading="loadingConfirmar"
@@ -348,8 +352,8 @@
         </q-card-section>
         <q-separator />
         <q-card-actions align="right" class="text-primary">
-          <q-btn color="negative" label="Devolver" @click="devolverPaquete"/>
-          <q-btn color="teal" label="Entregar" @click="entregarPaquete"/>
+          <q-btn color="negative" label="Devolver" @click="devolverPaquete" aria-label="devolver"/>
+          <q-btn color="teal" label="Entregar" @click="entregarPaquete" aria-label="entregar"/>
         </q-card-actions>
       </q-card>
     </q-dialog>

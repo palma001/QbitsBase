@@ -2,10 +2,10 @@
   <div class="q-pa-md q-gutter-y-md row">
     <div class="col-12 row q-gutter-sm">
       <div class="col-sm-4 col-xs-12">
-        <q-input v-model="desde" filled type="date" dense/>
+        <q-input v-model="desde" filled type="date" dense label="Desde"/>
       </div>
       <div class="col-sm-4 col-xs-12">
-        <q-input v-model="hasta" filled type="date" dense/>
+        <q-input v-model="hasta" filled type="date" dense label="Hasta"/>
       </div>
       <div class="col-sm-2 col-xs-12 col-md-1 col-lg-1 col-xl-1">
         <q-btn

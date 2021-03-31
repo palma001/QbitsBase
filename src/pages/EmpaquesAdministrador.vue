@@ -2,10 +2,10 @@
   <div class="q-pa-md row q-gutter-y-md">
     <div class="col-12 row">
       <div class="col-sm-3 col-xs-5">
-        <q-input v-model="desde" filled type="date" dense style="width: 97%"/>
+        <q-input v-model="desde" filled type="date" dense style="width: 97%" label="Desde"/>
       </div>
       <div class="col-sm-3 col-xs-5">
-        <q-input v-model="hasta" filled type="date" dense style="width: 97%"/>
+        <q-input v-model="hasta" filled type="date" dense style="width: 97%" label="Hasta"/>
       </div>
       <div class="col-sm-3 col-xs-2">
         <q-btn
@@ -13,6 +13,7 @@
           text-color="white"
           icon="search"
           size="15px"
+          aria-label="search"
           @click="obtenerFacturas"
         />
       </div>
