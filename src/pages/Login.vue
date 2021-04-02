@@ -96,9 +96,7 @@ export default {
   },
   data () {
     return {
-      rol: 'Usuario',
       scanner: false,
-      listaRoles: ['Empleado', 'Usuario'],
       /**
          * Email User
          * @type {String}
