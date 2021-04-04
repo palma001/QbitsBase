@@ -34,6 +34,7 @@
     "vue-i18n": "^8.24.2",
     "vue-qrcode-reader": "^2.3.18",
     "vue-quaggajs": "^1.0.12",
+    "vue-scrollto": "^2.20.0",
     "vue-socket.io": "^3.0.10",
     "vue2-google-maps": "^0.10.7"
   },

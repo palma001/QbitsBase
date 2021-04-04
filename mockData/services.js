@@ -7,10 +7,29 @@ import { branchOffice } from './data/branchOffice'
 import { roles } from './data/roles'
 import { categoryModules } from './data/categoryModules'
 import { authorizations } from './data/authorizations'
+import { sliders } from './data/sliders'
 
 const mockData = {
   getData (data, params) {
     switch (data) {
+      case 'sliders': {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve({
+              response: {
+                data: {
+                  content: sliders,
+                  metadata: {
+                    totalElements: sliders.length,
+                    number: params, // server data
+                    size: 3 // server data
+                  }
+                }
+              }
+            })
+          }, 200)
+        })
+      }
       case 'users': {
         return new Promise((resolve, reject) => {
           setTimeout(() => {

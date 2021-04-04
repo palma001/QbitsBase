@@ -34,7 +34,8 @@ module.exports = function (/* ctx */) {
       'crontab',
       'ably',
       'vueBarcodeScanner',
-      'VMask'
+      'VMask',
+      'VueScroll'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

@@ -1,336 +1,195 @@
 <template>
-  <div class="q-pa-md row items-start q-gutter-md">
-    <div class="row">
-      <div class="col-xl-12 col-lg-12 col-md-12 q-pa-sm">
-        <div class="text-h5">
-          Lista de producto
+  <div class="q-pa-none">
+    <q-carousel
+      animated
+      height="100vh"
+      style="margin-top:-100px"
+      infinite
+      navigation-position="bottom"
+      navigation
+      swipeable
+      :autoplay="3000"
+      :arrows="false"
+      v-model="slide"
+      id="home"
+    >
+      <template v-slot:navigation-icon="{ active, btnProps, onClick }">
+        <q-btn v-if="active" size="lg" icon="home" color="yellow" flat round dense @click="onClick" />
+        <q-btn v-else size="sm" :icon="btnProps.icon" color="white" flat round dense @click="onClick" />
+      </template>
+      <q-carousel-slide class="q-pa-none" v-for="slider in sliders" :name="slider.name" :key="slider.id">
+        <q-img :src="`/sliders/${slider.image}`" style="width: 100%; height:100%;">
+          <div class="absolute-full flex flex-left">
+           <div class="text-h2 text-bold title-car">
+            {{ slider.title }}
+           </div>
+            <div class="subtitle-car" v-html="slider.description"></div>
+          </div>
+        </q-img>
+      </q-carousel-slide>
+    </q-carousel>
+    <div style="width: 100%; height: 700px;">
+      <h1>
+        Empresa
+      </h1>
+    </div>
+    <div style="width: 100%; height: 700px;" id="contactus">
+      <q-img src="/sliders/pexels-tima-miroshnichenko-6169056.jpg" style="width: 100%; height:100%;">
+        <div class="absolute-full flex flex-left flex-center">
+          <div class="q-pa-md">
+            <div class="row justify-around q-gutter-y-xl">
+              <q-intersection transition="scale" class="col-md-4 col-sm-12">
+                <div class="text-h2">
+                  Titulo
+                </div>
+                <div  class="text-h6 q-mt-xl">
+                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quo sed nobis dolores architecto
+                  ex porro minus omnis tenetur inventore?
+                  Placeat quo iure obcaecati esse mollitia, illo quam officiis quos sunt?
+                </div>
+                <div class="q-mt-md">
+                  <q-list :bordered="false">
+                    <q-item clickable v-ripple :active="active">
+                      <q-item-section avatar>
+                        <q-icon name="phone" />
+                      </q-item-section>
+                      <q-item-section>+58 424.2649.549</q-item-section>
+                    </q-item>
+                    <q-item clickable v-ripple :active="active">
+                      <q-item-section avatar>
+                        <q-icon name="phone" />
+                      </q-item-section>
+                      <q-item-section>+58 412.852.83.11</q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-ripple :active="active" active-class="text-orange">
+                      <q-item-section avatar>
+                        <q-icon name="email" />
+                      </q-item-section>
+                      <q-item-section>contactus@transtjr.com</q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-ripple :active="active" active-class="bg-teal-1 text-grey-8">
+                      <q-item-section avatar>
+                        <q-icon name="room" />
+                      </q-item-section>
+                      <q-item-section>Anzoatgui</q-item-section>
+                    </q-item>
+                  </q-list>
+                </div>
+              </q-intersection>
+              <q-intersection transition="scale" class="col-md-5 col-sm-12" style="margin-top: 140px;">
+                <q-form
+                  class="q-col-gutter-lg row"
+                >
+                  <q-input
+                    v-model="name"
+                    label="Tu nombre"
+                    label-color="white"
+                    color="white"
+                    dark
+                    class="col-6"
+                  />
+                  <q-input
+                    v-model="email"
+                    label="E-mail"
+                    label-color="white"
+                    color="white"
+                    class="col-6"
+                    dark
+                  />
+                  <q-input
+                    v-model="subject"
+                    label="Asunto"
+                    label-color="white"
+                    color="white"
+                    class="col-12"
+                    dark
+                  />
+                  <q-input
+                    v-model="message"
+                    label="Mensaje"
+                    label-color="white"
+                    color="white"
+                    class="col-12"
+                    dark
+                    type="textarea"
+                  />
+                  <div class="col-12">
+                    <q-btn
+                      outline
+                      rounded
+                      label="Enviar"
+                      type="submit"
+                      color="white"
+                      size="lg"
+                    />
+                  </div>
+                </q-form>
+              </q-intersection>
+            </div>
+          </div>
         </div>
-      </div>
+      </q-img>
     </div>
-    <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 q-mt-md q-pa-sm" v-for="product in allProducts" :key="product.id">
-        <q-card class="my-card">
-          <q-card-section horizontal>
-            <barcode :value="product.code">
-              Show this if the rendering fails.
-            </barcode>
-            <q-card-section>
-              <q-btn
-                fab
-                color="primary"
-                icon="shopping_cart"
-                class="absolute"
-                style="top: 15px; right: 12px; transform: translateY(-50%);"
-              />
-                <div class="text-h6">
-                  {{ product.name }}
-                </div>
-              <div class="row no-wrap items-center">
-                <div class=" col text-subtitle2 ellipsis">
-                  {{ product.brand }} - {{ product.sub_category }}
-                </div>
-                <div class="col-auto text-caption q-pt-md row no-wrap items-center">
-                  $ {{ product.price }}
-                </div>
-              </div>
-              <div class="text-caption text-grey">
-                {{ product.description }}
-              </div>
-            </q-card-section>
-          </q-card-section>
-        </q-card>
-      </div>
+    <div style="width: 100%; height: 700px;">
+      <h1>
+        Footer
+      </h1>
     </div>
-    <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="persistent" transition-show="scale" transition-hide="scale">
-        <q-card style="width: 352px; height: 336px;" class="q-pa-none">
-          <q-card-section class="q-pa-xs">
-            <q-select dense behavior="menu" v-model="scanner" :options="options" label="Tipo de scanner" />
-          </q-card-section>
-          <qrcode-stream style="width: 100% !important; height: 288px; !important;" @decode="getOneProduct" v-if="scanner === 'Qr'"/>
-          <v-quagga v-else class="full-width" :onDetected="logIt" :readerTypes="readerTypes"/>
-        </q-card>
-      </q-dialog>
-    </div>
-    <q-dialog v-model="card">
-      <q-card class="my-card" v-if="productScaner">
-        <q-img src="https://cdn.quasar.dev/img/chicken-salad.jpg" />
-        <q-card-section>
-          <q-btn
-            fab
-            color="primary"
-            icon="shopping_cart"
-            class="absolute"
-            style="top: 0; right: 12px; transform: translateY(-50%);"
-          />
-          <div class="row no-wrap items-center">
-            <div class="col text-h6 ellipsis">
-              {{ productScaner.name }}
-            </div>
-            <div class="col-auto text-caption q-pt-md row no-wrap items-center">
-              $
-              {{ productScaner.price }}
-            </div>
-          </div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <div class="text-subtitle1">
-            {{ productScaner.sub_category }} - {{ productScaner.brand }}
-          </div>
-          <div class="text-caption text-grey">
-            {{ productScaner.description }}
-          </div>
-        </q-card-section>
-
-        <q-separator />
-
-        <q-card-actions align="right">
-          <q-btn v-close-popup flat color="primary" label="Cerrar" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-fab color="purple" icon="keyboard_arrow_up" direction="up" label="Opciones" label-position="left" external-label>
-        <q-fab-action color="amber"  @click="captureImage" icon="qr_code" glossy label="Scanner" label-position="left" external-label/>
-      </q-fab>
-    </q-page-sticky>
   </div>
 </template>
 
 <script>
-import VueBarcode from 'vue-barcode'
-window.addEventListener('keydown', evt => {
-  console.log(evt)
-})
 export default {
-  components: {
-    barcode: VueBarcode
-  },
   data () {
     return {
-      columns: [
-        {
-          name: 'name',
-          required: true,
-          label: 'Dessert (100g serving)',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
-        },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-      ],
-      data: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
-        }
-      ],
-      scanner: 'Barra',
-      options: [
-        'Barra', 'Qr'
-      ],
-      readerTypes: [
-        'code_128_reader',
-        'ean_reader',
-        'ean_8_reader',
-        'code_39_reader',
-        'code_39_vin_reader',
-        'codabar_reader',
-        'upc_reader',
-        'upc_e_reader',
-        'i2of5_reader'
-      ],
-      persistent: false,
-      /**
-       * all products
-       * @type {Array} all products
-       */
-      allProducts: [],
-
-      /**
-       * One products
-       * @type {Object} one product
-       */
-      productScaner: null,
-
-      /**
-       * Status Card product
-       * @type {Boolean} status card
-       */
-      card: false,
-      detecteds: []
+      slide: 'one',
+      sliders: [],
+      active: false,
+      name: '',
+      message: '',
+      subject: '',
+      email: ''
     }
   },
   created () {
-    this.getAllProducts()
+    this.getSliders()
   },
   methods: {
-    onDecode (decodedString) {
-      console.log(decodedString)
-    },
-    /**
-     * Get all products
-     *
-     */
-    getAllProducts () {
-      this.$mockData.getData('products')
-        .then(({ response }) => {
-          this.allProducts = response.data.content
-        })
-    },
-
-    /**
-     * Get products scanner
-     *
-     * @param {Object} data scanner
-     *
-     */
-
-    getOneProduct (data) {
-      if (data) {
-        this.productScaner = this.allProducts.filter(element => {
-          return Number(element.code) === Number(data)
-        })[0]
-
-        if (!this.productScaner) {
-          alert('Producto no encontrado ' + data)
-        } else {
-          this.card = true
-          this.persistent = false
-        }
-      }
-    },
-
-    /**
-     * Call scanner
-     *
-     */
-    captureImage () {
-      console.log(this.$q.platform, 'hola')
-      this.persistent = true
-      // if (this.validateDivice('mobile')) {
-      //   cordova.plugins.barcodeScanner.scan(
-      //     (result) => { this.getOneProduct(result.text) },
-      //     (error) => { alert('No se pudo escanear: ' + error) }
-      //   )
-      // } else {
-      // }
-    },
-    logIt (data) {
-      this.getOneProduct(data.codeResult.code)
-      console.log('detected', data.codeResult.code)
-    },
-    /**
-     * Validate divice
-     * @param  {String} validate divice
-     */
-    validateDivice (divice) {
-      return this.$q.platform.is[divice]
+    async getSliders () {
+      const { response } = await this.$mockData.getData('sliders')
+      this.sliders = response.data.content
+      console.log(this.sliders)
     }
   }
 }
 </script>
+<style>
+.custom-caption {
+  padding: 12px;
+  background-color: rgba(0, 0, 0, .3);
+}
+.title-car {
+  margin-top: 300px;
+}
+.subtitle-car {
+  margin-top: 400px;
+  margin-left: -470px;
+}
+.security {
+  margin-left: 10px;
+}
+@media (max-width: 1000px) {
+  .title-car {
+    margin-top: 300px;
+  }
+  .subtitle-car {
+    margin-left: 0px;
+    margin-top: -150px;
+  }
+  .security {
+    margin-left: 0px;
+  }
+}
+</style>

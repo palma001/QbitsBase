@@ -7,12 +7,18 @@ const routes = [
     component: () => import('pages/Login.vue')
   },
   {
-    path: '',
-    component: () => import('pages/Login.vue'),
-    name: ''
+    path: '/',
+    component: () => import('layouts/LandingLayaout.vue'),
+    children: [
+      {
+        path: '/',
+        component: () => import('pages/Index.vue'),
+        name: 'LandingPage'
+      }
+    ]
   },
   {
-    path: '',
+    path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
     beforeEnter: validationSession,
     children: [
