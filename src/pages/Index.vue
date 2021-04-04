@@ -28,7 +28,7 @@
         </q-img>
       </q-carousel-slide>
     </q-carousel>
-    <div style="width: 100%; height: 100%; padding: 90px">
+    <div style="width: 100%; height: 100%; padding: 90px" id="services">
       <div class="row">
         <q-intersection transition="scale"  class="col-6" once>
            <q-img

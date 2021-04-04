@@ -8,6 +8,7 @@
           </q-toolbar-title>
           <q-space />
           <q-btn stretch flat label="Home" :class="classButton" v-scroll-to="'#home'"/>
+          <q-btn stretch flat label="Servicios" :class="classButton" v-scroll-to="'#services'"/>
           <q-btn stretch flat label="Contáctanos" :class="classButton" v-scroll-to="'#contactus'"/>
           <q-btn stretch flat icon="person" :class="classButton">
             <q-popup-proxy style="width: 400px;">
