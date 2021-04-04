@@ -1,58 +1,51 @@
 export const categoryModules = [
   {
-    name: 'organization',
+    name: 'reception',
     icon: 'all_inbox',
     open: true,
     modules: [
       {
-        name: 'geolocation',
-        route: 'Geolocation',
-        icon: 'room',
-        access: ['UA'],
-        devices: ['mobile', 'desktop']
-      },
-      {
-        name: 'embalar',
-        route: 'Embalar',
-        icon: 'assignment',
-        access: ['EE'],
-        devices: ['mobile', 'desktop']
-      },
-      {
-        name: 'listaEmpaques',
-        route: 'EmpaquesEmpleado',
-        icon: 'receipt',
-        access: ['EE'],
-        devices: ['mobile', 'desktop']
-      },
-      {
-        name: 'listaEmpaques',
-        route: 'EmpaquesCliente',
-        icon: 'receipt',
-        access: ['UC'],
-        devices: ['mobile', 'desktop']
-      },
-      {
-        name: 'transporte',
-        route: 'EmpaquesTransporte',
+        name: 'new-shipment',
+        route: 'NewShipment',
         icon: 'local_shipping',
-        access: ['ET'],
-        devices: ['mobile', 'desktop']
-      },
-      {
-        name: 'listaEmpaques',
-        route: 'EmpaquesAdministrador',
-        icon: 'receipt',
-        access: ['UA'],
-        devices: ['mobile', 'desktop']
-      },
-      {
-        name: 'listaReclamo',
-        route: 'ListaReclamo',
-        icon: 'list_alt',
-        access: ['UA'],
         devices: ['mobile', 'desktop']
       }
+      // {
+      //   name: 'embalar',
+      //   route: 'Embalar',
+      //   icon: 'assignment',
+      //   devices: ['mobile', 'desktop']
+      // },
+      // {
+      //   name: 'listaEmpaques',
+      //   route: 'EmpaquesEmpleado',
+      //   icon: 'receipt',
+      //   devices: ['mobile', 'desktop']
+      // },
+      // {
+      //   name: 'listaEmpaques',
+      //   route: 'EmpaquesCliente',
+      //   icon: 'receipt',
+      //   devices: ['mobile', 'desktop']
+      // },
+      // {
+      //   name: 'transporte',
+      //   route: 'EmpaquesTransporte',
+      //   icon: 'local_shipping',
+      //   devices: ['mobile', 'desktop']
+      // },
+      // {
+      //   name: 'listaEmpaques',
+      //   route: 'EmpaquesAdministrador',
+      //   icon: 'receipt',
+      //   devices: ['mobile', 'desktop']
+      // },
+      // {
+      //   name: 'listaReclamo',
+      //   route: 'ListaReclamo',
+      //   icon: 'list_alt',
+      //   devices: ['mobile', 'desktop']
+      // }
     ]
   }
   // {

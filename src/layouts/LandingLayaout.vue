@@ -17,15 +17,30 @@
                 </q-card-section>
                 <q-separator></q-separator>
                 <q-card-section>
-                  <q-input  v-model="email" label="Usuario" dense/>
+                  <q-input
+                    v-model="email"
+                    label="Usuario"
+                    dense
+                    ref="username"
+                    @keyup.enter.native="login"
+                    :rules="[val => !!val || 'El campo es requerido.']"
+                  />
                 </q-card-section>
                 <q-card-section>
-                  <q-input v-model="password" label="Clave" dense/>
+                  <q-input
+                    v-model="password"
+                    label="Clave"
+                    dense
+                    type="password"
+                    ref="password"
+                    @keyup.enter.native="login"
+                    :rules="[val => !!val || 'El campo es requerido.']"
+                  />
                 </q-card-section>
                 <q-card-actions align="around">
                   <q-btn flat color="negative" class="q-ml-xs">Recuperar Clave</q-btn>
                   <q-space />
-                  <q-btn flat color="primary">Iniciar Sesion</q-btn>
+                  <q-btn flat color="primary" @click="login">Iniciar Sesion</q-btn>
                 </q-card-actions>
               </q-card>
             </q-popup-proxy>
@@ -44,6 +59,8 @@
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex'
+import { ACTIONS } from '../store/module-login/name.js'
 export default {
   data () {
     return {
@@ -70,7 +87,29 @@ export default {
         default:
           break
       }
-    }
+    },
+    /**
+     * Login app
+     */
+    async login () {
+      this.$refs.username.validate()
+      this.$refs.password.validate()
+      if (this.$refs.username.hasError || this.$refs.password.hasError) {
+        this.formHasError = true
+      } else {
+        await this[ACTIONS.LOGIN](
+          {
+            self: this,
+            route: ['authentication', 'login'],
+            param: {
+              username: this.email,
+              password: this.password
+            }
+          }
+        )
+      }
+    },
+    ...mapActions([ACTIONS.LOGIN])
   }
 }
 </script>

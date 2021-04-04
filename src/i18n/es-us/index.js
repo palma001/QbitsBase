@@ -7,14 +7,20 @@ export default {
     active: 'habilitado',
     desactive: 'deshabilitado',
     cliente: 'cliente',
-    organization: 'organización'
+    organization: 'organización',
+    reception: 'recepción'
   },
   // modules
   modules: {
-    embalar: 'embalar',
-    listaEmpaques: 'lista de empaques',
+    'new-shipment': 'nuevo envio',
     geolocation: 'geolocalización',
     transporte: 'transporte',
     listaReclamo: 'Lista Reclamo'
+  },
+  newShipment: {
+    sender: 'remitente',
+    packages: 'paquetes',
+    addSender: 'agregar remitente',
+    addPackages: 'agregar paquete'
   }
 }
