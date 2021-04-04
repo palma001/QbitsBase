@@ -8,7 +8,7 @@
       navigation-position="bottom"
       navigation
       swipeable
-      :autoplay="3000"
+      :autoplay="5000"
       :arrows="false"
       v-model="slide"
       id="home"
@@ -249,6 +249,9 @@ export default {
 }
 </script>
 <style>
+body {
+  font-family: 'Trebuchet ms';
+}
 .custom-caption {
   padding: 12px;
   background-color: rgba(0, 0, 0, .3);
