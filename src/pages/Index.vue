@@ -199,7 +199,7 @@
     </div>
     <div class= "bg-dark text-white"  style="width: 100%; height: 450px; padding: 40px">
       <div class= "row">
-        <div class="col-12 text-h3 text-bold flex flex-left flex-center q-pa-l">
+        <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center q-pa-l">
           ¡Somos Calidad de Servicio!
         </div>
         <div class="col-12 text-h4 flex flex-left flex-center q-pa-xl">
