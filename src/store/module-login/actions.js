@@ -11,7 +11,15 @@ export const actions = {
     self.btnDisable = true
     self.$services.postData(route, param)
       .then(({ res }) => {
-        dispatch(ACTIONS.LOGIN_SUCCESS, { data: res.data, self: self })
+        console.log(res.data.access_token)
+        commit(MUTATIONS.SET_TOKEN, res.data.access_token)
+        commit(MUTATIONS.SET_REFRESH_TOKEN, res.data.refresh_token)
+        commit(MUTATIONS.SET_USER, res.data.user)
+        commit(MUTATIONS.SET_EXPIRE_IN, Number(res.data.expires_in))
+        commit(MUTATIONS.SET_EXPIRE_IN, Number(res.data.expires_in))
+        commit(MUTATIONS.SET_ID, Number(res.data.user.id))
+        dispatch(ACTIONS.AUTO_LOGOUT, Number(res.data.expires_in))
+        self.$router.push({ name: 'Geolocation' })
         self.btnDisable = false
       })
       .catch(() => {
@@ -31,28 +39,6 @@ export const actions = {
   [ACTIONS.LOGOUT]: ({ commit }, { self }) => {
     commit(MUTATIONS.CLEAR_ACCOUNT_STATE)
     self.$router.push({ name: 'login' })
-  },
-  /**
-   * Success login
-   * @param {Object} context vuex
-   * @param {Object} data users data
-   */
-  [ACTIONS.LOGIN_SUCCESS]: ({ commit }, { data, self }) => {
-    commit(MUTATIONS.SET_USER, data)
-    switch (data.rol) {
-      case 'EE':
-        self.$router.push({ name: 'Embalar' })
-        break
-      case 'UC':
-        self.$router.push({ name: 'EmpaquesCliente' })
-        break
-      case 'UA':
-        self.$router.push({ name: 'Geolocation' })
-        break
-      default:
-        self.$router.push({ name: 'EmpaquesTransporte' })
-        break
-    }
   },
   /**
    * Valiad session active

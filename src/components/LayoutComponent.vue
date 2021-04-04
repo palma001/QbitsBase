@@ -202,13 +202,14 @@ export default {
     ...mapGetters([GETTERS.GET_USER])
   },
   methods: {
-    validateRole (access) {
+    validateRole (access = []) {
       const user = this[GETTERS.GET_USER]
-      if (access && user) {
+      if (access && access.length > 0 && user) {
         return access.filter(element => {
           return element === user.rol
         })[0]
       }
+      return true
     },
     /**
      * Emit event logout

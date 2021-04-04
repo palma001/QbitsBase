@@ -33,9 +33,9 @@ const routes = [
         name: 'Geolocation'
       },
       {
-        path: '/embalar',
-        component: () => import('pages/Embalar.vue'),
-        name: 'Embalar'
+        path: '/new-shipment',
+        component: () => import('pages/NewShipment.vue'),
+        name: 'NewShipment'
       },
       {
         path: 'pruebas',
