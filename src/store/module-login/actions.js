@@ -11,7 +11,6 @@ export const actions = {
     self.btnDisable = true
     self.$services.postData(route, param)
       .then(({ res }) => {
-        console.log(res.data.access_token)
         commit(MUTATIONS.SET_TOKEN, res.data.access_token)
         commit(MUTATIONS.SET_REFRESH_TOKEN, res.data.refresh_token)
         commit(MUTATIONS.SET_USER, res.data.user)
@@ -19,7 +18,7 @@ export const actions = {
         commit(MUTATIONS.SET_EXPIRE_IN, Number(res.data.expires_in))
         commit(MUTATIONS.SET_ID, Number(res.data.user.id))
         dispatch(ACTIONS.AUTO_LOGOUT, Number(res.data.expires_in))
-        self.$router.push({ name: 'Geolocation' })
+        self.$router.push({ name: 'NewShipment' })
         self.btnDisable = false
       })
       .catch(() => {
@@ -45,8 +44,9 @@ export const actions = {
    */
   [ACTIONS.VALID_SESSION]: ({ commit, dispatch }) => {
     const user = JSON.parse(localStorage.getItem('user_session'))
-    const userActive = localStorage.getItem('session_active')
-    const invalidUser = !userActive || userActive === 'false'
+    // const userActive = localStorage.getItem('session_active')
+    console.log(user)
+    const invalidUser = !user || user === null
     if (invalidUser) {
       commit(MUTATIONS.CLEAR_ACCOUNT_STATE)
       return false

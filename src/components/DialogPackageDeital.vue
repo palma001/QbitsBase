@@ -1,10 +1,10 @@
 <template>
-  <q-dialog v-model="model" persistent>
+  <q-dialog v-model="show" persistent>
     <q-card style="width: 700px; max-width: 80vw;">
       <q-card-section class="row items-center text-white bg-primary">
         <div class="text-h6">Agregar paquete</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
+        <q-btn icon="close" flat round dense v-close-popup @click="close"/>
       </q-card-section>
       <q-stepper
           v-model="step"
@@ -134,8 +134,8 @@
 
           <template v-slot:navigation>
             <q-stepper-navigation>
-              <q-btn @click="$refs.stepper.next()" color="primary" :label="step === 3 ? 'Finish' : 'Continue'" />
               <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
+              <q-btn @click="$refs.stepper.next()" color="primary" :label="step === 3 ? 'Finish' : 'Continue'" />
             </q-stepper-navigation>
           </template>
       </q-stepper>
@@ -145,13 +145,12 @@
 
 <script>
 export default {
-  // name: 'ComponentName',
+  name: 'DialogPackageDeital',
   data () {
     return {
       address: '',
       deliveryType: 'Sucursal',
       sucursal: null,
-      prompt: false,
       options: ['Sucursal', 'Destino'],
       destinos: ['Zulia', 'Anzoategui'],
       sucursales: ['Maturin', 'Caracas'],
@@ -160,9 +159,14 @@ export default {
     }
   },
   props: {
-    model: {
+    show: {
       type: Boolean,
       default: false
+    }
+  },
+  methods: {
+    close () {
+      this.$emit('close')
     }
   }
 }

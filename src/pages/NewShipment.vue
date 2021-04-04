@@ -8,7 +8,6 @@
           use-input
           hide-selected
           fill-input
-          input-debounce="0"
           dense
           :label="ucwords($t('newShipment.sender'))"
           :options="options"
@@ -23,7 +22,7 @@
               icon="add"
               aria-label="add"
               round
-              @click="persistent = !persistent"
+              @click="dialogSender = !dialogSender"
             >
               <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
                 <strong>{{ucwords($t('newShipment.addSender'))}}</strong>
@@ -43,25 +42,66 @@
     <div class="row">
       <div class="col-12">
         <q-table
+          hide-bottom
           :title="ucwords($t('newShipment.packages'))"
           :data="data"
           :columns="columns"
-          row-key="name"
-          hide-bottom
         >
            <template v-slot:top-right>
-            <q-btn color="primary" :label="ucwords($t('newShipment.addPackages'))" @click="dialogPackage = !dialogPackage"/>
+            <q-btn
+              color="primary"
+              :label="ucwords($t('newShipment.addPackages'))"
+              @click="dialogPackage = !dialogPackage"
+            />
           </template>
+          <template v-slot:header="props">
+            <q-tr :props="props">
+              <q-th
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+              >
+                {{ col.label }}
+              </q-th>
+              <q-th auto-width>
+                Acciones
+              </q-th>
+            </q-tr>
+          </template>
+           <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+              >
+                {{ col.value }}
+              </q-td>
+              <q-td auto-width class="q-gutter-x-sm">
+                <q-btn size="13px" color="primary" round dense @click="props.expand = !props.expand" icon="visibility" />
+                <q-btn size="13px" color="negative" round dense @click="props.expand = !props.expand" icon="delete" />
+                <q-btn size="13px" color="positive" round dense @click="props.expand = !props.expand" icon="content_copy" />
+              </q-td>
+            </q-tr>
+           </template>
         </q-table>
       </div>
     </div>
-    <dialog-package-deital :model="dialogPackage"/>
+    <dialog-package-deital
+      :show="dialogPackage"
+      @close="dialogPackage = !dialogPackage"
+    />
+    <dialog-add-sender
+      :show="dialogSender"
+      @close="dialogSender = !dialogSender"
+    />
   </q-page>
 </template>
 
 <script>
 import { mixins } from '../mixins'
 import DialogPackageDeital from '../components/DialogPackageDeital'
+import DialogAddSender from '../components/DialogAddSender'
 const stringOptions = [
   'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
 ].reduce((acc, opt) => {
@@ -73,132 +113,70 @@ const stringOptions = [
 
 export default {
   components: {
-    DialogPackageDeital
+    DialogPackageDeital,
+    DialogAddSender
   },
   mixins: [mixins.containerMixin],
   data () {
     return {
       dialogPackage: false,
+      dialogSender: false,
       model: null,
       options: stringOptions,
       columns: [
         {
-          name: 'desc',
-          required: true,
-          label: 'Dessert (100g serving)',
+          name: 'number',
+          field: 'number',
+          label: 'Numero de paquete',
           align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
           sortable: true
         },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-        { name: 'protein', label: 'Protein (g)', field: 'protein' },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-        { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+        {
+          name: 'peso',
+          field: 'peso',
+          label: 'Peso(Kg)',
+          sortable: true
+        },
+        {
+          name: 'ancho',
+          field: 'ancho',
+          label: 'Ancho (cm)',
+          sortable: true
+        },
+        {
+          name: 'largo',
+          field: 'largo',
+          label: 'Largo (cm)',
+          sortable: true
+        },
+        {
+          name: 'destino',
+          field: 'destino',
+          label: 'Destino',
+          sortable: true
+        },
+        {
+          name: 'destinatario',
+          field: 'destinatario',
+          label: 'Destinatario',
+          sortable: true
+        },
+        {
+          name: 'precio',
+          field: 'precio',
+          label: 'Precio ($)',
+          sortable: true
+        }
       ],
       data: [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
+          number: 2131312,
+          peso: 5.5,
+          ancho: 12,
+          largo: 12,
+          precio: 10,
+          destino: 'Puerto la cruz',
+          destinatario: 'Luis Palma'
         }
       ]
     }
