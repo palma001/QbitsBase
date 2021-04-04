@@ -3,7 +3,7 @@
     <q-carousel
       animated
       height="100vh"
-      style="margin-top:-100px"
+      style="margin-top:-98px"
       infinite
       navigation-position="bottom"
       navigation
