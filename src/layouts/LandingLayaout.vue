@@ -14,7 +14,7 @@
             <q-popup-proxy style="width: 400px;">
               <q-card class="my-card" style="width: 400px;">
                 <q-card-section>
-                  <div class="text-h6">Iniciar Sesión</div>
+                  <div class="text-h6 text-primary">Iniciar Sesión</div>
                 </q-card-section>
                 <q-separator></q-separator>
                 <q-card-section>
