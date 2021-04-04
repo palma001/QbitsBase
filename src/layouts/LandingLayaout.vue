@@ -6,9 +6,6 @@
           <q-toolbar-title :class="classButton">
             Transporte JR&LS
           </q-toolbar-title>
-          <!-- <q-toolbar-title>
-            <strong>Quasar</strong> Framework
-          </q-toolbar-title> -->
           <q-space />
           <q-btn stretch flat label="Home" :class="classButton" v-scroll-to="'#home'"/>
           <q-btn stretch flat label="Contáctanos" :class="classButton" v-scroll-to="'#contactus'"/>

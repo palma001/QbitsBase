@@ -3,7 +3,7 @@
     <q-carousel
       animated
       height="100vh"
-      style="margin-top:-100px"
+      style="margin-top:-98px"
       infinite
       navigation-position="bottom"
       navigation
@@ -33,12 +33,19 @@
         Empresa
       </h1>
     </div>
-    <div style="width: 100%; height: 700px;" id="contactus">
-      <q-img src="/sliders/pexels-tima-miroshnichenko-6169056.jpg" style="width: 100%; height:100%;">
-        <div class="absolute-full flex flex-left flex-center">
-          <div class="q-pa-md">
+    <div style="width: 100%; height: 800px;" id="contactus">
+      <q-parallax :speed="0.5" :height="800">
+        <template v-slot:media>
+          <img src="/sliders/pexels-tima-miroshnichenko-6169056.jpg">
+        </template>
+        <template v-slot:content="scope">
+          <div class="absolute column items-center" :style="{
+            top: (scope.percentScrolled * 40) + '%',
+            left: 0,
+            right: 0
+          }">
             <div class="row justify-around q-gutter-y-xl">
-              <q-intersection transition="scale" class="col-md-4 col-sm-12">
+              <q-intersection transition="scale" class="col-md-4 col-sm-12 text-white">
                 <div class="text-h2">
                   Titulo
                 </div>
@@ -129,8 +136,8 @@
               </q-intersection>
             </div>
           </div>
-        </div>
-      </q-img>
+        </template>
+      </q-parallax>
     </div>
     <div style="width: 100%; height: 700px;">
       <h1>
