@@ -141,9 +141,9 @@ module.exports = function (/* ctx */) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: 'Monteverde',
-        short_name: 'Monteverde',
-        description: 'Monteverde',
+        name: 'Transporte JR&LS',
+        short_name: 'Transporte JR&LS',
+        description: 'Transporte JR&LS',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#009688',

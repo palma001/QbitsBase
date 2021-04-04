@@ -30,31 +30,31 @@
     </q-carousel>
     <div style="width: 100%; height: 100%; padding: 90px" id="services">
       <div class="row">
-        <q-intersection transition="scale"  class="col-6" once>
+        <q-intersection transition="scale"  class="col-md-6 col-sm-12 col-xs-12" once>
            <q-img
             src="servicios/pexels-artem-podrez-5025667.jpg"
-            style="width: 100%"
+            style="width: 100%; height: 450px;"
           >
             <div class="absolute-bottom text-subtitle1 text-center">
               Calidad de Atención
             </div>
           </q-img>
         </q-intersection>
-        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-6 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
+        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
           <div class="q-pa-sm">Te ofrecemos siempre la mejor atención</div>
           <div class="q-pa-sm">Recolectamos tu mercancía sin costo adicional</div>
           <div class="q-pa-sm">Los mejores precios para tu encomienda</div>
         </q-intersection>
       </div>
       <div class="row">
-        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-6 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
+        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
           <div class="q-pa-sm">Salidas interdiarias a todos los destinos del país</div>
           <div class="q-pa-sm">Traslado de tu encomienda entre 12h y 48h. 72h para largas distancias</div>
         </q-intersection>
-        <q-intersection transition="scale" class="col-6" once>
+        <q-intersection transition="scale" class="col-md-6 col-sm-12 col-xs-12" once>
           <q-img
             src="servicios/pexels-tima-miroshnichenko-6169126.jpg"
-            style="width: 100%"
+            style="width: 100%; height: 450px;"
           >
             <div class="absolute-bottom text-subtitle1 text-center">
               Rapidez de Servicio
@@ -63,28 +63,28 @@
         </q-intersection>
       </div>
       <div class="row">
-        <q-intersection transition="scale" class="col-6" once>
+        <q-intersection transition="scale" class="col-md-6 col-sm-12 col-xs-12" once>
            <q-img
             src="servicios/pexels-artem-podrez-5025647.jpg"
-            style="width: 100%"
+            style="width: 100%; height: 450px;"
           >
             <div class="absolute-bottom text-subtitle1 text-center">
               Seguridad
             </div>
           </q-img>
         </q-intersection>
-        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-6 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
+        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
           <div class="q-pa-sm">Cada una de tus encomiendas posee su seguro contra cualquier incoveniente</div>
         </q-intersection>
       </div>
       <div class="row">
-        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-6 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
+        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
           <div class="q-pa-sm">Con la seguridad y compromiso de que tu encomienda llegara a tiempo y en perfecto estado a su destino</div>
         </q-intersection>
-        <q-intersection transition="scale" class="col-6 " once>
+        <q-intersection transition="scale" class="col-md-6 col-sm-12 col-xs-12 " once>
           <q-img
             src="servicios/pexels-tima-miroshnichenko-6169668.jpg"
-            style="width: 100%"
+            style="width: 100%; height: 450px;"
           >
             <div class="absolute-bottom text-subtitle1 text-center">
               Compromiso y Responsabilidad
@@ -93,12 +93,12 @@
         </q-intersection>
       </div>
     </div>
-    <div style="width: 100%; height: 105vh;" id="contactus">
+    <div id="contactus" class="contactus">
       <q-img src="/sliders/pexels-tima-miroshnichenko-6169056.jpg" style="width: 100%; height:100%;">
         <div class="absolute-full flex flex-left flex-center">
           <div class="q-pa-md">
             <div class="row justify-around q-gutter-y-xl">
-              <q-intersection once transition="scale" class="col-md-4 col-sm-12">
+              <q-intersection once transition="scale" class="col-md-4 col-sm-12 col-xs-12">
                 <div class="text-h2">
                   ¡Siempre grato poder servirte!
                 </div>
@@ -143,7 +143,7 @@
                   </q-list>
                 </div>
               </q-intersection>
-              <q-intersection once transition="scale" class="col-md-5 col-sm-12" style="margin-top: 140px;">
+              <q-intersection once transition="scale" class="col-md-5 col-sm-12 col-xs-12" style="margin-top: 140px;">
                 <q-form
                   class="q-col-gutter-lg row"
                 >
@@ -197,8 +197,8 @@
         </div>
       </q-img>
     </div>
-    <div class= "bg-dark text-white"  style="width: 100%; height: 450px; padding: 40px">
-      <div class= "row">
+    <div class="bg-dark text-white"  style="width: 100%; height: 450px; padding: 40px">
+      <div class="row">
         <div class="col-12 text-h3 text-bold flex flex-left flex-center q-pa-l">
           ¡Somos Calidad de Servicio!
         </div>
@@ -266,6 +266,10 @@ body {
 .security {
   margin-left: 10px;
 }
+.contactus {
+  width: 100%;
+  height: 100%;
+}
 @media (max-width: 1000px) {
   .title-car {
     margin-top: 300px;
@@ -276,6 +280,17 @@ body {
   }
   .security {
     margin-left: 0px;
+  }
+}
+
+@media (max-width: 1309px) {
+  .contactus {
+    height: 1000px;
+  }
+}
+@media (max-width: 1020px) {
+  .contactus {
+    height: 1500px;
   }
 }
 </style>

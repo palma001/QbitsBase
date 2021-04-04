@@ -1,8 +1,8 @@
 {
-  "name": "Monteverde",
+  "name": "Transporte JR&LS",
   "version": "0.0.1",
   "description": "software accounting software",
-  "productName": "Monteverde",
+  "productName": "Transporte JR&LS",
   "author": "Luis Palma <palmaluis1997@gmail.com>",
   "private": true,
   "scripts": {
