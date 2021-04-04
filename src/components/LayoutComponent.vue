@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh Lpr lff" class="shadow-2 rounded-borders">
     <q-header elevated>
-      <q-toolbar class="bg-teal glossy">
+      <q-toolbar class="bg-primary glossy">
         <q-btn flat
           dense
           round
@@ -33,7 +33,7 @@
                     </div>
                     <div class="column">
                       <div class="text-subtitle1 text-primary q-mt-sm q-mb-xs q-ml-sm">
-                        {{ GET_USER ? ucwords(GET_USER.nombre) : '' }}
+                        {{ GET_USER ? ucwords(GET_USER.name) : '' }}
                       </div>
                     </div>
                   </div>
@@ -202,13 +202,14 @@ export default {
     ...mapGetters([GETTERS.GET_USER])
   },
   methods: {
-    validateRole (access) {
+    validateRole (access = []) {
       const user = this[GETTERS.GET_USER]
-      if (access && user) {
+      if (access && access.length > 0 && user) {
         return access.filter(element => {
           return element === user.rol
         })[0]
       }
+      return true
     },
     /**
      * Emit event logout
@@ -251,5 +252,5 @@ export default {
 <style lang="sass">
 .my-menu-link
   color: white
-  background: #009688
+  background: #5DADE2
 </style>
