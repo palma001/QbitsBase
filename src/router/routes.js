@@ -1,4 +1,4 @@
-import { validationSession, validationNotSession } from './validations-router'
+import { validationNotSession } from './validations-router'
 const routes = [
   {
     path: '/login',
@@ -20,13 +20,8 @@ const routes = [
   {
     path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
-    beforeEnter: validationSession,
+    // beforeEnter: validationSession,
     children: [
-      {
-        path: '/empaques-empleado',
-        component: () => import('pages/EmpaquesEmpleado.vue'),
-        name: 'EmpaquesEmpleado'
-      },
       {
         path: '/empaques-transporte',
         component: () => import('pages/EmpaquesTransporte.vue'),
@@ -43,19 +38,9 @@ const routes = [
         name: 'Embalar'
       },
       {
-        path: '/empaques-cliente',
-        component: () => import('pages/EmpaquesCliente.vue'),
-        name: 'EmpaquesCliente'
-      },
-      {
-        path: '/empaques',
-        component: () => import('pages/EmpaquesAdministrador.vue'),
-        name: 'EmpaquesAdministrador'
-      },
-      {
-        path: '/lista-reclamo',
-        component: () => import('pages/ListaReclamo.vue'),
-        name: 'ListaReclamo'
+        path: 'pruebas',
+        component: () => import('pages/Prueba.vue'),
+        name: 'Prueba'
       }
     ]
   },
