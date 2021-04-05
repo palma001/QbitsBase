@@ -200,7 +200,7 @@
     </div>
     <div class="bg-dark text-white"  style="width: 100%; height: 450px; padding: 40px">
       <div class="row">
-        <div class="col-12 text-h3 text-bold flex flex-left flex-center q-pa-l">
+        <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center q-pa-l">
           ¡Somos Calidad de Servicio!
         </div>
         <div class="col-12 text-h4 flex flex-left flex-center q-pa-xl">
@@ -208,12 +208,12 @@
         </div>
         <div class="col-12 text-h5 flex flex-left flex-center q-pa-xl">
           <q-img class="q-ml-lg"
-            src="icons/WS-5.png"
-            style="width: 40px; height: 40px">
+            src="icons/Logo Whatsapp blanco II_Mesa de trabajo 1.png"
+            style="width: 70px; height: 70px">
           </q-img>
           <q-img class="q-ml-lg"
-            src="icons/IG.png"
-            style="width: 40px; height: 40px">
+            src="icons/Logo IG Blanco II_Mesa de trabajo 1.png"
+            style="width: 70px; height: 70px">
           </q-img>
         </div>
         <div class="col-12 text-h7 flex flex-left flex-center q-pa-sm">
