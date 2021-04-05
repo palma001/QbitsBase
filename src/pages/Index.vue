@@ -236,6 +236,7 @@
 export default {
   data () {
     return {
+      show: true,
       slide: 'one',
       sliders: [],
       active: false,
@@ -252,7 +253,6 @@ export default {
     async getSliders () {
       const { response } = await this.$mockData.getData('sliders')
       this.sliders = response.data.content
-      console.log(this.sliders)
     }
   }
 }
