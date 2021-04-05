@@ -150,27 +150,27 @@ module.exports = function (/* ctx */) {
         theme_color: '#009688',
         icons: [
           {
-            src: 'icons/Monteverdev2-128x128.png',
+            src: 'icons/favicontr.png',
             sizes: '128x128',
             type: 'image/png'
           },
           {
-            src: 'icons/Monteverdev2-192x192.png',
+            src: 'icons/favicontr.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'icons/Monteverdev2-256x256.png',
+            src: 'icons/favicontr.png',
             sizes: '256x256',
             type: 'image/png'
           },
           {
-            src: 'icons/Monteverdev2-384x384.png',
+            src: 'icons/favicontr.png',
             sizes: '384x384',
             type: 'image/png'
           },
           {
-            src: 'icons/Monteverdev2.png',
+            src: 'icons/favicontr.png',
             sizes: '512x512',
             type: 'image/png'
           }
