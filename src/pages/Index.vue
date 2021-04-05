@@ -44,14 +44,14 @@
             </div>
           </q-img>
         </q-intersection>
-        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
+        <q-intersection transition="scale" class="bg-primary col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
           <div class="q-pa-sm">Te ofrecemos siempre la mejor atención</div>
           <div class="q-pa-sm">Recolectamos tu mercancía sin costo adicional</div>
           <div class="q-pa-sm">Los mejores precios para tu encomienda</div>
         </q-intersection>
       </div>
       <div class="row">
-        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
+        <q-intersection transition="scale" class="bg-primary col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
           <div class="q-pa-sm">Salidas interdiarias a todos los destinos del país</div>
           <div class="q-pa-sm">Traslado de tu encomienda entre 12h y 48h</div>
           <div class="q-pa-sm">72h para largas distancias</div>
@@ -80,12 +80,12 @@
             </div>
           </q-img>
         </q-intersection>
-        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
+        <q-intersection transition="scale" class="bg-primary col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
           <div class="q-pa-sm">Cada una de tus encomiendas posee su seguro contra cualquier incoveniente</div>
         </q-intersection>
       </div>
       <div class="row">
-        <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
+        <q-intersection transition="scale" class="bg-primary col-md-6 col-sm-12 col-xs-12 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
           <div class="q-pa-sm">Con la seguridad y compromiso de que tu encomienda llegara a tiempo y en perfecto estado a su destino</div>
         </q-intersection>
         <q-intersection transition="scale" class="col-md-6 col-sm-12 col-xs-12 " once>
