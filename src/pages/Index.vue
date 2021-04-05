@@ -18,7 +18,8 @@
         <q-btn v-else size="sm" :icon="btnProps.icon" color="white" flat round dense @click="onClick" />
       </template>
       <q-carousel-slide class="q-pa-none" v-for="slider in sliders" :name="slider.name" :key="slider.id">
-        <q-img :src="`/sliders/${slider.image}`" style="width: 100%; height:100%;">
+        <q-img
+          :src="`/sliders/${slider.image}`" style="width: 100%; height:100%;" basic>
           <div class="absolute-full flex flex-left">
            <div class="text-h2 text-bold title-car">
             {{ slider.title }}
@@ -32,6 +33,7 @@
       <div class="row">
         <q-intersection transition="scale"  class="col-md-6 col-sm-12 col-xs-12" once>
            <q-img
+            basic
             src="servicios/pexels-artem-podrez-5025667.jpg"
             style="width: 100%; height: 450px;"
           >
@@ -54,6 +56,7 @@
         </q-intersection>
         <q-intersection transition="scale" class="col-md-6 col-sm-12 col-xs-12" once>
           <q-img
+            basic
             src="servicios/pexels-tima-miroshnichenko-6169126.jpg"
             style="width: 100%; height: 450px;"
           >
@@ -66,6 +69,7 @@
       <div class="row">
         <q-intersection transition="scale" class="col-md-6 col-sm-12 col-xs-12" once>
            <q-img
+            basic
             src="servicios/pexels-artem-podrez-5025647.jpg"
             style="width: 100%; height: 450px;"
           >
@@ -84,6 +88,7 @@
         </q-intersection>
         <q-intersection transition="scale" class="col-md-6 col-sm-12 col-xs-12 " once>
           <q-img
+            basic
             src="servicios/pexels-tima-miroshnichenko-6169668.jpg"
             style="width: 100%; height: 450px;"
           >
@@ -95,7 +100,8 @@
       </div>
     </div>
     <div id="contactus" class="contactus">
-      <q-img src="/sliders/pexels-tima-miroshnichenko-6169056.jpg" style="width: 100%; height:100%;">
+      <q-img
+        basic src="/sliders/pexels-tima-miroshnichenko-6169056.jpg" style="width: 100%; height:100%;">
         <div class="absolute-full flex flex-left flex-center">
           <div class="q-pa-md">
             <div class="row justify-around q-gutter-y-xl">
@@ -198,25 +204,27 @@
         </div>
       </q-img>
     </div>
-    <div class="bg-dark text-white"  style="width: 100%; height: 450px; padding: 40px">
+    <div class="bg-dark text-white text-center"  style="width: 100%; height: 100%; padding: 40px">
       <div class="row">
-        <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center q-pa-l">
+        <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center">
           ¡Somos Calidad de Servicio!
         </div>
-        <div class="col-12 text-h4 flex flex-left flex-center q-pa-xl">
+        <div class="col-12 text-h4 flex flex-left flex-center q-mt-lg">
           info@tranjr.com
         </div>
-        <div class="col-12 text-h5 flex flex-left flex-center q-pa-xl">
-          <q-img class="q-ml-lg"
+        <div class="col-12 text-h5 flex flex-left flex-center q-mt-lg">
+          <q-img
+            basic class="q-ml-lg"
             src="icons/Logo Whatsapp blanco II_Mesa de trabajo 1.png"
             style="width: 70px; height: 70px">
           </q-img>
-          <q-img class="q-ml-lg"
+          <q-img
+            basic class="q-ml-lg"
             src="icons/Logo IG Blanco II_Mesa de trabajo 1.png"
             style="width: 70px; height: 70px">
           </q-img>
         </div>
-        <div class="col-12 text-h7 flex flex-left flex-center q-pa-sm">
+        <div class="col-12 text-h7 flex flex-left flex-center q-mt-lg">
           Copyright ©2021 All rights reserved | This website is provided by Qbits Dev
         </div>
       </div>
