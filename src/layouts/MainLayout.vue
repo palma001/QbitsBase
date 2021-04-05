@@ -1,6 +1,6 @@
 <template>
   <LayoutComponent
-    titleApp="Monteverde"
+    titleApp="Transporte JR&LS"
     titleMenu="Opciones"
     :data="modules"
     @logout="logout"
