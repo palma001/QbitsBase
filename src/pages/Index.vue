@@ -49,7 +49,8 @@
       <div class="row">
         <q-intersection transition="scale" style="background:rgba(93,173,226,0.9)" class="col-6 text-white text-h4 flex flex-left flex-center q-pa-xl" once>
           <div class="q-pa-sm">Salidas interdiarias a todos los destinos del país</div>
-          <div class="q-pa-sm">Traslado de tu encomienda entre 12h y 48h. 72h para largas distancias</div>
+          <div class="q-pa-sm">Traslado de tu encomienda entre 12h y 48h</div>
+          <div class="q-pa-sm">72h para largas distancias</div>
         </q-intersection>
         <q-intersection transition="scale" class="col-6" once>
           <q-img
@@ -197,9 +198,9 @@
         </div>
       </q-img>
     </div>
-    <div class= "bg-dark text-white"  style="width: 100%; height: 450px; padding: 40px">
+    <div class= "bg-dark text-white"  style="width: 100%; height: 400px; padding: 40px">
       <div class= "row">
-        <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center q-pa-l">
+        <div class="col-12 text-h3 text-italic flex flex-left flex-center q-pa-l">
           ¡Somos Calidad de Servicio!
         </div>
         <div class="col-12 text-h4 flex flex-left flex-center q-pa-xl">
@@ -207,7 +208,7 @@
         </div>
         <div class="col-12 text-h5 flex flex-left flex-center q-pa-xl">
           <q-img class="q-ml-lg"
-            src="icons/WS.png"
+            src="icons/WS-5.png"
             style="width: 40px; height: 40px">
           </q-img>
           <q-img class="q-ml-lg"
@@ -216,7 +217,7 @@
           </q-img>
         </div>
         <div class="col-12 text-h7 flex flex-left flex-center q-pa-sm">
-          Copyright ©2021 All rights reserved | This Web Site is made with by Qbits Dev
+          Copyright ©2021 All rights reserved | This website is provided by Qbits Dev
         </div>
       </div>
     </div>
