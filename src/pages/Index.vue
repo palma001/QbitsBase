@@ -1,35 +1,37 @@
 <template>
   <div class="q-pa-none">
-    <q-carousel
-      animated
-      height="100vh"
-      style="margin-top:-98px"
-      infinite
-      navigation-position="bottom"
-      navigation
-      swipeable
-      :autoplay="5000"
-      :arrows="false"
-      v-model="slide"
-      id="home"
-    >
-      <template v-slot:navigation-icon="{ active, btnProps, onClick }">
-        <q-btn v-if="active" size="lg" icon="home" color="white" flat round dense @click="onClick" />
-        <q-btn v-else size="sm" :icon="btnProps.icon" color="white" flat round dense @click="onClick" />
-      </template>
-      <q-carousel-slide class="q-pa-none" v-for="slider in sliders" :name="slider.name" :key="slider.id">
-        <q-img
-          :src="`/sliders/${slider.image}`" style="width: 100%; height:100%;" basic>
-          <div class="absolute-full flex flex-left">
-           <div class="text-h2 text-bold title-car">
-            {{ slider.title }}
-           </div>
-            <div class="subtitle-car" v-html="slider.description"></div>
-          </div>
-        </q-img>
-      </q-carousel-slide>
-    </q-carousel>
-    <div style="width: 100%; height: 100%; padding: 3%" id="services">
+    <section>
+      <q-carousel
+        animated
+        height="100vh"
+        style="margin-top:-98px"
+        infinite
+        navigation-position="bottom"
+        navigation
+        swipeable
+        :autoplay="5000"
+        :arrows="false"
+        v-model="slide"
+        id="home"
+      >
+        <template v-slot:navigation-icon="{ active, btnProps, onClick }">
+          <q-btn v-if="active" size="lg" icon="home" color="white" flat round dense @click="onClick" />
+          <q-btn v-else size="sm" :icon="btnProps.icon" color="white" flat round dense @click="onClick" />
+        </template>
+        <q-carousel-slide class="q-pa-none" v-for="slider in sliders" :name="slider.name" :key="slider.id">
+          <q-img
+            :src="`/sliders/${slider.image}`" style="width: 100%; height:100%;" basic>
+            <div class="absolute-full flex flex-left">
+            <div class="text-h2 text-bold title-car">
+              {{ slider.title }}
+            </div>
+              <div class="subtitle-car" v-html="slider.description"></div>
+            </div>
+          </q-img>
+        </q-carousel-slide>
+      </q-carousel>
+    </section>
+    <section style="width: 100%; height: 100%; padding: 3%" id="services">
       <div class="row">
         <q-intersection transition="scale"  class="col-md-6 col-sm-12 col-xs-12" once>
            <q-img
@@ -98,8 +100,8 @@
           </q-img>
         </q-intersection>
       </div>
-    </div>
-    <div id="contactus" class="contactus">
+    </section>
+    <section id="contactus" class="contactus">
       <q-img
         basic src="/sliders/pexels-tima-miroshnichenko-6169056.jpg" style="width: 100%; height:100%;">
         <div class="absolute-full flex flex-left flex-center">
@@ -203,8 +205,8 @@
           </div>
         </div>
       </q-img>
-    </div>
-    <div class="bg-dark text-white text-center"  style="width: 100%; height: 100%; padding: 40px">
+    </section>
+    <footer class="bg-dark text-white text-center"  style="width: 100%; height: 100%; padding: 40px">
       <div class="row">
         <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center">
           ¡Somos Calidad de Servicio!
@@ -213,22 +215,14 @@
           info@tranjr.com
         </div>
         <div class="col-12 text-h5 flex flex-left flex-center q-mt-lg">
-          <q-img
-            basic class="q-ml-lg"
-            src="icons/Logo Whatsapp blanco II_Mesa de trabajo 1.png"
-            style="width: 70px; height: 70px">
-          </q-img>
-          <q-img
-            basic class="q-ml-lg"
-            src="icons/Logo IG Blanco II_Mesa de trabajo 1.png"
-            style="width: 70px; height: 70px">
-          </q-img>
+          <q-icon name="fab fa-whatsapp" size="xl"/>
+          <q-icon name="fab fa-instagram" class="q-ml-lg" size="xl"/>
         </div>
         <div class="col-12 text-h7 flex flex-left flex-center q-mt-lg">
           Copyright ©2021 All rights reserved | This website is provided by Qbits Dev
         </div>
       </div>
-    </div>
+    </footer>
   </div>
 </template>
 

@@ -1,11 +1,10 @@
 <template>
   <q-drawer
+    behavior="mobile"
     show-if-above
     bordered
     dark
-    overlay
     v-model="drawer"
-    :width="200"
     :breakpoint="500"
   >
     <q-scroll-area class="fit">
@@ -104,21 +103,6 @@
         </q-item>
       </q-list>
     </q-scroll-area>
-    <!--
-      in this case, we use a button (can be anything)
-      so that user can switch back
-      to mini-mode
-    -->
-    <div class="absolute" style="top: 15px; right: -17px">
-      <q-btn
-        dense
-        round
-        unelevated
-        color="primary"
-        icon="chevron_left"
-        @click="drawer = false"
-      />
-    </div>
   </q-drawer>
 </template>
 

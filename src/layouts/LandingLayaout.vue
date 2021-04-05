@@ -1,60 +1,60 @@
 <template>
   <div class="q-pa-none">
-    <q-layout view="lHh Lpr lFf">
+    <q-layout view="hHh Lpr lff">
       <q-header :class="`${classToolbar}`">
         <q-toolbar class="text-dark">
           <q-toolbar-title :class="classButton">
+            <!--<q-btn stretch flat round @click="show = !show" icon="menu" v-if="$q.screen.lt.sm" :class="classButton"/>
+            -->
             Transporte JR&LS
           </q-toolbar-title>
           <q-space />
-          <q-btn stretch flat @click="show = !show" icon="menu" v-if="$q.screen.lt.md" :class="classButton"/>
-          <div v-else>
+          <div v-if="!$q.screen.lt.sm">
             <q-btn stretch flat label="Home" :class="classButton" v-scroll-to="'#home'"/>
             <q-btn stretch flat label="Servicios" :class="classButton" v-scroll-to="'#services'"/>
             <q-btn stretch flat label="Contáctanos" :class="classButton" v-scroll-to="'#contactus'"/>
-            <q-btn stretch flat icon="person" :class="classButton">
-              <q-popup-proxy style="width: 400px;">
-                <q-card class="my-card" style="width: 400px;">
-                  <q-card-section>
-                    <div class="text-h6 text-primary">Iniciar Sesión</div>
-                  </q-card-section>
-                  <q-separator></q-separator>
-                  <q-card-section>
-                    <q-input
-                      v-model="email"
-                      label="Usuario"
-                      dense
-                      ref="username"
-                      @keyup.enter.native="login"
-                      :rules="[val => !!val || 'El campo es requerido.']"
-                    />
-                  </q-card-section>
-                  <q-card-section>
-                    <q-input
-                      v-model="password"
-                      label="Clave"
-                      dense
-                      type="password"
-                      ref="password"
-                      @keyup.enter.native="login"
-                      :rules="[val => !!val || 'El campo es requerido.']"
-                    />
-                  </q-card-section>
-                  <q-card-actions align="around">
-                    <q-btn flat color="negative" class="q-ml-xs">Recuperar Clave</q-btn>
-                    <q-space />
-                    <q-btn flat color="primary" @click="login">Iniciar Sesion</q-btn>
-                  </q-card-actions>
-                </q-card>
-              </q-popup-proxy>
-            </q-btn>
           </div>
+          <q-btn stretch flat icon="person" :class="classButton">
+            <q-popup-proxy style="width: 400px;">
+              <q-card class="my-card" style="width: 400px;">
+                <q-card-section>
+                  <div class="text-h6 text-primary">Iniciar Sesión</div>
+                </q-card-section>
+                <q-separator></q-separator>
+                <q-card-section>
+                  <q-input
+                    v-model="email"
+                    label="Usuario"
+                    dense
+                    ref="username"
+                    @keyup.enter.native="login"
+                    :rules="[val => !!val || 'El campo es requerido.']"
+                  />
+                </q-card-section>
+                <q-card-section class="q-pt-none">
+                  <q-input
+                    v-model="password"
+                    label="Clave"
+                    dense
+                    type="password"
+                    ref="password"
+                    @keyup.enter.native="login"
+                    :rules="[val => !!val || 'El campo es requerido.']"
+                  />
+                </q-card-section>
+                <q-card-actions align="around">
+                  <q-btn flat color="negative" class="q-ml-xs">Recuperar Clave</q-btn>
+                  <q-space />
+                  <q-btn flat color="primary" @click="login">Iniciar Sesion</q-btn>
+                </q-card-actions>
+              </q-card>
+            </q-popup-proxy>
+          </q-btn>
         </q-toolbar>
       </q-header>
       <drawer-landing :show="show" v-if="$q.screen.lt.sm || show"/>
       <q-page-container>
         <router-view />
-        <!-- place QPageScroller at end of page -->
         <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
           <q-btn fab icon="keyboard_arrow_up" color="primary" />
         </q-page-scroller>
@@ -131,5 +131,8 @@ export default {
 <style>
   .bg-transparent {
     background-color: rgba(255, 0, 0, 0.5)
+  }
+  .q-body--prevent-scroll {
+    position: relative !important;
   }
 </style>
