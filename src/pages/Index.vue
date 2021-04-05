@@ -28,7 +28,7 @@
         </q-img>
       </q-carousel-slide>
     </q-carousel>
-    <div style="width: 100%; height: 100%; padding: 90px" id="services">
+    <div style="width: 100%; height: 100%; padding: 3%" id="services">
       <div class="row">
         <q-intersection transition="scale"  class="col-md-6 col-sm-12 col-xs-12" once>
            <q-img
@@ -272,11 +272,11 @@ body {
 }
 @media (max-width: 1000px) {
   .title-car {
-    margin-top: 300px;
+    margin-top: 200px;
   }
   .subtitle-car {
     margin-left: 0px;
-    margin-top: -150px;
+    margin-top: -100px;
   }
   .security {
     margin-left: 0px;
@@ -290,7 +290,7 @@ body {
 }
 @media (max-width: 1020px) {
   .contactus {
-    height: 1500px;
+    height: 1800px;
   }
 }
 </style>
