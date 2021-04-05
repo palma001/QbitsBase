@@ -215,8 +215,12 @@
           info@tranjr.com
         </div>
         <div class="col-12 text-h5 flex flex-left flex-center q-mt-lg">
-          <q-icon name="fab fa-whatsapp" size="xl"/>
-          <q-icon name="fab fa-instagram" class="q-ml-lg" size="xl"/>
+          <a href="https://api.whatsapp.com/send/?phone=584143352633&text&app_absent=0" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
+            <q-icon name="fab fa-whatsapp" size="xl"/>
+          </a>
+          <a href="https://www.instagram.com/transporte.jrls/?hl=es-la" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
+            <q-icon name="fab fa-instagram" class="q-ml-lg" size="xl"/>
+          </a>
         </div>
         <div class="col-12 text-h7 flex flex-left flex-center q-mt-lg">
           Copyright ©2021 All rights reserved | This website is provided by Qbits Dev
