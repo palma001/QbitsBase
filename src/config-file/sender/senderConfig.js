@@ -7,12 +7,11 @@ export const senderConfig = [
         actionable: {
           propTag: 'document_type',
           addible: true,
-          editable: true,
-          type: 'text',
+          type: 'String',
           visibleLabel: true,
           component: {
+            name: 'b-search-select',
             props: {
-              name: 'b-search-select',
               data: [
                 {
                   label: 'Cédula',
@@ -20,7 +19,7 @@ export const senderConfig = [
                 },
                 {
                   label: 'Rif',
-                  value: 'Rif'
+                  value: 'RIF'
                 }
               ],
               dataValue: 'value',
@@ -29,28 +28,28 @@ export const senderConfig = [
               outlined: true,
               dense: true,
               clearable: true
-            }
-          },
-          class: {
-            'col-xs-12': true,
-            'col-sm-12': true,
-            'col-md-12': true
-          },
-          directives: [
-            {
-              name: 'validate',
-              value: {
-                required: true
+            },
+            class: {
+              'col-xs-12': true,
+              'col-sm-12': true,
+              'col-md-12': true
+            },
+            directives: [
+              {
+                name: 'validate',
+                value: {
+                  required: false
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       },
       {
         tabulated: {
           name: 'document_number',
           align: 'left',
-          field: row => row.document,
+          field: row => row.document_number,
           sortable: true,
           visible: true
         },
