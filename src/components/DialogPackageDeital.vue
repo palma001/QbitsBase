@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="show" persistent>
-    <q-card style="width: 700px; max-width: 80vw;">
+    <q-card style="width: 900px; max-width: 80vw;">
       <q-card-section class="row items-center text-white bg-primary">
         <div class="text-h6">Agregar paquete</div>
         <q-space />
