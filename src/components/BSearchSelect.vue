@@ -128,7 +128,6 @@ export default {
   },
   watch: {
     value () {
-      console.log(this.valueSelect)
       this.valueSelect = this.value
     },
     errorMessage () {

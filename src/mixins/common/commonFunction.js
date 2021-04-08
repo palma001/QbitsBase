@@ -22,7 +22,6 @@ export const translateLabel = function (value) {
  * @return {String}       text translated
  */
 export const errorRequest = function (error) {
-  console.log(error.slice(error.indexOf(';') + 2))
   switch (error.slice(error.indexOf(';') + 2)) {
     case 'Expected non-nullable type Int! not to be null at value.caja_id.' :
       return 'boxIsrequired'
@@ -137,7 +136,7 @@ export const time = (timeFormating) => {
 
 export const notify = (self, message, color, icon, position = 'bottom-right') => {
   self.$q.notify({
-    message: ucwords(message),
+    message: ucwords(self.$t(message)),
     color: color,
     position: position,
     icon: icon

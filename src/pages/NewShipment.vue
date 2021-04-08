@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-4">
         <q-select
-          v-model="model"
+          v-model="sender"
           clearable
           use-input
           hide-selected
@@ -99,7 +99,7 @@
       <DynamicForm
         module="sender"
         :loading="senderLoadingAdd"
-        :buttons="buttonsEntryAndExitOfMoney"
+        :buttons="buttonsSender"
         :config="senderConfig"
         @save="saveSender"
         @cancel="cancelSender"
@@ -111,7 +111,7 @@
 <script>
 import { mixins } from '../mixins'
 import DialogPackageDeital from '../components/DialogPackageDeital'
-import { senderConfig } from '../config-file/sender/senderConfig'
+import { senderConfig, buttonsSender } from '../config-file/sender/senderConfig'
 import DynamicForm from '../components/DynamicForm'
 export default {
   components: {
@@ -121,12 +121,12 @@ export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
-      buttonsEntryAndExitOfMoney: [],
+      buttonsSender,
       senderConfig,
       senderLoadingAdd: false,
       dialogPackage: false,
       dialogSender: false,
-      model: null,
+      sender: null,
       senderOptions: [],
       senderAll: [],
       columns: [
@@ -192,7 +192,25 @@ export default {
   },
   methods: {
     saveSender (data) {
-      console.log(data)
+      this.$services.postData(['senders'], {
+        name: data.sender_type.value === 'NAT' ? data.name : null,
+        last_name: data.last_name,
+        email: data.email,
+        user_created_id: 1,
+        business_name: data.sender_type.value === 'NAT' ? null : data.name,
+        phone_number: data.phone_number,
+        document_number: data.document_number,
+        document_type: data.document_type.value,
+        branch_office_id: 1
+      })
+        .then(({ res }) => {
+          this.sender = {
+            value: res.data.id,
+            label: `${res.data.full_name} (${res.data.document_type} - ${res.data.document_number})`
+          }
+          this.dialogSender = false
+          this.notify(this, 'sender.saveSuccess', 'positive', 'mood')
+        })
     },
     cancelSender () {
       this.dialogSender = false
@@ -229,7 +247,7 @@ export default {
       const { res } = await this.$services.getData(['senders'], {})
       this.senderAll = res.data.map(sender => {
         return {
-          label: `${sender.name} ${sender.last_name} (${sender.document_type} - ${sender.document_number})`,
+          label: `${sender.full_name} (${sender.document_type} - ${sender.document_number})`,
           value: sender.id
         }
       })

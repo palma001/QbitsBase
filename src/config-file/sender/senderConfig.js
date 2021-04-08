@@ -5,6 +5,47 @@ export const senderConfig = [
     children: [
       {
         actionable: {
+          propTag: 'sender_type',
+          addible: true,
+          type: 'String',
+          visibleLabel: true,
+          component: {
+            name: 'b-search-select',
+            props: {
+              data: [
+                {
+                  label: 'Natural',
+                  value: 'NAT'
+                },
+                {
+                  label: 'Juridica',
+                  value: 'JUR'
+                }
+              ],
+              dataValue: 'value',
+              dataLabel: 'label',
+              behavior: 'menu',
+              dense: true,
+              clearable: true
+            },
+            class: {
+              'col-xs-12': true,
+              'col-sm-12': true,
+              'col-md-12': true
+            },
+            directives: [
+              {
+                name: 'validate',
+                value: {
+                  required: false
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        actionable: {
           propTag: 'document_type',
           addible: true,
           type: 'String',
@@ -25,7 +66,6 @@ export const senderConfig = [
               dataValue: 'value',
               dataLabel: 'label',
               behavior: 'menu',
-              outlined: true,
               dense: true,
               clearable: true
             },
@@ -63,7 +103,6 @@ export const senderConfig = [
             name: 'b-input',
             props: {
               type: 'text',
-              outlined: true,
               dense: true
             },
             class: {
@@ -100,7 +139,6 @@ export const senderConfig = [
             name: 'b-input',
             props: {
               type: 'text',
-              outlined: true,
               dense: true
             },
             class: {
@@ -137,7 +175,6 @@ export const senderConfig = [
             name: 'b-input',
             props: {
               type: 'text',
-              outlined: true,
               dense: true
             },
             class: {
@@ -149,7 +186,7 @@ export const senderConfig = [
               {
                 name: 'validate',
                 value: {
-                  required: true
+                  required: false
                 }
               }
             ]
@@ -174,7 +211,6 @@ export const senderConfig = [
             name: 'b-input',
             props: {
               type: 'text',
-              outlined: true,
               dense: true
             },
             class: {
@@ -211,7 +247,6 @@ export const senderConfig = [
             name: 'b-input',
             props: {
               type: 'text',
-              outlined: true,
               dense: true
             },
             class: {
@@ -231,5 +266,58 @@ export const senderConfig = [
         }
       }
     ]
+  }
+]
+export const buttonsSender = [
+  {
+    name: 'cancel',
+    action: 'cancel',
+    label: false,
+    props: {
+      icon: 'highlight_off',
+      color: 'negative',
+      glossy: true,
+      size: '12px'
+    },
+    tooltip: {
+      text: 'cancel',
+      props: {
+        'content-class': 'bg-negative'
+      }
+    }
+  },
+  {
+    name: 'reset',
+    action: 'reset',
+    label: false,
+    props: {
+      icon: 'restore',
+      color: 'positive',
+      glossy: true,
+      size: '12px'
+    },
+    tooltip: {
+      text: 'reset',
+      props: {
+        'content-class': 'bg-positive'
+      }
+    }
+  },
+  {
+    name: 'add',
+    action: 'add',
+    label: false,
+    props: {
+      color: 'primary',
+      glossy: true,
+      size: '12px',
+      icon: 'add_circle'
+    },
+    tooltip: {
+      text: 'add',
+      props: {
+        'content-class': 'bg-primary'
+      }
+    }
   }
 ]
