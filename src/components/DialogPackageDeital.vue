@@ -1,144 +1,167 @@
 <template>
-  <q-dialog v-model="show" persistent>
-    <q-card style="width: 900px; max-width: 80vw;">
+  <q-dialog v-model="show" persistent :maximized="$q.screen.lt.sm">
+    <q-card :style="$q.screen.lt.sm ? '' : 'width: 900px; max-width: 80vw;'">
       <q-card-section class="row items-center text-white bg-primary">
         <div class="text-h6">Agregar paquete</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup @click="close"/>
       </q-card-section>
-      <q-stepper
-          v-model="step"
-          ref="stepper"
-          alternative-labels
+      <q-card-section class="q-pa-none" style="min-height: 420px;'">
+        <q-stepper
+            ref="stepper"
+            color="primary"
+            animated
+            header-nav
+            v-model="step"
+            alternative-labels
+            :vertical="$q.screen.lt.md"
+            style="border-style: none !important; border-width: 0px; !important"
+          >
+            <q-step
+              title="Datos del paquete"
+              icon="settings"
+              :name="1"
+              :done="step > 1"
+            >
+              <q-card style="" class="row">
+                <q-card-section
+                  class="col-12"
+                  v-for="rate in rates"
+                  :key="rate.id"
+                >
+                  <q-input
+                    autofocus
+                    dense
+                    v-model="rateValue[rate.id]"
+                    type="number"
+                    :label="`${rate.name} (${rate.unit_of_measurement.acronym})`"
+                  />
+                </q-card-section>
+                 <q-card-section
+                    class="col-12"
+                  >
+                    <q-input
+                      autofocus
+                      dense
+                      v-model="rateValue.amount"
+                      type="number"
+                      label="Costo del paquete"
+                    />
+                  </q-card-section>
+              </q-card>
+            </q-step>
+            <q-step
+              :name="2"
+              title="Dirección de envio"
+              icon="create_new_folder"
+              :done="step > 2"
+            >
+              <q-card class="row">
+                <q-card-section class="col-12">
+                  <q-select v-model="deliveryType" :options="options" label="Tipo de entrega" dense/>
+                  </q-card-section>
+                  <q-card-section class="col-12" v-if="deliveryType === 'Sucursal'">
+                    <q-select v-model="branchOffice" :options="branchOffices" label="Sucursales" dense/>
+                  </q-card-section>
+                  <q-card-section class="col-12 q-pt-none row q-col-gutter-md" v-else>
+                    <q-select
+                      v-model="destination"
+                      :options="destinations"
+                      label="Destino"
+                      dense
+                      class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                    />
+                    <q-input
+                      autofocus
+                      dense
+                      v-model="referencePoin"
+                      label="Punto de referencia"
+                      class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                    />
+                    <q-input
+                      autofocus
+                      dense
+                      v-model="address"
+                      label="Dirección"
+                      type="textarea"
+                      class="col-12"
+                    />
+                  </q-card-section>
+              </q-card>
+            </q-step>
+            <q-step
+              :name="3"
+              title="Datos del destinatario"
+              icon="add_comment"
+            >
+              <q-card class="row">
+                <q-card-section class="col-12">
+                  <q-input
+                    autofocus
+                    dense
+                    v-model="documetntNumber"
+                    label="Número de documento"
+                    @blur="getAddress"
+                  />
+                </q-card-section>
+                <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    autofocus
+                    dense
+                    v-model="addressee.name"
+                    label="Nombre"
+                  />
+                </q-card-section>
+                <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    autofocus
+                    dense
+                    v-model="addressee.last_name"
+                    label="Apellido"
+                  />
+                </q-card-section>
+                <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    autofocus
+                    dense
+                    v-model="addressee.phone_number"
+                    label="Telefono"
+                  />
+                </q-card-section>
+                <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    autofocus
+                    dense
+                    v-model="addressee.email"
+                    label="Email"
+                  />
+                </q-card-section>
+              </q-card>
+            </q-step>
+        </q-stepper>
+      </q-card-section>
+      <q-separator/>
+      <q-card-actions align="right">
+        <q-btn
+          icon="chevron_left"
+          class="q-ml-sm"
+          color="negative"
+          v-if="step > 1"
+          @click="$refs.stepper.previous()"
+        />
+        <q-btn
+          icon="navigate_next"
           color="primary"
-          animated
-          header-nav
-        >
-          <q-step
-            :name="1"
-            title="Datos del paquete"
-            icon="settings"
-            :done="step > 1"
-          >
-
-            <q-card style="" class="row">
-              <q-card-section class="col-12">
-                <q-input
-                  autofocus
-                  dense
-                  v-model="address"
-                  label="Peso"
-                />
-              </q-card-section>
-              <q-card-section class="col-12">
-                <q-input
-                  autofocus
-                  dense
-                  v-model="address"
-                  label="Largo"
-                />
-              </q-card-section>
-              <q-card-section class="col-12">
-                <q-input
-                  autofocus
-                  dense
-                  v-model="address"
-                  label="Ancho"
-                />
-              </q-card-section>
-            </q-card>
-          </q-step>
-
-          <q-step
-            :name="2"
-            title="Dirección de envio"
-            icon="create_new_folder"
-            :done="step > 2"
-          >
-            <q-card class="row">
-              <q-card-section class="col-12">
-                <q-select v-model="deliveryType" :options="options" label="Tipo de entrega" dense/>
-                </q-card-section>
-                <q-card-section class="col-12" v-if="deliveryType === 'Sucursal'">
-                <q-select v-model="sucursal" :options="sucursales" label="Sucursales" dense/>
-                </q-card-section>
-                <q-card-section class="col-12 q-pt-none" v-else>
-                  <q-select v-model="destino" :options="destinos" label="Destino" dense/>
-                  <q-input
-                    autofocus
-                    dense
-                    v-model="address"
-                    label="Dirección"
-                    type="textarea"
-                    class="q-mt-lg"
-                  />
-                  <q-input
-                    autofocus
-                    dense
-                    v-model="address"
-                    label="Referencia"
-                    class="q-mt-lg"
-                  />
-                </q-card-section>
-            </q-card>
-          </q-step>
-
-          <q-step
-            :name="3"
-            title="Datos del destinatario"
-            icon="add_comment"
-          >
-            <q-card class="row">
-              <q-card-section class="col-12">
-                <q-input
-                  autofocus
-                  dense
-                  v-model="address"
-                  label="Nombre"
-                />
-              </q-card-section>
-              <q-card-section class="col-12">
-                <q-input
-                  autofocus
-                  dense
-                  v-model="address"
-                  label="Apellido"
-                />
-              </q-card-section>
-              <q-card-section class="col-12">
-                <q-input
-                  autofocus
-                  dense
-                  v-model="address"
-                  label="Identificación"
-                />
-              </q-card-section>
-              <q-card-section class="col-12">
-                <q-input
-                  autofocus
-                  dense
-                  v-model="address"
-                  label="Telefono"
-                />
-              </q-card-section>
-              <q-card-section class="col-12">
-                <q-input
-                  autofocus
-                  dense
-                  v-model="address"
-                  label="Email"
-                />
-              </q-card-section>
-            </q-card>
-          </q-step>
-
-          <template v-slot:navigation>
-            <q-stepper-navigation>
-              <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
-              <q-btn @click="$refs.stepper.next()" color="primary" :label="step === 3 ? 'Finish' : 'Continue'" />
-            </q-stepper-navigation>
-          </template>
-      </q-stepper>
+          v-if="step < 3"
+          @click="$refs.stepper.next()"
+        />
+        <q-btn
+          label="Guardar"
+          color="primary"
+          @click="saveDataPackage"
+          v-else
+        />
+      </q-card-actions>
     </q-card>
 </q-dialog>
 </template>
@@ -150,12 +173,29 @@ export default {
     return {
       address: '',
       deliveryType: 'Sucursal',
-      sucursal: null,
-      options: ['Sucursal', 'Destino'],
-      destinos: ['Zulia', 'Anzoategui'],
-      sucursales: ['Maturin', 'Caracas'],
-      destino: null,
-      step: 1
+      options: ['Sucursal', 'Entrega a domicilio'],
+      destinations: [],
+      destination: null,
+      referencePoin: '',
+      step: 1,
+      rates: [],
+      rateValue: {},
+      documentType: null,
+      branchOffices: [],
+      branchOffice: null,
+      amount: 0,
+      documetntNumber: null,
+      addressee: {},
+      optionsDocumentTypes: [
+        {
+          label: 'Cedúla',
+          value: 'CI'
+        },
+        {
+          label: 'Rif',
+          value: 'RIF'
+        }
+      ]
     }
   },
   props: {
@@ -164,7 +204,88 @@ export default {
       default: false
     }
   },
+  created () {
+    this.getAllRates()
+    this.getAllBranchOffices()
+    this.getAllDestinations()
+  },
   methods: {
+    /**
+     * Save vocuher
+     */
+    async saveDataPackage () {
+      await this.saveAddresse()
+      const dataPackage = {
+        rate: this.rateValue,
+        addressee: this.addressee,
+        destination: {
+          branchOffice: this.branchOffice,
+          referencePoin: this.referencePoin,
+          address: this.address,
+          destination: this.destination
+        }
+      }
+      this.$emit('savePackage', dataPackage)
+    },
+    /**
+     * Save Addresse
+     */
+    async saveAddresse () {
+      this.addressee.user_created_id = 1
+      this.addressee.document_number = this.documetntNumber
+      const { res } = await this.$services.postData(['addressees'], this.addressee)
+      this.addressee = res.data
+    },
+    /**
+     * Get Rate all
+     */
+    async getAllRates () {
+      const { res } = await this.$services.getData(['rates'], { paginated: false })
+      this.rates = res.data
+    },
+    /**
+     * Get Destinations all
+     */
+    async getAllDestinations () {
+      const { res } = await this.$services.getData(['destinations'], { paginated: false })
+      this.destinations = res.data.map(destination => {
+        return {
+          label: `${destination.state} - ${destination.city}`,
+          value: destination.id
+        }
+      })
+    },
+    /**
+     * Get Branch Office all
+     */
+    async getAllBranchOffices () {
+      const { res } = await this.$services.getData(['branch-offices'], { paginated: false })
+      this.branchOffices = res.data.map(branchOffice => {
+        return {
+          label: branchOffice.name,
+          value: branchOffice.id
+        }
+      })
+    },
+    /**
+     * Get Addresse all
+     */
+    async getAddress () {
+      if (this.documetntNumber) {
+        const { res } = await this.$services.getData(['addressees'],
+          {
+            paginated: false,
+            dataFilter: {
+              document_number: this.documetntNumber
+            }
+          }
+        )
+        this.addressee = res.data.length > 0 ? res.data[0] : {}
+      }
+    },
+    /**
+     * Close dialog
+     */
     close () {
       this.$emit('close')
     }

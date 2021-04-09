@@ -43,7 +43,7 @@
         <q-table
           hide-bottom
           :title="ucwords($t('newShipment.packages'))"
-          :data="data"
+          :data="packages"
           :columns="columns"
         >
            <template v-slot:top-right>
@@ -89,6 +89,7 @@
     <dialog-package-deital
       :show="dialogPackage"
       @close="dialogPackage = !dialogPackage"
+      @savePackage="savePackage"
     />
     <q-dialog
       v-model="dialogSender"
@@ -131,66 +132,49 @@ export default {
       senderAll: [],
       columns: [
         {
-          name: 'number',
-          field: 'number',
-          label: 'Numero de paquete',
+          name: 'destino',
+          field: (row) => row.destination.branchOffice ? row.destination.branchOffice.label : row.destination.destination.label,
+          label: 'Destino',
           align: 'left',
           sortable: true
         },
         {
-          name: 'peso',
-          field: 'peso',
-          label: 'Peso(Kg)',
-          sortable: true
-        },
-        {
-          name: 'ancho',
-          field: 'ancho',
-          label: 'Ancho (cm)',
-          sortable: true
-        },
-        {
-          name: 'largo',
-          field: 'largo',
-          label: 'Largo (cm)',
-          sortable: true
-        },
-        {
-          name: 'destino',
-          field: 'destino',
-          label: 'Destino',
-          sortable: true
-        },
-        {
           name: 'destinatario',
-          field: 'destinatario',
+          field: (row) => row.addressee.full_name,
           label: 'Destinatario',
+          align: 'left',
           sortable: true
         },
         {
           name: 'precio',
-          field: 'precio',
+          field: (row) => row.rate.amount,
           label: 'Precio ($)',
+          align: 'left',
           sortable: true
         }
       ],
       data: [
         {
-          number: 2131312,
-          peso: 5.5,
-          ancho: 12,
-          largo: 12,
-          precio: 10,
           destino: 'Puerto la cruz',
-          destinatario: 'Luis Palma'
+          destinatario: 'Luis Palma',
+          precio: 10
         }
-      ]
+      ],
+      packages: []
     }
   },
   created () {
     this.getAllSenders()
   },
   methods: {
+    savePackage (data) {
+      console.log(data)
+      this.packages.push(data)
+    },
+    /**
+     * Save sender
+     * @param {Object} data data to save
+     */
     saveSender (data) {
       this.$services.postData(['senders'], {
         name: data.sender_type.value === 'NAT' ? data.name : null,
@@ -209,9 +193,13 @@ export default {
             label: `${res.data.full_name} (${res.data.document_type} - ${res.data.document_number})`
           }
           this.dialogSender = false
+          this.getAllSenders()
           this.notify(this, 'sender.saveSuccess', 'positive', 'mood')
         })
     },
+    /**
+     * Cancel save
+     */
     cancelSender () {
       this.dialogSender = false
     },
@@ -244,7 +232,7 @@ export default {
      * Get Senders all
      */
     async getAllSenders () {
-      const { res } = await this.$services.getData(['senders'], {})
+      const { res } = await this.$services.getData(['senders'], { paginated: false })
       this.senderAll = res.data.map(sender => {
         return {
           label: `${sender.full_name} (${sender.document_type} - ${sender.document_number})`,
