@@ -14,7 +14,7 @@
             <q-btn stretch flat label="Servicios" :class="classButton" v-scroll-to="'#services'"/>
             <q-btn stretch flat label="Contáctanos" :class="classButton" v-scroll-to="'#contactus'"/>
           </div>
-          <q-btn stretch flat icon="person" :class="classButton">
+          <q-btn stretch flat icon="person" :class="classButton" v-if="!GET_USER">
             <q-popup-proxy style="width: 400px;">
               <q-card class="my-card" style="width: 400px;">
                 <q-card-section>
@@ -50,6 +50,7 @@
               </q-card>
             </q-popup-proxy>
           </q-btn>
+          <q-btn label="Administrativo" stretch flat :class="classButton" @click="$router.push({ 'name': 'NewShipment'})" v-else/>
         </q-toolbar>
       </q-header>
       <drawer-landing :show="show" v-if="$q.screen.lt.sm || show"/>
@@ -65,8 +66,8 @@
 </template>
 <script>
 import DrawerLanding from '../components/DrawerLanding'
-import { mapActions } from 'vuex'
-import { ACTIONS } from '../store/module-login/name.js'
+import { mapActions, mapGetters } from 'vuex'
+import { ACTIONS, GETTERS } from '../store/module-login/name.js'
 export default {
   components: {
     DrawerLanding
@@ -82,6 +83,12 @@ export default {
       email: '',
       password: ''
     }
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
   },
   methods: {
     eventLogin (data) {

@@ -4,7 +4,7 @@ import { ACTIONS } from '../store/module-login/name'
 export const validationSession = async (to, from, next) => {
   const validation = await Store.dispatch(ACTIONS.VALID_SESSION)
   if (!validation) {
-    return next('/login')
+    return next('/')
   }
   next()
 }
