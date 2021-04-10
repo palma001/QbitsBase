@@ -267,11 +267,11 @@ body {
   margin-top: 300px;
 }
 .subtitle-car {
-  margin-top: 400px;
-  margin-left: -470px;
+  margin-top: 370px;
+  margin-left: -150px;
 }
 .security {
-  margin-left: 10px;
+  margin-left: 20px;
 }
 .contactus {
   width: 100%;
