@@ -16,3 +16,7 @@ export const validationNotSession = async (to, from, next) => {
   }
   next()
 }
+export const validationValidation = async (to, from, next) => {
+  await Store.dispatch(ACTIONS.VALID_SESSION)
+  next()
+}

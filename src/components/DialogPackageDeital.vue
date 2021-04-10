@@ -32,7 +32,7 @@
                   <q-input
                     autofocus
                     dense
-                    v-model="rateValue[`${rate.id}-${rate.name}`]"
+                    v-model="rateValue[rate.id]"
                     type="number"
                     :label="`${rate.name} (${rate.unit_of_measurement.acronym})`"
                   />
@@ -195,7 +195,8 @@ export default {
           label: 'Rif',
           value: 'RIF'
         }
-      ]
+      ],
+      dataPackage: []
     }
   },
   props: {
@@ -215,7 +216,7 @@ export default {
      */
     async saveDataPackage () {
       await this.saveAddresse()
-      const dataPackage = {
+      this.dataPackage.push({
         rate: this.rateValue,
         addressee: this.addressee,
         destination: {
@@ -224,8 +225,22 @@ export default {
           address: this.address,
           destination: this.destination
         }
-      }
-      this.$emit('savePackage', dataPackage)
+      })
+      this.clearForm()
+      this.$emit('savePackage', this.dataPackage)
+    },
+    /**
+     * Clear form
+    */
+    clearForm () {
+      this.rateValue = {}
+      this.branchOffice = null
+      this.address = ''
+      this.destination = ''
+      this.referencePoin = ''
+      this.documetntNumber = ''
+      this.deliveryType = null
+      this.addressee = {}
     },
     /**
      * Save Addresse

@@ -2,10 +2,12 @@
   <div class="q-pa-none">
     <q-layout view="hHh Lpr lff">
       <q-header :class="`${classToolbar}`">
-        <q-toolbar class="text-dark q-pb-none">
-          <q-avatar size="100px" class="q-mt-md">
-            <img src="icons/JRLS.png">
-          </q-avatar>
+        <q-toolbar class="text-dark">
+          <q-toolbar-title :class="classButton">
+            <!--<q-btn stretch flat round @click="show = !show" icon="menu" v-if="$q.screen.lt.sm" :class="classButton"/>
+            -->
+            Transporte JR&LS
+          </q-toolbar-title>
           <q-space />
           <div v-if="!$q.screen.lt.sm" class="q-gutter-x-md">
             <q-btn stretch flat dense label="Home" :class="classButton" v-scroll-to="'#home'"/>
@@ -97,11 +99,11 @@ export default {
     onScroll (data) {
       switch (true) {
         case data.position > 100:
-          this.classToolbar = 'bg-white'
+          this.classToolbar = 'bg-white q-pa-sm'
           this.classButton = 'text-dark'
           break
         case data.position < 100:
-          this.classToolbar = 'bg-transparent'
+          this.classToolbar = 'bg-transparent q-pa-lg'
           this.classButton = 'text-white'
           break
         default:

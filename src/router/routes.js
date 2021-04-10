@@ -1,4 +1,4 @@
-import { validationNotSession, validationSession } from './validations-router'
+import { validationNotSession, validationSession, validationValidation } from './validations-router'
 const routes = [
   {
     path: '/login',
@@ -9,6 +9,7 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/LandingLayaout.vue'),
+    beforeEnter: validationValidation,
     children: [
       {
         path: '/',

@@ -139,25 +139,18 @@ export default {
           sortable: true
         },
         {
-          name: 'destinatario',
+          name: 'addressee',
           field: (row) => row.addressee.full_name,
           label: 'Destinatario',
           align: 'left',
           sortable: true
         },
         {
-          name: 'precio',
+          name: 'amount',
           field: (row) => row.rate.amount,
           label: 'Precio ($)',
           align: 'left',
           sortable: true
-        }
-      ],
-      data: [
-        {
-          destino: 'Puerto la cruz',
-          destinatario: 'Luis Palma',
-          precio: 10
         }
       ],
       packages: []
@@ -165,20 +158,29 @@ export default {
   },
   created () {
     this.getAllSenders()
+    this.getAllRates()
   },
   methods: {
-    savePackage (data) {
-      console.log(data)
-      this.addDetailsTable(data.rate)
-      this.packages.push(data)
+    /**
+     * Get Rate all
+     */
+    async getAllRates () {
+      const { res } = await this.$services.getData(['rates'], { paginated: false })
+      this.columns = this.columns.concat(
+        res.data.map(rate => {
+          return {
+            name: rate.id,
+            label: `${rate.name} (${rate.unit_of_measurement.acronym})`,
+            field: (row) => row.rate[rate.id],
+            align: 'left',
+            sortable: true
+          }
+        })
+      )
     },
-    addDetailsTable (data) {
-      for (const key in data) {
-        if (Object.hasOwnProperty.call(data, key)) {
-          const arr = key.split('-')
-          console.log(key, arr)
-        }
-      }
+    savePackage (data) {
+      this.packages = data
+      this.dialogPackage = false
     },
     /**
      * Save sender
@@ -244,7 +246,7 @@ export default {
       const { res } = await this.$services.getData(['senders'], { paginated: false })
       this.senderAll = res.data.map(sender => {
         return {
-          label: `${sender.full_name} (${sender.document_type} - ${sender.document_number})`,
+          label: `${sender.full_name} (${sender.document_type}-${sender.document_number})`,
           value: sender.id
         }
       })
