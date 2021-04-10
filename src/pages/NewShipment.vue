@@ -169,7 +169,16 @@ export default {
   methods: {
     savePackage (data) {
       console.log(data)
+      this.addDetailsTable(data.rate)
       this.packages.push(data)
+    },
+    addDetailsTable (data) {
+      for (const key in data) {
+        if (Object.hasOwnProperty.call(data, key)) {
+          const arr = key.split('-')
+          console.log(key, arr)
+        }
+      }
     },
     /**
      * Save sender

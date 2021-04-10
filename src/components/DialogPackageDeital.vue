@@ -32,7 +32,7 @@
                   <q-input
                     autofocus
                     dense
-                    v-model="rateValue[rate.id]"
+                    v-model="rateValue[`${rate.id}-${rate.name}`]"
                     type="number"
                     :label="`${rate.name} (${rate.unit_of_measurement.acronym})`"
                   />

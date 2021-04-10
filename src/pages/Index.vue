@@ -4,7 +4,7 @@
       <q-carousel
         animated
         height="100vh"
-        style="margin-top:-98px"
+        style="margin-top:-200px"
         infinite
         navigation-position="bottom"
         navigation
