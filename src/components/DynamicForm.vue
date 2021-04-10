@@ -321,6 +321,7 @@ export default {
             confi.children.map(prop => {
               if (prop.actionable && prop.actionable.addible) {
                 const propTag = prop.actionable.propTag
+                console.log(propTag)
                 prop.actionable.component.props.value = (prop.actionable.component.props.defaultValue) ? prop.actionable.component.props.defaultValue : self.objectToBind[propTag]
                 return createElement(
                   prop.actionable.component.name,

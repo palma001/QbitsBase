@@ -22,5 +22,14 @@ export default {
     packages: 'paquetes',
     addSender: 'agregar remitente',
     addPackages: 'agregar paquete'
+  },
+  sender: {
+    add: 'Agregar Remitente',
+    name: 'nombre',
+    last_name: 'apellido',
+    document_number: 'número de documento',
+    document_type: 'tipo de documento',
+    phone_number: 'número de telefono',
+    email: 'correo'
   }
 }

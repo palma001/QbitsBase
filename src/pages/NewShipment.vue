@@ -10,9 +10,8 @@
           fill-input
           dense
           :label="ucwords($t('newShipment.sender'))"
-          :options="options"
+          :options="senderOptions"
           @filter="filterFn"
-          @filter-abort="abortFilterFn"
         >
           <template v-slot:append>
             <q-btn
@@ -91,38 +90,45 @@
       :show="dialogPackage"
       @close="dialogPackage = !dialogPackage"
     />
-    <dialog-add-sender
-      :show="dialogSender"
-      @close="dialogSender = !dialogSender"
-    />
+    <q-dialog
+      v-model="dialogSender"
+      full-height
+      position="right"
+      persistent
+    >
+      <DynamicForm
+        module="sender"
+        :loading="senderLoadingAdd"
+        :buttons="buttonsEntryAndExitOfMoney"
+        :config="senderConfig"
+        @save="saveSender"
+        @cancel="cancelSender"
+      />
+    </q-dialog>
   </q-page>
 </template>
 
 <script>
 import { mixins } from '../mixins'
 import DialogPackageDeital from '../components/DialogPackageDeital'
-import DialogAddSender from '../components/DialogAddSender'
-const stringOptions = [
-  'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
-].reduce((acc, opt) => {
-  for (let i = 1; i <= 5; i++) {
-    acc.push(opt + ' ' + i)
-  }
-  return acc
-}, [])
-
+import { senderConfig } from '../config-file/sender/senderConfig'
+import DynamicForm from '../components/DynamicForm'
 export default {
   components: {
     DialogPackageDeital,
-    DialogAddSender
+    DynamicForm
   },
   mixins: [mixins.containerMixin],
   data () {
     return {
+      buttonsEntryAndExitOfMoney: [],
+      senderConfig,
+      senderLoadingAdd: false,
       dialogPackage: false,
       dialogSender: false,
       model: null,
-      options: stringOptions,
+      senderOptions: [],
+      senderAll: [],
       columns: [
         {
           name: 'number',
@@ -181,8 +187,19 @@ export default {
       ]
     }
   },
-
+  created () {
+    this.getAllSenders()
+  },
   methods: {
+    saveSender (data) {
+      console.log(data)
+    },
+    cancelSender () {
+      this.dialogSender = false
+    },
+    /**
+     * Filter Sender
+    */
     filterFn (val, update, abort) {
       // call abort() at any time if you can't retrieve data somehow
 
@@ -190,15 +207,12 @@ export default {
         update(
           () => {
             if (val === '') {
-              this.options = stringOptions
+              this.senderOptions = this.senderAll
             } else {
               const needle = val.toLowerCase()
-              this.options = stringOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
+              this.senderOptions = this.senderAll.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
             }
           },
-
-          // next function is available in Quasar v1.7.4+;
-          // "ref" is the Vue reference to the QSelect
           ref => {
             if (val !== '' && ref.options.length > 0) {
               ref.setOptionIndex(-1) // reset optionIndex in case there is something selected
@@ -208,35 +222,17 @@ export default {
         )
       }, 300)
     },
-
-    filterFnAutoselect (val, update, abort) {
-      // call abort() at any time if you can't retrieve data somehow
-
-      setTimeout(() => {
-        update(
-          () => {
-            if (val === '') {
-              this.options = stringOptions
-            } else {
-              const needle = val.toLowerCase()
-              this.options = stringOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-            }
-          },
-
-          // next function is available in Quasar v1.7.4+;
-          // "ref" is the Vue reference to the QSelect
-          ref => {
-            if (val !== '' && ref.options.length > 0 && ref.optionIndex === -1) {
-              ref.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
-              ref.toggleOption(ref.options[ref.optionIndex], true) // toggle the focused option
-            }
-          }
-        )
-      }, 300)
-    },
-
-    abortFilterFn () {
-      // console.log('delayed filter aborted')
+    /**
+     * Get Senders all
+     */
+    async getAllSenders () {
+      const { res } = await this.$services.getData(['senders'], {})
+      this.senderAll = res.data.map(sender => {
+        return {
+          label: `${sender.name} ${sender.last_name} (${sender.document_type} - ${sender.document_number})`,
+          value: sender.id
+        }
+      })
     }
   }
 }
