@@ -10,7 +10,7 @@
         <q-input
           autofocus
           dense
-          v-model="address"
+          v-model="name"
           label="Nombre"
         />
       </q-card-section>
@@ -18,7 +18,7 @@
         <q-input
           autofocus
           dense
-          v-model="address"
+          v-model="last_name"
           label="Apellido"
         />
       </q-card-section>
