@@ -1,7 +1,7 @@
 <template>
   <q-page padding class="q-gutter-lg">
-    <div class="row">
-      <div class="col-4">
+    <div class="row justify-between q-gutter-y-sm">
+      <div class="col-xs-12 col-sm-6 col-lg-4">
         <q-select
           v-model="sender"
           clearable
@@ -37,6 +37,15 @@
           </template>
         </q-select>
       </div>
+      <div class="col-xs-12 col-sm-6 col-lg-4 text-right">
+        <p class="text-h4 float-right">${{ total }}</p>
+        <q-btn
+          icon="fa fa-credit-card"
+          class="q-mr-md q-mt-xs"
+          color="primary"
+          @click="dialogPayment = !dialogPayment"
+        />
+      </div>
     </div>
     <div class="row">
       <div class="col-12">
@@ -67,7 +76,7 @@
               </q-th>
             </q-tr>
           </template>
-           <template v-slot:body="props">
+          <template v-slot:body="props">
             <q-tr :props="props">
               <q-td
                 v-for="col in props.cols"
@@ -78,11 +87,11 @@
               </q-td>
               <q-td auto-width class="q-gutter-x-sm">
                 <q-btn size="13px" color="primary" round dense @click="props.expand = !props.expand" icon="visibility" />
-                <q-btn size="13px" color="negative" round dense @click="props.expand = !props.expand" icon="delete" />
+                <q-btn size="13px" color="negative" round dense @click="deletePackage(props)" icon="delete" />
                 <q-btn size="13px" color="positive" round dense @click="props.expand = !props.expand" icon="content_copy" />
               </q-td>
             </q-tr>
-           </template>
+          </template>
         </q-table>
       </div>
     </div>
@@ -97,14 +106,69 @@
       position="right"
       persistent
     >
-      <DynamicForm
-        module="sender"
-        :loading="senderLoadingAdd"
-        :buttons="buttonsSender"
-        :config="senderConfig"
-        @save="saveSender"
-        @cancel="cancelSender"
-      />
+    <DynamicForm
+      module="sender"
+      :loading="senderLoadingAdd"
+      :buttons="buttonsSender"
+      :config="senderConfig"
+      @save="saveSender"
+      @cancel="cancelSender"
+    />
+    </q-dialog>
+    <q-dialog
+      v-model="dialogPayment"
+      persistent
+    >
+      <q-card style="width: 900px; max-width: 80vw;">
+        <q-card-section>
+          <div class="text-h6">Pagar</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-select
+            label="Tipos de pago"
+            multiple
+            dense
+            use-chips
+            v-model="paymentTypes"
+            :options="paymentTypesAll"
+          />
+        </q-card-section>
+        <q-card-section
+          v-for="paymentType in paymentTypes"
+          :key="paymentType.id"
+          class="row q-col-gutter-x-md"
+        >
+          <div class="col-4">
+            <q-input
+              dense
+              label="Monto"
+              :hint="paymentType.label"
+              v-model="paymentType.monto"
+            />
+          </div>
+          <div class="col-4">
+            <q-input
+              dense
+              label="Codigo de referencia"
+              :hint="paymentType.label"
+              v-model="paymentType.refrence"
+            />
+          </div>
+          <div class="col-4">
+            <q-select
+              dense
+              v-model="paymentType.paymentTypesDestination"
+              label="Destino del pago"
+              :options="paymentTypesDestinations"
+              :hint="paymentType.label"
+            />
+          </div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn color="primary" label="Pagar" @click="saveBill" />
+        </q-card-actions>
+      </q-card>
     </q-dialog>
   </q-page>
 </template>
@@ -124,6 +188,12 @@ export default {
     return {
       buttonsSender,
       senderConfig,
+      payments: {},
+      paymentTypes: null,
+      dialogPayment: false,
+      paymentTypesAll: [],
+      paymentTypesDestinations: [],
+      paymentTypesDestination: null,
       senderLoadingAdd: false,
       dialogPackage: false,
       dialogSender: false,
@@ -153,14 +223,20 @@ export default {
           sortable: true
         }
       ],
-      packages: []
+      packages: [],
+      total: 0
     }
   },
   created () {
     this.getAllSenders()
     this.getAllRates()
+    this.getAllPaymentTypes()
+    this.getAllPaymentTypeDestinations()
   },
   methods: {
+    saveBill () {
+      console.log(this.paymentTypes)
+    },
     /**
      * Get Rate all
      */
@@ -178,9 +254,46 @@ export default {
         })
       )
     },
+    /**
+     * Save package
+     * @param {Array} data package
+    */
     savePackage (data) {
       this.packages = data
+      this.calcTotal(data)
       this.dialogPackage = false
+    },
+    /**
+     * Delete product
+     * @param {Object} data data product
+     */
+    deletePackage (data) {
+      this.$q.dialog({
+        title: 'Alerta',
+        message: '¿Desea eliminar el paquete?',
+        persistent: true,
+        ok: {
+          label: 'Aceptar',
+          color: 'primary'
+        },
+        cancel: {
+          color: 'negative',
+          label: 'Cancelar'
+        }
+      }).onOk(() => {
+        this.packages.splice(data.rowIndex, 1)
+        this.calcTotal(this.packages)
+      })
+    },
+    /**
+      * Calcula el total
+      */
+    calcTotal (data) {
+      let total = 0
+      data.forEach((data) => {
+        total = Number(total) + Number(data.rate.amount)
+      })
+      this.total = total
     },
     /**
      * Save sender
@@ -248,6 +361,30 @@ export default {
         return {
           label: `${sender.full_name} (${sender.document_type}-${sender.document_number})`,
           value: sender.id
+        }
+      })
+    },
+    /**
+     * Get Senders all
+     */
+    async getAllPaymentTypes () {
+      const { res } = await this.$services.getData(['payment-types'], { paginated: false })
+      this.paymentTypesAll = res.data.map(paymentType => {
+        return {
+          label: paymentType.name,
+          value: paymentType.id
+        }
+      })
+    },
+    /**
+     * Get Senders all
+     */
+    async getAllPaymentTypeDestinations () {
+      const { res } = await this.$services.getData(['payment-destinations'], { paginated: false })
+      this.paymentTypesDestinations = res.data.map(paymentTypeDestination => {
+        return {
+          label: paymentTypeDestination.name,
+          value: paymentTypeDestination.id
         }
       })
     }

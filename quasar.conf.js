@@ -123,7 +123,8 @@ module.exports = function (/* ctx */) {
         'Loading',
         'LocalStorage',
         'SessionStorage',
-        'BottomSheet'
+        'BottomSheet',
+        'Dialog'
       ]
     },
 

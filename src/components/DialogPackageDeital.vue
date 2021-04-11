@@ -26,11 +26,11 @@
               <q-card style="" class="row">
                 <q-card-section
                   class="col-12"
-                  v-for="rate in rates"
+                  v-for="(rate, index) in rates"
                   :key="rate.id"
                 >
                   <q-input
-                    autofocus
+                    :autofocus="index === 0"
                     dense
                     v-model="rateValue[rate.id]"
                     type="number"
@@ -41,7 +41,6 @@
                     class="col-12"
                   >
                     <q-input
-                      autofocus
                       dense
                       v-model="rateValue.amount"
                       type="number"
@@ -72,14 +71,12 @@
                       class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
                     />
                     <q-input
-                      autofocus
                       dense
                       v-model="referencePoin"
                       label="Punto de referencia"
                       class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
                     />
                     <q-input
-                      autofocus
                       dense
                       v-model="address"
                       label="Dirección"
@@ -106,7 +103,6 @@
                 </q-card-section>
                 <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-input
-                    autofocus
                     dense
                     v-model="addressee.name"
                     label="Nombre"
@@ -114,7 +110,6 @@
                 </q-card-section>
                 <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-input
-                    autofocus
                     dense
                     v-model="addressee.last_name"
                     label="Apellido"
@@ -122,7 +117,6 @@
                 </q-card-section>
                 <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-input
-                    autofocus
                     dense
                     v-model="addressee.phone_number"
                     label="Telefono"
@@ -130,7 +124,6 @@
                 </q-card-section>
                 <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-input
-                    autofocus
                     dense
                     v-model="addressee.email"
                     label="Email"
@@ -239,8 +232,9 @@ export default {
       this.destination = ''
       this.referencePoin = ''
       this.documetntNumber = ''
-      this.deliveryType = null
+      this.deliveryType = 'Sucursal'
       this.addressee = {}
+      this.step = 1
     },
     /**
      * Save Addresse
