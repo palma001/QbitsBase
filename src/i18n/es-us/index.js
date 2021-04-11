@@ -8,11 +8,16 @@ export default {
     desactive: 'deshabilitado',
     cliente: 'cliente',
     organization: 'organización',
-    reception: 'recepción'
+    reception: 'recepción',
+    configuration: 'configuración'
   },
   // modules
   modules: {
     'new-shipment': 'nuevo envio',
+    'users-management': 'usuarios',
+    'branchoffices-management': 'sucursales',
+    'transportation-management': 'transportes',
+    'roles-management': 'roles',
     geolocation: 'geolocalización',
     transporte: 'transporte',
     listaReclamo: 'Lista Reclamo'
