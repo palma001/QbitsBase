@@ -27,6 +27,16 @@ const routes = [
         path: '/new-shipment',
         component: () => import('pages/NewShipment.vue'),
         name: 'NewShipment'
+      },
+      {
+        path: '/user-management',
+        component: () => import('pages/UserPage.vue'),
+        name: 'UserPage'
+      },
+      {
+        path: 'pruebas',
+        component: () => import('pages/Prueba.vue'),
+        name: 'Prueba'
       }
     ]
   },
