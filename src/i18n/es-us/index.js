@@ -18,6 +18,8 @@ export default {
     'branchoffices-management': 'sucursales',
     'transportation-management': 'transportes',
     'roles-management': 'roles',
+    'routes-management': 'rutas',
+    'measures-management': 'medidas',
     geolocation: 'geolocalización',
     transporte: 'transporte',
     listaReclamo: 'Lista Reclamo'

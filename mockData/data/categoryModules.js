@@ -26,7 +26,7 @@ export const categoryModules = [
       {
         name: 'branchoffices-management',
         route: 'BranchOfficesPage',
-        icon: 'store',
+        icon: 'maps_home_work',
         devices: ['mobile', 'desktop']
       },
       {
@@ -39,6 +39,18 @@ export const categoryModules = [
         name: 'roles-management',
         route: 'RolesPage',
         icon: 'people_alt',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'routes-management',
+        route: 'RoutesPage',
+        icon: 'moving',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'measures-management',
+        route: 'MeasuresPage',
+        icon: 'straighten',
         devices: ['mobile', 'desktop']
       }
     ]
