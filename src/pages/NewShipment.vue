@@ -106,14 +106,14 @@
       position="right"
       persistent
     >
-    <DynamicForm
-      module="sender"
-      :loading="senderLoadingAdd"
-      :buttons="buttonsSender"
-      :config="senderConfig"
-      @save="saveSender"
-      @cancel="cancelSender"
-    />
+      <DynamicForm
+        module="sender"
+        :loading="senderLoadingAdd"
+        :buttons="buttonsSender"
+        :config="senderConfig"
+        @save="saveSender"
+        @cancel="cancelSender"
+      />
     </q-dialog>
     <q-dialog
       v-model="dialogPayment"
@@ -122,6 +122,8 @@
       <q-card style="width: 900px; max-width: 80vw;">
         <q-card-section>
           <div class="text-h6">Pagar</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup/>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
@@ -166,6 +168,7 @@
           </div>
         </q-card-section>
         <q-card-actions align="right">
+          <q-btn color="negaive" label="Cancelar" v-close-popup/>
           <q-btn color="primary" label="Pagar" @click="saveBill" />
         </q-card-actions>
       </q-card>
