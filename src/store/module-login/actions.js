@@ -37,7 +37,7 @@ export const actions = {
    */
   [ACTIONS.LOGOUT]: ({ commit }, { self }) => {
     commit(MUTATIONS.CLEAR_ACCOUNT_STATE)
-    self.$router.push({ name: 'login' })
+    self.$router.push({ name: 'LandingPage' })
   },
   /**
    * Valiad session active

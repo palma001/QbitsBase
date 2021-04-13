@@ -231,6 +231,8 @@
 </template>
 
 <script>
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
@@ -246,6 +248,12 @@ export default {
   },
   created () {
     this.getSliders()
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
   },
   methods: {
     async getSliders () {
