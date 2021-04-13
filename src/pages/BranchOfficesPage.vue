@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <div classe="row">
+    <div class="row">
       <div class="col-12">
         <div class="q-pa-md">
           <q-table
@@ -26,9 +26,6 @@
             </template>
             <template v-slot:header="props">
               <q-tr :props="props">
-                <!--<q-th>
-                  <q-toggle v-model="props.selected"/>
-                </q-th>-->
                 <q-th v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.label}}
                 </q-th>
@@ -39,9 +36,6 @@
             </template>
             <template v-slot:body="props">
               <q-tr :props="props" >
-                <!--<q-td>
-                  <q-toggle v-model="props.selected"/>
-                </q-td>-->
                 <q-td v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.value}}
                 </q-td>
@@ -171,179 +165,185 @@ export default {
           phone_number: '0212-4283034',
           phone_number_two: '0412-9581752',
           in_charge: 'Carlos Ferreira'
-        }/*,
+        },
         {
           id: 4,
-          name: 'Carlos Pérez',
-          document_number: '19.581.680',
-          rol: 'Cajero(a)',
-          branch_office: 'Puerto La Cruz',
-          phone_number: '0412-1927835',
-          email: 'carlosperez57@gmail.com'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
           id: 5,
-          name: 'Karla Martínez',
-          document_number: '19.581.680',
-          rol: 'Cajero(a)',
-          branch_office: 'Puerto La Cruz',
-          phone_number: '0426-5564120',
-          email: 'karlapatrici@yahoo.com'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
           id: 6,
-          name: 'Pedro Sifontes',
-          document_number: '19.581.680',
-          rol: 'Supervisor(a)',
-          branch_office: 'Tumeremo',
-          phone_number: '0412-3205569',
-          email: 'pedrosifontespere87@gmail.com'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
           id: 7,
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
           id: 8,
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
           id: 9,
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
           id: 10,
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
-        } */
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
+        }
       ],
       original: [
         {
-          name: 'Luis Palma',
-          calories: 'Supervisor',
-          fat: 'Puerto La Cruz',
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         },
         {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
+          name: 'Caracas',
+          description: 'Sucursal-001',
+          city: 'Caracas',
+          state: 'Distrito Capital',
+          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
+          phone_number: '0212-4283034',
+          phone_number_two: '0412-9581752',
+          in_charge: 'Carlos Ferreira'
         }
       ]
     }

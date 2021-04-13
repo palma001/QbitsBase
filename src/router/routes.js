@@ -64,7 +64,7 @@ const routes = [
       },
       {
         path: '/measures-management',
-        component: () => import('src/pages/RoutesPage.vue'),
+        component: () => import('src/pages/MeasuresPage.vue'),
         name: 'MeasuresPage'
       },
       {

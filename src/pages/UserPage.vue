@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <div classe="row">
+    <div class="row">
       <div class="col-12">
         <div class="q-pa-md">
           <q-table
