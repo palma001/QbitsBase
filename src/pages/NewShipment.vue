@@ -120,11 +120,13 @@
       persistent
     >
       <q-card style="width: 900px; max-width: 80vw;">
-        <q-card-section>
+        <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Pagar</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
 
-        <q-card-section class="q-pt-none">
+        <q-card-section class="q-pt-md">
           <q-select
             label="Tipos de pago"
             multiple
@@ -144,7 +146,7 @@
               dense
               label="Monto"
               :hint="paymentType.label"
-              v-model="paymentType.monto"
+              v-model="paymentType.amount"
             />
           </div>
           <div class="col-4">
@@ -178,6 +180,8 @@ import { mixins } from '../mixins'
 import DialogPackageDeital from '../components/DialogPackageDeital'
 import { senderConfig, buttonsSender } from '../config-file/sender/senderConfig'
 import DynamicForm from '../components/DynamicForm'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     DialogPackageDeital,
@@ -224,7 +228,9 @@ export default {
         }
       ],
       packages: [],
-      total: 0
+      total: 0,
+      tax: 12,
+      exchange: 10000
     }
   },
   created () {
@@ -233,9 +239,73 @@ export default {
     this.getAllPaymentTypes()
     this.getAllPaymentTypeDestinations()
   },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
+  },
   methods: {
     saveBill () {
-      console.log(this.paymentTypes)
+      const params = {
+        sender_id: this.sender.value,
+        receptionist_id: this[GETTERS.GET_USER].id,
+        branch_office_id: 1,
+        vouchers: this.modelVoucher(this.packages),
+        billPayments: this.modelPayment(this.paymentTypes)
+      }
+      console.log(params)
+    },
+    /**
+      * Set model payment
+      * @param {Array} payments data payments
+     */
+    modelPayment (payments) {
+      return payments.map(payment => {
+        return {
+          payment_type_id: payment.value,
+          payment_destination_id: payment.paymentTypesDestination.value,
+          amount: payment.amount,
+          user_created_id: this[GETTERS.GET_USER].id
+        }
+      })
+    },
+    /**
+      * Set model vouchers
+      * @param {Array} packages data vouchers
+     */
+    modelVoucher (packages) {
+      return packages.map(pack => {
+        return {
+          addressee_id: pack.addressee.id,
+          destinable_type: pack.destination.branchOffice ? 'App\\Models\\BranchOffice' : 'App\\Models\\Destination',
+          destinable_id: pack.destination.branchOffice ? pack.destination.branchOffice.value : pack.destination.destination.value,
+          address: pack.destination.address,
+          reference_point: pack.destination.referencePoin,
+          amount: pack.rate.amount,
+          tax: this.tax,
+          coin_id: 1,
+          exchange: this.exchange,
+          user_created_id: this[GETTERS.GET_USER].id,
+          rate: this.modelRate(pack.rate)
+        }
+      })
+    },
+    /**
+      * Set model rates
+      * @param {Array} packages data rates
+     */
+    modelRate (rates) {
+      const valueReturn = []
+      for (const key in rates) {
+        if (Object.hasOwnProperty.call(rates, key) && key !== 'amount') {
+          valueReturn.push({
+            rate_id: key,
+            description: rates[key]
+          })
+        }
+      }
+      return valueReturn
     },
     /**
      * Get Rate all
