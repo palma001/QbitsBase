@@ -32,7 +32,7 @@
                 <q-th v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.label}}
                 </q-th>
-                <q-th>
+                <q-th class="text-center">
                   Acciones
                 </q-th>
               </q-tr>
@@ -45,7 +45,7 @@
                 <q-td v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.value}}
                 </q-td>
-                <q-td>
+                <q-td class="text-center">
                   <q-btn icon="visibility" color="primary" rounded size="sm" @click="viewDetail(props.row)">
                   </q-btn>
                 </q-td>
@@ -79,24 +79,24 @@
             icon="settings"
             :done="step > 1"
           >
-            <div class="row">
+            <div class="row q-col-gutter-sm">
               <div class="col-12">
-                <q-input v-model="transport_identifier" label="Unidad N°" />
+                <q-input v-model="transport_identifier" label="Unidad N°" dense/>
               </div>
               <div class="col-4">
-                <q-input v-model="model" label="Modelo" />
+                <q-input v-model="model" label="Modelo" dense/>
               </div>
               <div class="col-4">
-                <q-input v-model="brand" label="Marca" />
+                <q-input v-model="brand" label="Marca" dense/>
               </div>
               <div class="col-4">
-                <q-input v-model="year" label="Año" />
+                <q-input v-model="year" label="Año" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="license_plate" label="¨Placa" />
+                <q-input v-model="license_plate" label="¨Placa" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="vehicle_type" label="Tipo" />
+                <q-input v-model="vehicle_type" label="Tipo" dense/>
               </div>
              </div>
           </q-step>
@@ -109,13 +109,13 @@
             :done="step > 2"
           >
             <div class="col-12">
-                <q-input v-model="body_serial" label="Serial de carrocería" />
+                <q-input v-model="body_serial" label="Serial de carrocería" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="loading_capacity" label="Capacidad de carga" />
+                <q-input v-model="loading_capacity" label="Capacidad de carga" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="number_of_axles" label="Número de ejes" />
+                <q-input v-model="number_of_axles" label="Número de ejes" dense/>
               </div>
           </q-step>
 

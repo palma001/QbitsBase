@@ -29,7 +29,7 @@
                 <q-th v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.label}}
                 </q-th>
-                <q-th>
+                <q-th class="text-center">
                   Acciones
                 </q-th>
               </q-tr>
@@ -39,7 +39,7 @@
                 <q-td v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.value}}
                 </q-td>
-                <q-td>
+                <q-td class="text-center">
                   <q-btn icon="visibility" color="primary" rounded size="sm" @click="viewDetail(props.row)">
                   </q-btn>
                 </q-td>
@@ -62,16 +62,16 @@
 
         <q-card-section>
           <div class="col-12">
-                <q-input v-model="name" label="Descripción" />
+                <q-input v-model="name" label="Descripción" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="acronym" label="Unidad" />
+                <q-input v-model="acronym" label="Unidad" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="cost" label="Costo ($)" />
+                <q-input v-model="cost" label="Costo ($)" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="date" label="Fecha" />
+                <q-input v-model="date" label="Fecha" dense/>
               </div>
         </q-card-section>
         <q-card-actions align="right">

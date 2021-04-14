@@ -29,7 +29,7 @@
                 <q-th v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.label}}
                 </q-th>
-                <q-th>
+                <q-th class="text-center">
                   Acciones
                 </q-th>
               </q-tr>
@@ -39,7 +39,7 @@
                 <q-td v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.value}}
                 </q-td>
-                <q-td>
+                <q-td class="text-center">
                   <q-btn icon="visibility" color="primary" rounded size="sm" @click="viewDetail(props.row)">
                   </q-btn>
                 </q-td>
@@ -62,25 +62,25 @@
 
         <q-card-section>
           <div class="col-12">
-                <q-input v-model="name" label="Sucursal" />
+                <q-input v-model="name" label="Sucursal" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="description" label="Descripción" />
+                <q-input v-model="description" label="Descripción" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="city" label="Ciudad" />
+                <q-input v-model="city" label="Ciudad" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="state" label="Estado" />
+                <q-input v-model="state" label="Estado" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="address" label="Dirección" />
+                <q-input v-model="address" label="Dirección" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="phone_number" label="Teléfono (1)" />
+                <q-input v-model="phone_number" label="Teléfono (1)" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="phone_number_two" label="Teléfono (2)" />
+                <q-input v-model="phone_number_two" label="Teléfono (2)" dense/>
               </div>
         </q-card-section>
         <q-card-actions align="right">
