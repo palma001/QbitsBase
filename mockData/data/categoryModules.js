@@ -1,5 +1,20 @@
 export const categoryModules = [
   {
+
+    name: 'home',
+    icon: 'home',
+    open: true,
+    modules: [
+      {
+        name: 'dashboard',
+        route: 'DashboardPage',
+        icon: 'dashboards',
+        devices: ['mobile', 'desktop']
+      }
+    ]
+  },
+  {
+
     name: 'reception',
     icon: 'all_inbox',
     open: true,
@@ -26,7 +41,7 @@ export const categoryModules = [
       {
         name: 'branchoffices-management',
         route: 'BranchOfficesPage',
-        icon: 'store',
+        icon: 'maps_home_work',
         devices: ['mobile', 'desktop']
       },
       {
@@ -39,6 +54,18 @@ export const categoryModules = [
         name: 'roles-management',
         route: 'RolesPage',
         icon: 'people_alt',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'routes-management',
+        route: 'RoutesPage',
+        icon: 'moving',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'measures-management',
+        route: 'MeasuresPage',
+        icon: 'straighten',
         devices: ['mobile', 'desktop']
       }
     ]

@@ -30,8 +30,38 @@ const routes = [
       },
       {
         path: '/user-management',
-        component: () => import('pages/UserPage.vue'),
+        component: () => import('src/pages/UserPage.vue'),
         name: 'UserPage'
+      },
+      {
+        path: '/branchoffices-management',
+        component: () => import('src/pages/BranchOfficesPage.vue'),
+        name: 'BranchOfficesPage'
+      },
+      {
+        path: '/transportation-management',
+        component: () => import('src/pages/TransportationPage.vue'),
+        name: 'TransportationPage'
+      },
+      {
+        path: '/roles-management',
+        component: () => import('src/pages/RolesPage.vue'),
+        name: 'RolesPage'
+      },
+      {
+        path: '/routes-management',
+        component: () => import('src/pages/RoutesPage.vue'),
+        name: 'RoutesPage'
+      },
+      {
+        path: '/measures-management',
+        component: () => import('src/pages/MeasuresPage.vue'),
+        name: 'MeasuresPage'
+      },
+      {
+        path: '/dashboard',
+        component: () => import('src/pages/DashboardPage.vue'),
+        name: 'DashboardPage'
       },
       {
         path: 'pruebas',

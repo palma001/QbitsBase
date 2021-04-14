@@ -9,7 +9,8 @@ export default {
     cliente: 'cliente',
     organization: 'organización',
     reception: 'recepción',
-    configuration: 'configuración'
+    configuration: 'configuración',
+    home: 'inicio'
   },
   // modules
   modules: {
@@ -18,6 +19,9 @@ export default {
     'branchoffices-management': 'sucursales',
     'transportation-management': 'transportes',
     'roles-management': 'roles',
+    'routes-management': 'rutas',
+    'measures-management': 'medidas',
+    dashboard: 'tablero',
     geolocation: 'geolocalización',
     transporte: 'transporte',
     listaReclamo: 'Lista Reclamo'

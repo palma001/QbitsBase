@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <div classe="row">
+    <div class="row">
       <div class="col-12">
         <div class="q-pa-md">
           <q-table
@@ -35,7 +35,7 @@
                 <q-th v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.label}}
                 </q-th>
-                <q-th>
+                <q-th class="text-center">
                   Acciones
                 </q-th>
               </q-tr>
@@ -51,7 +51,7 @@
                 <q-td v-for="col in props.cols" :key="col.name" :props="props">
                   {{col.value}}
                 </q-td>
-                <q-td>
+                <q-td class="text-center">
                   <q-btn icon="visibility" color="primary" rounded size="sm" @click="viewDetail(props.row)">
                   </q-btn>
                 </q-td>
@@ -63,7 +63,7 @@
       </div>
     </div>
     <q-dialog v-model="inception">
-      <q-card style="width:1000px; max-width:80vw;">
+      <q-card style="width:750px; max-width:80vw;">
         <q-card-section class='row'>
           <div class='text-h6'>
             {{titleForm}}
@@ -85,24 +85,24 @@
             icon="settings"
             :done="step > 1"
           >
-            <div class="row">
+            <div class="row q-col-gutter-sm">
               <div class="col-12">
-                <q-input v-model="name" label="Nombre" />
+                <q-input v-model="name" label="Nombre" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="last_name" label="Apellidos" />
+                <q-input v-model="last_name" label="Apellidos" dense/>
               </div>
               <div class="col-3">
-                <q-select v-model="document_type" :options="options" label="Tipo de documento" />
+                <q-select v-model="document_type" :options="options" label="Tipo de documento" dense/>
               </div>
               <div class="col-9">
-                <q-input v-model="document_number" label="Documento" />
+                <q-input v-model="document_number" label="Documento" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="address" label="Dirección" />
+                <q-input v-model="address" label="Dirección" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="phone_number" label="Teléfono" />
+                <q-input v-model="phone_number" label="Teléfono" dense/>
               </div>
              </div>
           </q-step>
@@ -115,10 +115,10 @@
             :done="step > 2"
           >
             <div class="col-12">
-                <q-input v-model="rol" label="Cargo" />
+                <q-input v-model="rol" label="Cargo" dense/>
               </div>
               <div class="col-12">
-                <q-input v-model="branch_office" label="Sucursal" />
+                <q-input v-model="branch_office" label="Sucursal" dense/>
               </div>
           </q-step>
 
@@ -128,10 +128,10 @@
             icon="assignment"
           >
             <div class="col-12">
-              <q-input v-model="email" label="email" />
+              <q-input v-model="email" label="email" dense/>
             </div>
             <div class="col-12">
-              <q-input v-model="password" label="Clave" />
+              <q-input v-model="password" label="Clave" dense/>
             </div>
           </q-step>
 
