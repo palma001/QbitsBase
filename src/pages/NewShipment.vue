@@ -9,8 +9,10 @@
           hide-selected
           fill-input
           dense
+          ref="sender"
           :label="ucwords($t('newShipment.sender'))"
           :options="senderOptions"
+          :rules="[val => !!val || 'El remitente es requerido']"
           @filter="filterFn"
         >
           <template v-slot:append>
@@ -43,6 +45,7 @@
           icon="fa fa-credit-card"
           class="q-mr-md q-mt-xs"
           color="primary"
+          :disable="packages.length <= 0"
           @click="dialogPayment = !dialogPayment"
         />
       </div>
@@ -120,13 +123,12 @@
       persistent
     >
       <q-card style="width: 900px; max-width: 80vw;">
-        <q-card-section>
+        <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Pagar</div>
           <q-space />
-          <q-btn icon="close" flat round dense v-close-popup/>
+          <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
-
-        <q-card-section class="q-pt-none">
+        <q-card-section class="q-pt-md">
           <q-select
             label="Tipos de pago"
             multiple
@@ -137,19 +139,20 @@
           />
         </q-card-section>
         <q-card-section
+          class="row q-col-gutter-md"
           v-for="paymentType in paymentTypes"
-          :key="paymentType.id"
-          class="row q-col-gutter-x-md"
-        >
-          <div class="col-4">
+            :key="paymentType.id"
+          >
+          <div class="col-xs-12 col-sm-4 col-md-4">
             <q-input
               dense
               label="Monto"
               :hint="paymentType.label"
-              v-model="paymentType.monto"
+              v-model="paymentType.amount"
+              @input="calcTotalModalPaid"
             />
           </div>
-          <div class="col-4">
+          <div class="col-xs-12 col-sm-4 col-md-4">
             <q-input
               dense
               label="Codigo de referencia"
@@ -157,7 +160,7 @@
               v-model="paymentType.refrence"
             />
           </div>
-          <div class="col-4">
+          <div class="col-xs-12 col-sm-4 col-md-4">
             <q-select
               dense
               v-model="paymentType.paymentTypesDestination"
@@ -167,9 +170,36 @@
             />
           </div>
         </q-card-section>
-        <q-card-actions align="right">
-          <q-btn color="negaive" label="Cancelar" v-close-popup/>
-          <q-btn color="primary" label="Pagar" @click="saveBill" />
+        <q-card-section>
+          <q-list bordered separator>
+            <q-item
+              clickable
+              v-ripple
+              class="text-bold"
+              active-class="text-primary"
+              :active="true"
+            >
+              <q-item-section>
+                $ {{  total }}
+              </q-item-section>
+              <q-item-section side>Cuenta</q-item-section>
+            </q-item>
+            <q-item clickable v-ripple class="text-bold">
+              <q-item-section>
+                $ {{  totalPayment }}
+              </q-item-section>
+              <q-item-section side>Aporte</q-item-section>
+            </q-item>
+            <q-item clickable v-ripple class="text-bold">
+              <q-item-section>
+                $ {{  total - totalPayment }}
+              </q-item-section>
+              <q-item-section side>Saldo</q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
+        <q-card-actions class="q-pa-md" align="right">
+          <q-btn color="primary" label="Pagar" @click="validBill" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -181,6 +211,8 @@ import { mixins } from '../mixins'
 import DialogPackageDeital from '../components/DialogPackageDeital'
 import { senderConfig, buttonsSender } from '../config-file/sender/senderConfig'
 import DynamicForm from '../components/DynamicForm'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     DialogPackageDeital,
@@ -227,7 +259,10 @@ export default {
         }
       ],
       packages: [],
-      total: 0
+      total: 0,
+      tax: 12,
+      exchange: 10000,
+      totalPayment: 0
     }
   },
   created () {
@@ -236,9 +271,93 @@ export default {
     this.getAllPaymentTypes()
     this.getAllPaymentTypeDestinations()
   },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
+  },
   methods: {
-    saveBill () {
-      console.log(this.paymentTypes)
+    validBill () {
+      const saldo = this.total + this.totalPayment
+      switch (true) {
+        case saldo === 0:
+          this.saveBill()
+          break
+        case saldo > 0:
+          this.notify(this, 'Aporte Insuficiente', 'negative', 'warining')
+          break
+        case saldo < 0:
+          this.notify(this, 'Aporte Supera el total de la factura', 'negative', 'warining')
+          break
+        default:
+          break
+      }
+    },
+    async saveBill () {
+      this.$refs.sender.validate()
+      const params = {
+        sender_id: this.sender.value,
+        receptionist_id: this[GETTERS.GET_USER].id,
+        branch_office_id: 1,
+        vouchers: this.modelVoucher(this.packages),
+        billPayments: this.modelPayment(this.paymentTypes),
+        user_created_id: this[GETTERS.GET_USER].id
+      }
+      const { res } = await this.$services.postData(['bills'], params)
+      console.log(res)
+    },
+    /**
+      * Set model payment
+      * @param {Array} payments data payments
+     */
+    modelPayment (payments) {
+      return payments.map(payment => {
+        return {
+          payment_type_id: payment.value,
+          payment_destination_id: payment.paymentTypesDestination.value,
+          amount: payment.amount,
+          user_created_id: this[GETTERS.GET_USER].id
+        }
+      })
+    },
+    /**
+      * Set model vouchers
+      * @param {Array} packages data vouchers
+     */
+    modelVoucher (packages) {
+      return packages.map(pack => {
+        return {
+          addressee_id: pack.addressee.id,
+          destinable_type: pack.destination.branchOffice ? 'App\\Models\\BranchOffice' : 'App\\Models\\Destination',
+          destinable_id: pack.destination.branchOffice ? pack.destination.branchOffice.value : pack.destination.destination.value,
+          address: pack.destination.address,
+          reference_point: pack.destination.referencePoin,
+          amount: pack.rate.amount,
+          tax: this.tax,
+          coin_id: 1,
+          exchange: this.exchange,
+          user_created_id: this[GETTERS.GET_USER].id,
+          rate: this.modelRate(pack.rate)
+        }
+      })
+    },
+    /**
+      * Set model rates
+      * @param {Array} packages data rates
+     */
+    modelRate (rates) {
+      const valueReturn = []
+      for (const key in rates) {
+        if (Object.hasOwnProperty.call(rates, key) && key !== 'amount') {
+          valueReturn.push({
+            rate_id: key,
+            description: rates[key],
+            user_created_id: this[GETTERS.GET_USER].id
+          })
+        }
+      }
+      return valueReturn
     },
     /**
      * Get Rate all
@@ -299,6 +418,16 @@ export default {
       this.total = total
     },
     /**
+      * Calcula el total
+      */
+    calcTotalModalPaid () {
+      let total = 0
+      this.paymentTypes.forEach((data) => {
+        total = Number(total) + Number(data.amount)
+      })
+      this.totalPayment = total
+    },
+    /**
      * Save sender
      * @param {Object} data data to save
      */
@@ -307,7 +436,7 @@ export default {
         name: data.sender_type.value === 'NAT' ? data.name : null,
         last_name: data.last_name,
         email: data.email,
-        user_created_id: 1,
+        user_created_id: this[GETTERS.GET_USER].id,
         business_name: data.sender_type.value === 'NAT' ? null : data.name,
         phone_number: data.phone_number,
         document_number: data.document_number,
