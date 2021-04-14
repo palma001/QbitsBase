@@ -9,8 +9,10 @@
           hide-selected
           fill-input
           dense
+          ref="sender"
           :label="ucwords($t('newShipment.sender'))"
           :options="senderOptions"
+          :rules="[val => !!val || 'El remitente es requerido']"
           @filter="filterFn"
         >
           <template v-slot:append>
@@ -43,6 +45,7 @@
           icon="fa fa-credit-card"
           class="q-mr-md q-mt-xs"
           color="primary"
+          :disable="packages.length <= 0"
           @click="dialogPayment = !dialogPayment"
         />
       </div>
@@ -125,7 +128,6 @@
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
-
         <q-card-section class="q-pt-md">
           <q-select
             label="Tipos de pago"
@@ -137,19 +139,20 @@
           />
         </q-card-section>
         <q-card-section
+          class="row q-col-gutter-md q-pr-none"
           v-for="paymentType in paymentTypes"
-          :key="paymentType.id"
-          class="row q-col-gutter-x-md"
-        >
-          <div class="col-4">
+            :key="paymentType.id"
+          >
+          <div class="col-xs-12 col-sm-4 col-md-4">
             <q-input
               dense
               label="Monto"
               :hint="paymentType.label"
               v-model="paymentType.amount"
+              @input="calcTotalModalPaid"
             />
           </div>
-          <div class="col-4">
+          <div class="col-xs-12 col-sm-4 col-md-4">
             <q-input
               dense
               label="Codigo de referencia"
@@ -157,7 +160,7 @@
               v-model="paymentType.refrence"
             />
           </div>
-          <div class="col-4">
+          <div class="col-xs-12 col-sm-4 col-md-4">
             <q-select
               dense
               v-model="paymentType.paymentTypesDestination"
@@ -167,8 +170,36 @@
             />
           </div>
         </q-card-section>
-        <q-card-actions align="right">
-          <q-btn color="primary" label="Pagar" @click="saveBill" />
+        <q-card-section>
+          <q-list bordered separator>
+            <q-item
+              clickable
+              v-ripple
+              class="text-bold"
+              active-class="text-primary"
+              :active="true"
+            >
+              <q-item-section>
+                $ {{  total }}
+              </q-item-section>
+              <q-item-section side>Cuenta</q-item-section>
+            </q-item>
+            <q-item clickable v-ripple class="text-bold">
+              <q-item-section>
+                $ {{  totalPayment }}
+              </q-item-section>
+              <q-item-section side>Aporte</q-item-section>
+            </q-item>
+            <q-item clickable v-ripple class="text-bold">
+              <q-item-section>
+                $ {{  total - totalPayment }}
+              </q-item-section>
+              <q-item-section side>Saldo</q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
+        <q-card-actions class="q-pa-md" align="right">
+          <q-btn color="primary" label="Pagar" @click="validBill" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -230,7 +261,8 @@ export default {
       packages: [],
       total: 0,
       tax: 12,
-      exchange: 10000
+      exchange: 10000,
+      totalPayment: 0
     }
   },
   created () {
@@ -246,15 +278,34 @@ export default {
     ...mapGetters([GETTERS.GET_USER])
   },
   methods: {
-    saveBill () {
+    validBill () {
+      const saldo = this.total + this.totalPayment
+      switch (true) {
+        case saldo === 0:
+          this.saveBill()
+          break
+        case saldo > 0:
+          this.notify(this, 'Aporte Insuficiente', 'negative', 'warining')
+          break
+        case saldo < 0:
+          this.notify(this, 'Aporte Supera el total de la factura', 'negative', 'warining')
+          break
+        default:
+          break
+      }
+    },
+    async saveBill () {
+      this.$refs.sender.validate()
       const params = {
         sender_id: this.sender.value,
         receptionist_id: this[GETTERS.GET_USER].id,
         branch_office_id: 1,
         vouchers: this.modelVoucher(this.packages),
-        billPayments: this.modelPayment(this.paymentTypes)
+        billPayments: this.modelPayment(this.paymentTypes),
+        user_created_id: this[GETTERS.GET_USER].id
       }
-      console.log(params)
+      const { res } = await this.$services.postData(['bills'], params)
+      console.log(res)
     },
     /**
       * Set model payment
@@ -301,7 +352,8 @@ export default {
         if (Object.hasOwnProperty.call(rates, key) && key !== 'amount') {
           valueReturn.push({
             rate_id: key,
-            description: rates[key]
+            description: rates[key],
+            user_created_id: this[GETTERS.GET_USER].id
           })
         }
       }
@@ -366,6 +418,16 @@ export default {
       this.total = total
     },
     /**
+      * Calcula el total
+      */
+    calcTotalModalPaid () {
+      let total = 0
+      this.paymentTypes.forEach((data) => {
+        total = Number(total) + Number(data.amount)
+      })
+      this.totalPayment = total
+    },
+    /**
      * Save sender
      * @param {Object} data data to save
      */
@@ -374,7 +436,7 @@ export default {
         name: data.sender_type.value === 'NAT' ? data.name : null,
         last_name: data.last_name,
         email: data.email,
-        user_created_id: 1,
+        user_created_id: this[GETTERS.GET_USER].id,
         business_name: data.sender_type.value === 'NAT' ? null : data.name,
         phone_number: data.phone_number,
         document_number: data.document_number,
