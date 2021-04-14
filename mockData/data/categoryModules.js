@@ -1,5 +1,20 @@
 export const categoryModules = [
   {
+
+    name: 'home',
+    icon: 'home',
+    open: true,
+    modules: [
+      {
+        name: 'dashboard',
+        route: 'DashboardPage',
+        icon: 'dashboards',
+        devices: ['mobile', 'desktop']
+      }
+    ]
+  },
+  {
+
     name: 'reception',
     icon: 'all_inbox',
     open: true,

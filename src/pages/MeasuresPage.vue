@@ -62,7 +62,7 @@
 
         <q-card-section>
           <div class="col-12">
-                <q-input v-model="name" label="Medida" />
+                <q-input v-model="name" label="Descripción" />
               </div>
               <div class="col-12">
                 <q-input v-model="acronym" label="Unidad" />

@@ -51,7 +51,7 @@
       </div>
     </div>
     <q-dialog v-model="inception">
-      <q-card style="width:1000px; max-width:80vw;">
+      <q-card style="width:600px; max-width:80vw;">
         <q-card-section class="row items-center q-pb-none">
             <div class="text-h6">
                {{titleForm}}

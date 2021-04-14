@@ -59,6 +59,11 @@ const routes = [
         name: 'MeasuresPage'
       },
       {
+        path: '/dashboard',
+        component: () => import('src/pages/DashboardPage.vue'),
+        name: 'DashboardPage'
+      },
+      {
         path: 'pruebas',
         component: () => import('pages/Prueba.vue'),
         name: 'Prueba'
