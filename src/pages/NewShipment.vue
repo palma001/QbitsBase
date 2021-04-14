@@ -139,7 +139,7 @@
           />
         </q-card-section>
         <q-card-section
-          class="row q-col-gutter-md q-pr-none"
+          class="row q-col-gutter-md"
           v-for="paymentType in paymentTypes"
             :key="paymentType.id"
           >
