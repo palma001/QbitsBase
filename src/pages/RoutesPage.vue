@@ -71,6 +71,7 @@
                       dense
                       v-model="nameRoute"
                       :rules="[ val => val && val.length > 0 || 'El nombre de la ruta es requerida.']"
+                       @keyup.enter.native="addRoute"
                     />
                     <q-btn
                       color="primary"
@@ -114,7 +115,13 @@
                             class="row q-col-gutter-x-sm"
                           >
                             <div class="col-10">
-                              <q-select label="Ciudad" :options="cities" v-model="city" dense/>
+                              <q-select
+                                label="Ciudad"
+                                dense
+                                v-model="city"
+                                :options="cities"
+                                @keyup.enter.native="addCity(0)"
+                              />
                             </div>
                             <div class="col-2 q-mt-md">
                               <q-btn
@@ -150,6 +157,7 @@
                           :options="cities"
                           v-model="city"
                           dense
+                          @keyup.enter.native="addCity(index)"
                         />
                       </div>
                     </div>
@@ -264,6 +272,7 @@ export default {
       if (res.data) {
         this.routes.push(res.data)
         this.routeSelected = res.data
+        this.routeSelected.destinations = []
         this.nameRoute = null
       }
     },
