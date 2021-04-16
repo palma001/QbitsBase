@@ -296,12 +296,25 @@ export default {
       })
     },
     async deleteRoute (route) {
-      this.loadingRoute = true
-      console.log(route)
-      await this.$services.deleteData(['routes', route.id])
-      this.getRoutes()
-      this.loadingRoute = false
-      this.notify(this, 'Ruta eliminada exitosamente', 'primary', 'mood')
+      this.$q.dialog({
+        title: 'Alerta',
+        message: '¿Desea eliminar la ruta?',
+        persistent: true,
+        ok: {
+          label: 'Aceptar',
+          color: 'primary'
+        },
+        cancel: {
+          color: 'negative',
+          label: 'Cancelar'
+        }
+      }).onOk(async () => {
+        this.loadingRoute = true
+        await this.$services.deleteData(['routes', route.id])
+        this.getRoutes()
+        this.loadingRoute = false
+        this.notify(this, 'Ruta eliminada exitosamente', 'primary', 'mood')
+      })
     },
     async saveRoute () {
       this.loadingRoute = true

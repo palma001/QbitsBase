@@ -213,6 +213,7 @@ import { senderConfig, buttonsSender } from '../config-file/sender/senderConfig'
 import DynamicForm from '../components/DynamicForm'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
+import { bill } from './DesignBill'
 export default {
   components: {
     DialogPackageDeital,
@@ -221,6 +222,7 @@ export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
+      bill,
       buttonsSender,
       senderConfig,
       payments: {},
@@ -270,6 +272,7 @@ export default {
     this.getAllRates()
     this.getAllPaymentTypes()
     this.getAllPaymentTypeDestinations()
+    this.printBillAndVoucher(bill)
   },
   computed: {
     /**
@@ -277,18 +280,23 @@ export default {
      */
     ...mapGetters([GETTERS.GET_USER])
   },
+  watch: {
+    paymentTypes () {
+      this.calcTotalModalPaid()
+    }
+  },
   methods: {
     validBill () {
-      const saldo = this.total + this.totalPayment
+      const saldo = this.total - this.totalPayment
       switch (true) {
         case saldo === 0:
           this.saveBill()
           break
         case saldo > 0:
-          this.notify(this, 'Aporte Insuficiente', 'negative', 'warining')
+          this.notify(this, 'Aporte Insuficiente', 'negative', 'warning')
           break
         case saldo < 0:
-          this.notify(this, 'Aporte Supera el total de la factura', 'negative', 'warining')
+          this.notify(this, 'Aporte Supera el total de la factura', 'negative', 'warning')
           break
         default:
           break
@@ -305,7 +313,14 @@ export default {
         user_created_id: this[GETTERS.GET_USER].id
       }
       const { res } = await this.$services.postData(['bills'], params)
-      console.log(res)
+      this.printBillAndVoucher(res.data)
+    },
+    /**
+     * Print Bill
+     */
+    async printBillAndVoucher (data) {
+      // const { res } = await this.$services.getOneData(['bills', data.id])
+      console.log(data)
     },
     /**
       * Set model payment
@@ -423,7 +438,9 @@ export default {
     calcTotalModalPaid () {
       let total = 0
       this.paymentTypes.forEach((data) => {
-        total = Number(total) + Number(data.amount)
+        if (data.amount) {
+          total = Number(total) + Number(data.amount)
+        }
       })
       this.totalPayment = total
     },
