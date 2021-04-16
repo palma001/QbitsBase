@@ -108,7 +108,7 @@
                   round
                   @click="saveRoute"
                 >
-                <q-tooltip>
+                  <q-tooltip>
                     Guardar Cambios
                   </q-tooltip>
                 </q-btn>
@@ -142,8 +142,10 @@
                             <q-select
                               label="Ciudad"
                               dense
+                              use-input
+                              @filter="filterCity"
                               v-model="city"
-                              :options="cities"
+                              :options="optionsCities"
                               @keyup.enter.native="addCity(0)"
                             />
                           </div>
@@ -179,8 +181,10 @@
                       <q-select
                         label="Ciudad"
                         dense
+                        use-input
+                        @filter="filterCity"
                         v-model="city"
-                        :options="cities"
+                        :options="optionsCities"
                         @keyup.enter.native="addCity(index)"
                       />
                     </div>
@@ -266,6 +270,7 @@ export default {
       insideModel: 30,
       step: 0,
       nameRoute: null,
+      optionsCities: [],
       markers: [
         { position: { lat: 10.196248389913245, lng: -64.62544711587066 } },
         { position: { lat: 8.879893326702739, lng: -64.23543248221198 } }
@@ -284,6 +289,12 @@ export default {
     this.getCities()
   },
   methods: {
+    filterCity (val, update, abort) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.optionsCities = this.cities.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
     async deleteRoute (route) {
       this.loadingRoute = true
       console.log(route)
