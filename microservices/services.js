@@ -70,7 +70,7 @@ export const putData = function (url, params) {
   })
 }
 export const deleteData = function (url, params) {
-  return axiosInstance.delete(`${url[0]}/${url[1]}/${url[2]}`).then((res) => {
+  return axiosInstance.delete(url.join('/')).then((res) => {
     return {
       status: true,
       res: res

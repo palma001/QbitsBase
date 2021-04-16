@@ -36,13 +36,13 @@
                     v-for="route in routes"
                     :key="route.id"
                   >
-                  <q-input :value="route.name" dense>
+                  <q-input v-model="route.name" dense :readonly="routeSelected.id !== route.id">
                     <template v-slot:append>
                       <q-btn
-                        color="orange"
+                        :color="routeSelected.id !== route.id ? 'orange' : 'green'"
                         text-color="white"
                         size="xs"
-                        icon="map"
+                        :icon="routeSelected.id !== route.id ? 'touch_app' : 'edit'"
                         aria-label="map"
                         round
                         class="q-mt-sm"
@@ -57,6 +57,7 @@
                         aria-label="trash"
                         round
                         class="q-mt-sm"
+                         @click="deleteRoute(route)"
                       >
                       </q-btn>
                     </template>
@@ -65,6 +66,7 @@
                 <div class="q-px-sm q-pb-md">
                  <q-form
                     @submit="addRoute"
+                    class="text-right"
                   >
                     <q-input
                       label="Rutas"
@@ -76,169 +78,184 @@
                     <q-btn
                       color="primary"
                       text-color="white"
-                      size="xs"
+                      size="sm"
                       icon="add"
                       aria-label="add"
                       round
                       class="q-mt-sm"
                       type="submit"
-                    />
+                    >
+                      <q-tooltip>
+                        Guardar ruta
+                      </q-tooltip>
+                    </q-btn>
                  </q-form>
                 </div>
             </div>
           </template>
           <template v-slot:after v-if="routeSelected">
-            <div class="q-pa-md q-pr-md q-pb-md q-pt-none">
-              <div class="text-h6 q-mb-md">{{ routeSelected.name }} / Ciudades</div>
-                <q-stepper
-                  v-model="step"
-                  vertical
-                  color="primary"
-                  done-color="deep-orange"
-                  active-color="orange"
-                  inactive-color="primary"
-                  animated
-                  header-nav
+            <div class="q-pa-md q-pr-md q-pb-md q-pt-none row">
+              <div class="text-h6 q-mb-md col-11">
+                {{ routeSelected.name }} / Ciudades
+              </div>
+              <div class="col-1">
+                <q-btn
+                  color="orange"
+                  text-color="white"
+                  size="sm"
+                  icon="save"
+                  aria-label="save"
+                  round
+                  @click="saveRoute"
                 >
-                  <q-step
-                    v-if="routeSelected.destinations && routeSelected.destinations.length <= 0"
-                    :name="0"
-                    title="Agragr Ciudad"
-                    color="primary"
-                    icon="location_on"
-                  >
-                    <div class="row">
-                      <div class="col-12">
-                        <div class="q-px-sm q-pb-md">
-                          <q-form
-                            @submit="addCity(0)"
-                            class="row q-col-gutter-x-sm"
-                          >
-                            <div class="col-10">
-                              <q-select
-                                label="Ciudad"
-                                dense
-                                v-model="city"
-                                :options="cities"
-                                @keyup.enter.native="addCity(0)"
-                              />
-                            </div>
-                            <div class="col-2 q-mt-md">
-                              <q-btn
-                                color="primary"
-                                text-color="white"
-                                size="sm"
-                                icon="add_location_alt"
-                                aria-label="add_location_alt"
-                                round
-                                :rules="[ val => val && val.length > 0 || 'Ciudad Requerida']"
-                                type="submit"
-                                dense
-                              />
-                            </div>
-                          </q-form>
-                        </div>
+                <q-tooltip>
+                    Guardar Cambios
+                  </q-tooltip>
+                </q-btn>
+              </div>
+              <q-stepper
+                color="primary"
+                done-color="deep-orange"
+                active-color="orange"
+                inactive-color="primary"
+                class="col-12"
+                v-model="step"
+                vertical
+                animated
+                header-nav
+              >
+                <q-step
+                  v-if="routeSelected.destinations && routeSelected.destinations.length <= 0"
+                  :name="0"
+                  title="Agragr Ciudad"
+                  color="primary"
+                  icon="location_on"
+                >
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="q-px-sm q-pb-md">
+                        <q-form
+                          @submit="addCity(0)"
+                          class="row q-col-gutter-x-sm"
+                        >
+                          <div class="col-10">
+                            <q-select
+                              label="Ciudad"
+                              dense
+                              v-model="city"
+                              :options="cities"
+                              @keyup.enter.native="addCity(0)"
+                            />
+                          </div>
+                          <div class="col-2 q-mt-md">
+                            <q-btn
+                              color="primary"
+                              text-color="white"
+                              size="sm"
+                              icon="add_location_alt"
+                              aria-label="add_location_alt"
+                              round
+                              :rules="[ val => val && val.length > 0 || 'Ciudad Requerida']"
+                              type="submit"
+                              dense
+                            />
+                          </div>
+                        </q-form>
                       </div>
                     </div>
-                  </q-step>
-                  <q-step
-                    v-else
-                    v-for="(destiantion, index) in routeSelected.destinations"
-                    :key="destiantion.id"
-                    :name="index"
-                    :title="destiantion.city"
-                    :color="destiantion.branch_office ? 'negative' : ''"
-                    :icon="destiantion.branch_office ? 'corporate_fare' : 'location_on'"
-                  >
-                    <div class="row">
-                      <div class="col-12">
-                        <q-select
-                          label="Ciudad"
-                          :options="cities"
-                          v-model="city"
-                          dense
-                          @keyup.enter.native="addCity(index)"
-                        />
-                      </div>
+                  </div>
+                </q-step>
+                <q-step
+                  v-else
+                  v-for="(destiantion, index) in routeSelected.destinations"
+                  :key="destiantion.id"
+                  :name="index"
+                  :title="destiantion.city"
+                  :color="destiantion.branch_office ? 'negative' : ''"
+                  :icon="destiantion.branch_office ? 'corporate_fare' : 'location_on'"
+                >
+                  <div class="row">
+                    <div class="col-12">
+                      <q-select
+                        label="Ciudad"
+                        dense
+                        v-model="city"
+                        :options="cities"
+                        @keyup.enter.native="addCity(index)"
+                      />
                     </div>
-                    <div class="row q-gutter-x-sm q-mt-md">
-                      <div class="col-1 offset-7">
-                        <q-btn
-                          color="red"
-                          text-color="white"
-                          size="xs"
-                          icon="wrong_location"
-                          aria-label="wrong_location"
-                          round
-                          @click="deleteCity(index)"
-                        >
-                          <q-tooltip>
-                            Eliminar Ciudad
-                          </q-tooltip>
-                        </q-btn>
-                      </div>
-                      <div class="col-1">
-                        <q-btn
-                          color="green"
-                          text-color="white"
-                          size="xs"
-                          icon="edit_location"
-                          aria-label="edit_location"
-                          round
-                          @click="editCity(index)"
-                        >
-                          <q-tooltip>
-                            Editar Ciudad
-                          </q-tooltip>
-                        </q-btn>
-                      </div>
-                      <div class="col-1">
-                        <q-btn
-                          color="primary"
-                          text-color="white"
-                          size="sm"
-                          icon="add_location_alt"
-                          aria-label="add_location_alt"
-                          round
-                          type="submit"
-                          dense
-                          @click="addCity(index)"
-                        >
-                          <q-tooltip>
-                            Agregar Ciudad
-                          </q-tooltip>
-                        </q-btn>
-                      </div>
-                      <div class="col-1">
-                        <q-btn
-                          color="orange"
-                          text-color="white"
-                          size="xs"
-                          icon="save"
-                          aria-label="save"
-                          round
-                        >
+                  </div>
+                  <div class="row q-gutter-x-sm q-mt-md">
+                    <div class="col-1 offset-8">
+                      <q-btn
+                        color="red"
+                        text-color="white"
+                        size="xs"
+                        icon="wrong_location"
+                        aria-label="wrong_location"
+                        round
+                        @click="deleteCity(index)"
+                      >
                         <q-tooltip>
-                            Guardar Cambios
-                          </q-tooltip>
-                        </q-btn>
-                      </div>
+                          Eliminar Ciudad
+                        </q-tooltip>
+                      </q-btn>
                     </div>
-                  </q-step>
-                </q-stepper>
+                    <div class="col-1">
+                      <q-btn
+                        color="green"
+                        text-color="white"
+                        size="xs"
+                        icon="edit_location"
+                        aria-label="edit_location"
+                        round
+                        @click="editCity(index)"
+                      >
+                        <q-tooltip>
+                          Editar Ciudad
+                        </q-tooltip>
+                      </q-btn>
+                    </div>
+                    <div class="col-1">
+                      <q-btn
+                        color="primary"
+                        text-color="white"
+                        size="sm"
+                        icon="add_location_alt"
+                        aria-label="add_location_alt"
+                        round
+                        type="submit"
+                        dense
+                        @click="addCity(index)"
+                      >
+                        <q-tooltip>
+                          Agregar Ciudad
+                        </q-tooltip>
+                      </q-btn>
+                    </div>
+                  </div>
+                </q-step>
+              </q-stepper>
             </div>
           </template>
         </q-splitter>
       </template>
-
+      <q-inner-loading :showing="loadingRoute">
+        <q-spinner-gears size="150px" color="primary" />
+      </q-inner-loading>
     </q-splitter>
   </q-page>
 </template>
 
 <script>
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
+import { mixins } from '../mixins'
 export default {
+  mixins: [mixins.containerMixin],
   data () {
     return {
+      loadingRoute: false,
       filter: '',
       text: '',
       routes: [],
@@ -255,16 +272,51 @@ export default {
       ]
     }
   },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER])
+  },
   created () {
     // this.getDirection()
     this.getRoutes()
     this.getCities()
   },
   methods: {
+    async deleteRoute (route) {
+      this.loadingRoute = true
+      console.log(route)
+      await this.$services.deleteData(['routes', route.id])
+      this.getRoutes()
+      this.loadingRoute = false
+      this.notify(this, 'Ruta eliminada exitosamente', 'primary', 'mood')
+    },
+    async saveRoute () {
+      this.loadingRoute = true
+      await this.$services.putData(['routes', this.routeSelected.id], {
+        name: this.routeSelected.name,
+        user_updated_id: 1,
+        destinations: this.destinationModel(this.routeSelected.destinations)
+      })
+      this.loadingRoute = false
+      this.notify(this, 'Ruta guardada exitosamente', 'primary', 'mood')
+    },
+    destinationModel (data) {
+      const destinations = data
+      return destinations.map((destination, index) => {
+        return {
+          destination_id: destination.destination_id ?? destination.id,
+          order: index,
+          user_created_id: 1
+        }
+      })
+    },
     /**
      * Add Route
     */
     async addRoute () {
+      this.loadingRoute = true
       const { res } = await this.$services.postData(['routes'], {
         name: this.nameRoute,
         user_created_id: 1
@@ -274,6 +326,8 @@ export default {
         this.routeSelected = res.data
         this.routeSelected.destinations = []
         this.nameRoute = null
+        this.loadingRoute = false
+        this.notify(this, 'Ruta agregada exitosamente', 'primary', 'mood')
       }
     },
     getDirection () {
