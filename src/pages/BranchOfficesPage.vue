@@ -14,7 +14,9 @@
           :offset="[10, 10]"
           v-if="$q.screen.lt.sm"
         >
-          <strong>{{ucwords($t('branchOffice.add'))}}</strong>
+          {{
+            ucwords($t('branchOffice.add'))
+          }}
         </q-tooltip>
       </q-btn>
       </div>
@@ -44,6 +46,7 @@
         module="branchOffice"
         :propsPanelEdition="propsPanelEdition"
         :config="branchOffice"
+        :loading="loadingForm"
         @cancel="editDialog = false"
         @update="update"
       />
@@ -57,6 +60,7 @@
       <dynamic-form
         module="branchOffice"
         :config="branchOffice"
+        :loading="loadingForm"
         @cancel="addDialig = false"
         @save="save"
       />
@@ -78,6 +82,12 @@ export default {
   },
   data () {
     return {
+      loadingForm: false,
+      /**
+       * Selected data
+       * @type {Object}
+       */
+      selectedData: null,
       /**
        * Options pagination
        * @type {Object}
@@ -173,14 +183,38 @@ export default {
      * @param  {Object}
      */
     save (data) {
-      console.log(data)
+      data.destination_id = data.destination.value
+      data.in_charge_id = data.in_charge.value
+      data.user_created_id = 1
+      this.loadingForm = true
+      this.$services.postData(['branch-offices'], data)
+        .then(({ res }) => {
+          this.addDialig = false
+          this.loadingForm = false
+          this.getBanchOffices(this.params)
+        })
+        .catch(() => {
+          this.loadingForm = false
+        })
     },
     /**
      * Update Branch Office
      * @param  {Object}
      */
     update (data) {
-      console.log(data)
+      data.destination_id = data.destination.value ?? data.destination.id
+      data.in_charge_id = data.in_charge.value ?? data.in_charge.id
+      data.user_created_id = 1
+      this.loadingForm = true
+      this.$services.putData(['branch-offices', this.selectedData.id], data)
+        .then(({ res }) => {
+          this.editDialog = false
+          this.loadingForm = false
+          this.getBanchOffices(this.params)
+        })
+        .catch(() => {
+          this.loadingForm = false
+        })
     },
     /**
      * Set data dialog edition
@@ -189,6 +223,7 @@ export default {
     viewDetails (data) {
       this.editDialog = true
       this.propsPanelEdition.data = data
+      this.selectedData = data
     },
     /**
      * Open formulary
