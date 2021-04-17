@@ -3,100 +3,27 @@
     <div class="row">
       <div class="col-12">
         <div class="q-pa-md">
-          <q-table
-            title="Treats"
-            :data="data"
-            :columns="columns"
-            row-key="id"
-            :filter="filter"
-            :loading="loading"
-            selection="multiple"
-            :selected.sync="selected"
-            :visible-columns="visibleColumns"
-          >
-            <template v-slot:top>
-              <q-btn color="primary" :disable="loading" label="Add row" @click="changeTitleForm('Agregar Sucursal')" />
-              <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" />
-              <q-space />
-              <q-input dense debounce="300" color="primary" v-model="filter">
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </template>
-            <template v-slot:header="props">
-              <q-tr :props="props">
-                <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.label}}
-                </q-th>
-                <q-th class="text-center">
-                  Acciones
-                </q-th>
-              </q-tr>
-            </template>
-            <template v-slot:body="props">
-              <q-tr :props="props" >
-                <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.value}}
-                </q-td>
-                <q-td class="text-center">
-                  <q-btn icon="visibility" color="primary" rounded size="sm" @click="viewDetail(props.row)">
-                  </q-btn>
-                </q-td>
-              </q-tr>
-            </template>
-
-          </q-table>
+          <data-table
+            title="list"
+            module="branchOffice"
+          />
         </div>
       </div>
     </div>
-    <q-dialog v-model="inception">
-      <q-card style="width:600px; max-width:80vw;">
-        <q-card-section class="row items-center q-pb-none">
-            <div class="text-h6">
-               {{titleForm}}
-            </div>
-          <q-space />
-          <q-btn icon="close" flat round dense @click="cleanForm" />
-        </q-card-section>
-
-        <q-card-section>
-          <div class="col-12">
-                <q-input v-model="name" label="Sucursal" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="description" label="Descripción" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="city" label="Ciudad" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="state" label="Estado" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="address" label="Dirección" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="phone_number" label="Teléfono (1)" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="phone_number_two" label="Teléfono (2)" dense/>
-              </div>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="primary" v-close-popup />
-          <q-btn flat label="Aceptar" color="primary" v-close-popup />
-        </q-card-actions>
+<!--     <q-dialog v-model="inception">
       </q-card>
-    </q-dialog>
+    </q-dialog> -->
   </q-page>
 </template>
-
 <script>
+import DataTable from '../components/DataTable.vue'
 export default {
+  components: {
+    DataTable
+  },
   data () {
     return {
-      titleForm: 'Agregar Sucursal',
+      titleForm: "Agregar Sucursal",
       visibleColumns: ['name', 'description', 'city', 'state', 'phone_number', 'phone_number_two', 'in_charge'],
       name: '',
       description: '',
