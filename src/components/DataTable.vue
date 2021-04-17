@@ -20,7 +20,7 @@
             :class="col.class">
             {{ ucwords((col.label) ? $t(`${module}.${col.label}`) : $t(`${module}.${col.name}`)) }}
           </q-th>
-          <q-th align="left" v-if="action">
+          <q-th align="center" v-if="action">
              {{ ucwords($t('template.actions')) }}
           </q-th>
         </q-tr>
@@ -41,9 +41,10 @@
           <q-td v-for="col in props.cols"
             :key="col.name"
             :props="props">
-            {{ col.value }}
+            {{ col.value ? col.value : '-' }}
           </q-td>
-          <q-td v-if="action">
+          <q-td v-if="action" align="center"
+          >
             <q-btn size="sm"
               color="primary"
               dense

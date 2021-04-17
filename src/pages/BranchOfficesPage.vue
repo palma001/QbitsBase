@@ -1,330 +1,208 @@
 <template>
   <q-page padding>
-    <div class="row">
+    <div class="row q-gutter-y-sm">
+      <div class="col-12 text-right">
+        <q-btn
+          :label="$t('branchOffice.add')"
+          color="primary"
+          @click="addDialig = true"
+        />
+      </div>
       <div class="col-12">
-        <div class="q-pa-md">
-          <data-table
-            title="list"
-            module="branchOffice"
-          />
-        </div>
+        <data-table
+          title="list"
+          module="branchOffice"
+          searchable
+          action
+          :column="branchOffice"
+          :data="data"
+          :loading="loadingTable"
+          :optionPagination="optionPagination"
+          @search-data="searchData"
+          @view-details="viewDetails"
+          @on-load-data="loadData"
+        />
       </div>
     </div>
-<!--     <q-dialog v-model="inception">
-      </q-card>
-    </q-dialog> -->
+    <q-dialog
+      position="right"
+      full-height
+      persistent
+      v-model="editDialog"
+    >
+      <dynamic-form-edition
+        module="branchOffice"
+        :propsPanelEdition="propsPanelEdition"
+        :config="branchOffice"
+        @cancel="editDialog = false"
+        @update="update"
+      />
+    </q-dialog>
+    <q-dialog
+      position="right"
+      full-height
+      persistent
+      v-model="addDialig"
+    >
+      <dynamic-form
+        module="branchOffice"
+        :config="branchOffice"
+        @cancel="addDialig = false"
+        @save="save"
+      />
+    </q-dialog>
   </q-page>
 </template>
 <script>
 import DataTable from '../components/DataTable.vue'
+import DynamicFormEdition from '../components/DynamicFormEdition.vue'
+import DynamicForm from '../components/DynamicForm.vue'
+import { branchOffice, propsPanelEdition, branchOfficeServices } from '../config-file/branchOffice/branchOfficeConfig.js'
+import { mixins } from '../mixins'
 export default {
+  mixins: [mixins.containerMixin],
   components: {
-    DataTable
+    DataTable,
+    DynamicFormEdition,
+    DynamicForm
   },
   data () {
     return {
-      titleForm: "Agregar Sucursal",
-      visibleColumns: ['name', 'description', 'city', 'state', 'phone_number', 'phone_number_two', 'in_charge'],
-      name: '',
-      description: '',
-      city: '',
-      state: '',
-      address: '',
-      phone_number: '',
-      phone_number_two: '',
-      in_charge: '',
-      selector: false,
-      selected: [],
-      options: ['V', 'P'],
-      // step: 1,
-      inception: false,
-      loading: false,
-      filter: '',
-      rowCount: 10,
-      columns: [
-        {
-          name: 'name',
-          required: true,
-          label: 'Sucursal',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
-        },
-        { name: 'description', align: 'center', label: 'Descripción', field: 'description', sortable: true },
-        { name: 'city', align: 'center', label: 'Ciudad', field: 'city', sortable: true },
-        { name: 'state', align: 'center', label: 'Estado', field: 'state', sortable: true },
-        { name: 'address', align: 'center', label: 'Dirección', field: 'address' },
-        { name: 'phone_number', align: 'center', label: 'Teléfono (1)', field: 'phone_number' },
-        { name: 'phone_number_two', align: 'center', label: 'Teléfono (2)', field: 'phone_number_two' },
-        { name: 'in_charge', align: 'center', label: 'Supervisor(a)', field: 'in_charge' }
-      ],
-      data: [
-        {
-          id: 1,
-          name: 'Puerto La Cruz',
-          description: 'Sucursal-101',
-          city: 'Puerto La Cruz',
-          state: 'Anzoátegui',
-          address: 'Av. Intercomunal, Sector Las Garzas, CCMT',
-          phone_number: '0281-2862034',
-          phone_number_two: '0424-8456912',
-          in_charge: 'Luis Palma'
-        },
-        {
-          id: 2,
-          name: 'Barcelona',
-          description: 'Sucursal-102',
-          city: 'Barcelona',
-          state: 'Anzoátegui',
-          address: 'Av. Intercomunal, Sector Las Garzas, CCMT',
-          phone_number: '0281-2652034',
-          phone_number_two: '0412-4789127',
-          in_charge: 'Amable Salés'
-        },
-        {
-          id: 3,
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          id: 4,
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          id: 5,
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          id: 6,
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          id: 7,
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          id: 8,
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          id: 9,
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          id: 10,
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
+      /**
+       * Options pagination
+       * @type {Object}
+       */
+      optionPagination: {
+        rowsPerPage: 20,
+        paginate: true,
+        sortBy: 'id',
+        sortOrder: 'desc'
+      },
+      /**
+       * Params search
+       * @type {Object}
+       */
+      params: {
+        paginated: true,
+        sortBy: 'id',
+        sortOrder: 'desc',
+        dataSearch: {
+          name: '',
+          phone_number: '',
+          phone_number_two: '',
+          address: '',
+          description: ''
         }
-      ],
-      original: [
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        },
-        {
-          name: 'Caracas',
-          description: 'Sucursal-001',
-          city: 'Caracas',
-          state: 'Distrito Capital',
-          address: 'Av. Francisco de Miranda, Frente al Parque del Este',
-          phone_number: '0212-4283034',
-          phone_number_two: '0412-9581752',
-          in_charge: 'Carlos Ferreira'
-        }
-      ]
+      },
+      /**
+       * Open add dialog
+       * @type {Boolean}
+       */
+      addDialig: false,
+      /**
+       * Config edition panel
+       * @type {Object}
+       */
+      propsPanelEdition,
+      /**
+       * File config module
+       * @type {Object}
+       */
+      branchOffice,
+      /**
+       * RelationalData description
+       * @type {Object}
+       */
+      branchOfficeServices,
+      /**
+       * Open edit dialog
+       * @type {Boolean}
+       */
+      editDialog: false,
+      /**
+       * Status loading table
+       * @type {Boolean}
+       */
+      loadingTable: false,
+      /**
+       * Data of table
+       * @type {Array}
+       */
+      data: []
     }
   },
-
+  created () {
+    this.getBanchOffices()
+    this.setRelationalData(this.branchOfficeServices, [], this)
+  },
   methods: {
-    // emulate fetching data from server
-    addRow () {
-      this.loading = true
-      setTimeout(() => {
-        const
-          index = Math.floor(Math.random() * (this.data.length + 1)),
-          row = this.original[Math.floor(Math.random() * this.original.length)]
-        if (this.data.length === 0) {
-          this.rowCount = 0
-        }
-        row.id = ++this.rowCount
-        const addRow = { ...row } // extend({}, row, { name: `${row.name} (${row.__count})` })
-        this.data = [...this.data.slice(0, index), addRow, ...this.data.slice(index)]
-        this.loading = false
-      }, 500)
+    /**
+     * Load data sorting
+     * @param  {Object}
+     */
+    loadData (data) {
+      this.params.page = data.page
+      this.params.sortBy = data.sortBy
+      this.params.sortOrder = data.sortOrder
+      this.params.perPage = data.rowsPerPage
+      this.optionPagination = data
+      this.getBanchOffices(this.params)
     },
-
-    removeRow () {
-      this.loading = true
-      setTimeout(() => {
-        const index = Math.floor(Math.random() * this.data.length)
-        this.data = [...this.data.slice(0, index), ...this.data.slice(index + 1)]
-        this.loading = false
-      }, 500)
+    /**
+     * Search branch offices
+     * @param  {Object}
+     */
+    searchData (data) {
+      for (const dataSearch in this.params.dataSearch) {
+        this.params.dataSearch[dataSearch] = data
+      }
+      this.getBanchOffices()
     },
-    viewDetail (data) {
-      this.name = data.name
-      this.description = data.description
-      this.city = data.city
-      this.state = data.state
-      this.address = data.address
-      this.phone_number = data.phone_number
-      this.phone_number_two = data.phone_number_two
-      this.changeTitleForm('Actualizar Datos de la Sucursal ')
+    /**
+     * Save Branch Office
+     * @param  {Object}
+     */
+    save (data) {
+      console.log(data)
     },
+    /**
+     * Update Branch Office
+     * @param  {Object}
+     */
+    update (data) {
+      console.log(data)
+    },
+    /**
+     * Set data dialog edition
+     * @param  {Object} data selected
+     */
+    viewDetails (data) {
+      this.editDialog = true
+      this.propsPanelEdition.data = data
+    },
+    /**
+     * Open formulary
+     * @param  {String}
+     */
     changeTitleForm (title) {
       this.titleForm = title
-      this.inception = true
     },
-    cleanForm () {
-      this.name = ''
-      this.description = ''
-      this.city = ''
-      this.state = ''
-      this.address = ''
-      this.phone_number = ''
-      this.phone_number_two = ''
-      this.inception = false
+    /**
+     * Get all branch offices
+     */
+    getBanchOffices (params = this.params) {
+      this.loadingTable = true
+      console.log(this.params)
+      this.$services.getData(['branch-offices'], this.params)
+        .then(({ res }) => {
+          this.data = res.data
+          this.loadingTable = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.data = []
+          this.loadingTable = false
+        })
     }
   }
 }

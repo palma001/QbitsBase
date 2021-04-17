@@ -15,6 +15,7 @@
     :error-message="errorMessageProp"
     :error="error"
     :use-chips="useChips"
+    @filter="filter"
     @input="input"
     @select="select"
   >
@@ -60,7 +61,7 @@ export default {
       type: String
     },
     value: {
-      type: [String, Object]
+      type: [String, Object, Number]
     },
     data: {
       type: Array,
@@ -123,8 +124,12 @@ export default {
   data () {
     return {
       valueSelect: null,
-      errorMessageProp: ''
+      errorMessageProp: '',
+      dataFilter: []
     }
+  },
+  created () {
+    this.valueSelect = this.setModelSelect(this.value)
   },
   watch: {
     value () {
@@ -136,16 +141,22 @@ export default {
   },
   computed: {
     dataOptions () {
-      return this.data.map(element => {
-        element.label = element[this.dataLabel]
-        element.value = element[this.dataValue]
-        element.description = element[this.dataDescription]
-        element.icon = element[this.dataIcon]
-        return element
+      return this.dataFilter.map(element => {
+        return this.setModelSelect(element)
       })
     }
   },
   methods: {
+    setModelSelect (data) {
+      if (data) {
+        return {
+          label: data[this.dataLabel],
+          value: data[this.dataValue],
+          description: data[this.dataDescription],
+          icon: data[this.dataIcon]
+        }
+      }
+    },
     /**
      * Event input
      * @type {Object} data input selected
@@ -160,6 +171,17 @@ export default {
     select (data) {
       this.valueSelect = data
       this.$emit('select', data)
+    },
+    /**
+     * Filter input
+     * @param  {Object}
+     * @param  {Function}
+     */
+    filter (val, update) {
+      update(() => {
+        const needle = val.toLowerCase()
+        this.dataFilter = this.data.filter(v => v[this.dataLabel].toLowerCase().indexOf(needle) > -1)
+      })
     }
   }
 }

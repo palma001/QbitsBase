@@ -6,22 +6,22 @@
     >
       <template v-slot:after>
         <div class="q-pl-md q-pr-md q-pb-md q-pt-none">
-            <GmapMap
-              ref="mymap"
-              map-type-id="roadmap"
-              style="width: 100%; height: 86vh"
-              :center="{ lat: 10.196248389913245, lng: -64.62544711587066 }"
-              :zoom="8"
-              >
-              <GmapMarker
-                :key="index"
-                v-for="(m, index) in markers"
-                :position="m.position"
-                :clickable="true"
-                :draggable="true"
-                @click="center=m.position"
-              />
-            </GmapMap>
+          <GmapMap
+            ref="mymap"
+            map-type-id="roadmap"
+            style="width: 100%; height: 86vh"
+            :center="{ lat: 10.196248389913245, lng: -64.62544711587066 }"
+            :zoom="8"
+            >
+            <GmapMarker
+              :key="index"
+              v-for="(m, index) in markers"
+              :position="m.position"
+              :clickable="true"
+              :draggable="true"
+              @click="center=m.position"
+            />
+          </GmapMap>
         </div>
       </template>
       <template v-slot:before>
@@ -316,6 +316,9 @@ export default {
         this.notify(this, 'Ruta eliminada exitosamente', 'primary', 'mood')
       })
     },
+    /**
+     * Save route
+     */
     async saveRoute () {
       this.loadingRoute = true
       await this.$services.putData(['routes', this.routeSelected.id], {

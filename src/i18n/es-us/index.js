@@ -10,7 +10,10 @@ export default {
     organization: 'organización',
     reception: 'recepción',
     configuration: 'configuración',
-    home: 'inicio'
+    home: 'inicio',
+    search: 'buscar',
+    actions: 'detalles',
+    noResults: 'sin resultados'
   },
   // modules
   modules: {
@@ -44,5 +47,21 @@ export default {
     reset: 'Limpiar',
     cancel: 'Cancelar',
     saveSuccess: 'Remitente agregado exitosamente'
+  },
+  branchOffice: {
+    name: 'nombre',
+    description: 'descripción',
+    phone_number: 'telefono (1)',
+    destination: 'ciudad',
+    destination_id: 'ciudad',
+    phone_number_two: 'telefono (2)',
+    in_charge: 'encaragado',
+    in_charge_id: 'encaragado',
+    list: 'lista de sucursales',
+    add: 'agregar sucursal',
+    update: 'editar sucursal',
+    cancel: 'cancelar',
+    reset: 'limpiar',
+    address: 'dirección'
   }
 }

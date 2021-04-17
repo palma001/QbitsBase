@@ -45,7 +45,6 @@ export const actions = {
   [ACTIONS.VALID_SESSION]: ({ commit, dispatch }) => {
     const user = JSON.parse(localStorage.getItem('user_session'))
     // const userActive = localStorage.getItem('session_active')
-    console.log(user)
     const invalidUser = !user || user === null
     if (invalidUser) {
       commit(MUTATIONS.CLEAR_ACCOUNT_STATE)
