@@ -3,10 +3,20 @@
     <div class="row q-gutter-y-sm">
       <div class="col-12 text-right">
         <q-btn
-          :label="$t('branchOffice.add')"
           color="primary"
+          icon="add_circle"
+          :label="$q.screen.lt.sm ? '' : $t('branchOffice.add')"
           @click="addDialig = true"
-        />
+        >
+        <q-tooltip
+          anchor="center right"
+          self="center left"
+          :offset="[10, 10]"
+          v-if="$q.screen.lt.sm"
+        >
+          <strong>{{ucwords($t('branchOffice.add'))}}</strong>
+        </q-tooltip>
+      </q-btn>
       </div>
       <div class="col-12">
         <data-table
