@@ -5,7 +5,7 @@
         <q-btn
           color="primary"
           icon="add_circle"
-          :label="$q.screen.lt.sm ? '' : $t('branchOffice.add')"
+          :label="$q.screen.lt.sm ? '' : $t('user.add')"
           @click="addDialig = true"
         >
         <q-tooltip
@@ -15,7 +15,7 @@
           v-if="$q.screen.lt.sm"
         >
           {{
-            ucwords($t('branchOffice.add'))
+            ucwords($t('userConfig.add'))
           }}
         </q-tooltip>
       </q-btn>
@@ -23,12 +23,12 @@
       <div class="col-12">
         <data-table
           title="list"
-          module="branchOffice"
+          module="user"
           selection="multiple"
           searchable
           action
           toggable
-          :column="branchOffice"
+          :column="userConfig"
           :data="data"
           :loading="loadingTable"
           :optionPagination="optionPagination"
@@ -45,9 +45,9 @@
       v-model="editDialog"
     >
       <dynamic-form-edition
-        module="branchOffice"
+        module="user"
         :propsPanelEdition="propsPanelEdition"
-        :config="branchOffice"
+        :config="userConfig"
         :loading="loadingForm"
         @cancel="editDialog = false"
         @update="update"
@@ -60,8 +60,8 @@
       v-model="addDialig"
     >
       <dynamic-form
-        module="branchOffice"
-        :config="branchOffice"
+        module="user"
+        :config="userConfig"
         :loading="loadingForm"
         @cancel="addDialig = false"
         @save="save"
@@ -73,7 +73,7 @@
 import DataTable from '../components/DataTable.vue'
 import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
-import { branchOffice, propsPanelEdition, branchOfficeServices } from '../config-file/branchOffice/branchOfficeConfig.js'
+import { userConfig, propsPanelEdition, userServices } from '../config-file/user/userConfig.js'
 import { mixins } from '../mixins'
 export default {
   mixins: [mixins.containerMixin],
@@ -130,12 +130,12 @@ export default {
        * File config module
        * @type {Object}
        */
-      branchOffice,
+      userConfig,
       /**
        * RelationalData description
        * @type {Object}
        */
-      branchOfficeServices,
+      userServices,
       /**
        * Open edit dialog
        * @type {Boolean}
@@ -154,8 +154,8 @@ export default {
     }
   },
   created () {
-    this.getBanchOffices()
-    this.setRelationalData(this.branchOfficeServices, [], this)
+    this.getUsers()
+    this.setRelationalData(this.userServices, [], this)
   },
   methods: {
     /**
@@ -168,7 +168,7 @@ export default {
       this.params.sortOrder = data.sortOrder
       this.params.perPage = data.rowsPerPage
       this.optionPagination = data
-      this.getBanchOffices(this.params)
+      this.getUsers(this.params)
     },
     /**
      * Search branch offices
@@ -178,7 +178,7 @@ export default {
       for (const dataSearch in this.params.dataSearch) {
         this.params.dataSearch[dataSearch] = data
       }
-      this.getBanchOffices()
+      this.getUsers()
     },
     /**
      * Save Branch Office
@@ -189,11 +189,11 @@ export default {
       data.in_charge_id = data.in_charge.value
       data.user_created_id = 1
       this.loadingForm = true
-      this.$services.postData(['branch-offices'], data)
+      this.$services.postData(['users'], data)
         .then(({ res }) => {
           this.addDialig = false
           this.loadingForm = false
-          this.getBanchOffices(this.params)
+          this.getUsers(this.params)
         })
         .catch(() => {
           this.loadingForm = false
@@ -208,11 +208,11 @@ export default {
       data.in_charge_id = data.in_charge.value ?? data.in_charge.id
       data.user_created_id = 1
       this.loadingForm = true
-      this.$services.putData(['branch-offices', this.selectedData.id], data)
+      this.$services.putData(['users', this.selectedData.id], data)
         .then(({ res }) => {
           this.editDialog = false
           this.loadingForm = false
-          this.getBanchOffices(this.params)
+          this.getUsers(this.params)
         })
         .catch(() => {
           this.loadingForm = false
@@ -237,9 +237,9 @@ export default {
     /**
      * Get all branch offices
      */
-    getBanchOffices (params = this.params) {
+    getUsers (params = this.params) {
       this.loadingTable = true
-      this.$services.getData(['branch-offices'], this.params)
+      this.$services.getData(['users'], this.params)
         .then(({ res }) => {
           this.data = res.data
           this.loadingTable = false

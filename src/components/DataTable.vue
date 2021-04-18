@@ -15,7 +15,7 @@
       </template>
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th v-if="toggable">
+          <q-th v-if="toggable" align="left">
             <q-toggle
               v-model="props.selected"
               size="xs"
