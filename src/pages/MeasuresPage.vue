@@ -176,11 +176,9 @@ export default {
      * @param  {Object}
      */
     save (data) {
-      console.log(data)
       data.unit_of_measurement_id = data.unit_of_measurement.value
       data.user_created_id = 1
       this.loadingForm = true
-      console.log(data)
       this.$services.postData(['rates'], data)
         .then(({ res }) => {
           this.addDialig = false
@@ -196,8 +194,8 @@ export default {
      * @param  {Object}
      */
     update (data) {
-      data.destination_id = data.unit_of_measurement.value ?? data.unit_of_measurement.id
-      data.user_created_id = 1
+      data.unit_of_measurement_id = data.unit_of_measurement.value ?? data.unit_of_measurement.id
+      data.user_updated_id = 1
       this.loadingForm = true
       this.$services.putData(['rates', this.selectedData.id], data)
         .then(({ res }) => {

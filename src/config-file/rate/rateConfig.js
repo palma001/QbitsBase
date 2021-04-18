@@ -32,7 +32,7 @@ export const rate = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -72,7 +72,7 @@ export const rate = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -96,7 +96,7 @@ export const rate = [
           component: {
             name: 'b-input',
             props: {
-              type: 'text',
+              type: 'number',
               dense: true
             },
             class: {
