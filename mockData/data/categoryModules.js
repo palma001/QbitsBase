@@ -47,13 +47,13 @@ export const categoryModules = [
       {
         name: 'reception-pakages',
         route: 'ReceptionPakagesPage',
-        icon: 'north_west',
+        icon: 'south_east',
         devices: ['mobile', 'desktop']
       },
       {
         name: 'dispatch-packages',
         route: 'DispatchPakagesPage',
-        icon: 'south_east',
+        icon: 'north_west',
         devices: ['mobile', 'desktop']
       },
       {
