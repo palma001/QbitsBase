@@ -24,9 +24,19 @@ const routes = [
     beforeEnter: validationSession,
     children: [
       {
-        path: '/new-shipment',
+        path: '/cash-register',
         component: () => import('pages/NewShipment.vue'),
         name: 'NewShipment'
+      },
+      {
+        path: '/cash-register',
+        component: () => import('pages/CashRegisterPage.vue'),
+        name: 'CashRegisterPage'
+      },
+      {
+        path: '/check-shipping',
+        component: () => import('pages/CheckShippingPage.vue'),
+        name: 'CheckShippingPage'
       },
       {
         path: '/user-management',
@@ -62,6 +72,46 @@ const routes = [
         path: '/dashboard',
         component: () => import('src/pages/DashboardPage.vue'),
         name: 'DashboardPage'
+      },
+      {
+        path: '/payment-method',
+        component: () => import('src/pages/PaymentMethodPage.vue'),
+        name: 'PaymentMethodPage'
+      },
+      {
+        path: '/reception-pakages',
+        component: () => import('src/pages/ReceptionPakagesPage.vue'),
+        name: 'ReceptionPakagesPage'
+      },
+      {
+        path: '/dispatch-packages',
+        component: () => import('src/pages/DispatchPakagesPage.vue'),
+        name: 'DispatchPakagesPage'
+      },
+      {
+        path: '/guides-management',
+        component: () => import('src/pages/GuidesPakagesPage.vue'),
+        name: 'GuidesPakagesPage'
+      },
+      {
+        path: '/inventory-management',
+        component: () => import('src/pages/InventoryPakagesPage.vue'),
+        name: 'InventoryPakagesPage'
+      },
+      {
+        path: '/payment-summary',
+        component: () => import('src/pages/PaymentSummaryPage.vue'),
+        name: 'PaymentSummaryPage'
+      },
+      {
+        path: '/invoice-summary',
+        component: () => import('src/pages/InvoiceSummaryPage.vue'),
+        name: 'InvoiceSummaryPage'
+      },
+      {
+        path: '/shipment summary',
+        component: () => import('src/pages/ShipmentSummaryPage.vue'),
+        name: 'ShipmentSummaryPage'
       },
       {
         path: 'pruebas',
