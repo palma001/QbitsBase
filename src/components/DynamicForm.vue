@@ -439,6 +439,8 @@ export default {
             class: {
               'text-h6': true,
               'items-center': true,
+              'bg-primary': true,
+              'text-white': true,
               row: true
             }
           },
