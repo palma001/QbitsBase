@@ -6,14 +6,22 @@
       :title="ucwords($t(`${module}.${title}`))"
       :pagination="paginationConfig"
       :loading="loading"
+      :selection="selection"
+      :selected.sync="selected"
       @update:pagination="setPagination">
       <template v-slot:loading>
         <q-inner-loading showing
           color="primary" />
       </template>
-      <!-- @update:pagination ="rowsPerPage"> -->
       <template v-slot:header="props">
         <q-tr :props="props">
+          <q-th v-if="toggable">
+            <q-toggle
+              v-model="props.selected"
+              size="xs"
+              @input="selectionToggleAll"
+            />
+          </q-th>
           <q-th v-for="col in props.cols"
             :key="col.name"
             :props="props"
@@ -38,6 +46,13 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props">
+          <q-td v-if="toggable">
+            <q-toggle
+              v-model="props.selected"
+              size="xs"
+              @input="selectionToggle(props.row)"
+            />
+          </q-td>
           <q-td v-for="col in props.cols"
             :key="col.name"
             :props="props">
@@ -64,6 +79,22 @@ export default {
   name: 'DataTable',
   mixins: [mixins.containerMixin],
   props: {
+    /**
+     * Visibility toggle
+     * @type {Boolean} status toggle
+     */
+    toggable: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * Selection type
+     * @type {String} selection type
+     */
+    selection: {
+      type: String,
+      default: 'single'
+    },
     /**
      * Actions
      * @type {Boolean} status
@@ -142,7 +173,8 @@ export default {
        * Content the column
        * @type {Array}
        */
-      columnData: []
+      columnData: [],
+      selected: []
     }
   },
   computed: {
@@ -154,6 +186,19 @@ export default {
     this.setHeaders()
   },
   methods: {
+    /**
+     * Selected all data
+     */
+    selectionToggleAll () {
+      this.$emit('selectedAll', this.selected)
+    },
+    /**
+     * Selected one data
+     * @param {Object} Data selected
+     */
+    selectionToggle (data) {
+      this.$emit('selected', data, this.selected)
+    },
     /**
      * Details data
      * @param  {Object} data
