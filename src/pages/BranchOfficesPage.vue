@@ -237,7 +237,6 @@ export default {
      */
     getBanchOffices (params = this.params) {
       this.loadingTable = true
-      console.log(this.params)
       this.$services.getData(['branch-offices'], this.params)
         .then(({ res }) => {
           this.data = res.data

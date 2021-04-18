@@ -63,5 +63,16 @@ export default {
     cancel: 'cancelar',
     reset: 'limpiar',
     address: 'dirección'
+  },
+  rate: {
+    name: 'nombre',
+    cost: 'costo',
+    unit_of_measurement_id: 'médida',
+    unit_of_measurement: 'médida',
+    list: 'lista de médidas',
+    add: 'agregar médida',
+    update: 'editar médida',
+    cancel: 'cancelar',
+    reset: 'limpiar'
   }
 }

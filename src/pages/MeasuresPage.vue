@@ -1,299 +1,245 @@
 <template>
   <q-page padding>
-    <div class="row">
+    <div class="row q-gutter-y-sm">
+      <div class="col-12 text-right">
+        <q-btn
+          color="primary"
+          icon="add_circle"
+          :label="$q.screen.lt.sm ? '' : $t('rate.add')"
+          @click="addDialig = true"
+        >
+        <q-tooltip
+          anchor="center right"
+          self="center left"
+          :offset="[10, 10]"
+          v-if="$q.screen.lt.sm"
+        >
+          {{
+            ucwords($t('rate.add'))
+          }}
+        </q-tooltip>
+      </q-btn>
+      </div>
       <div class="col-12">
-        <div class="q-pa-md">
-          <q-table
-            title="Treats"
-            :data="data"
-            :columns="columns"
-            row-key="id"
-            :filter="filter"
-            :loading="loading"
-            selection="multiple"
-            :selected.sync="selected"
-            :visible-columns="visibleColumns"
-          >
-            <template v-slot:top>
-              <q-btn color="primary" :disable="loading" label="Add row" @click="changeTitleForm('Agregar Medida')" />
-              <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" />
-              <q-space />
-              <q-input dense debounce="300" color="primary" v-model="filter">
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </template>
-            <template v-slot:header="props">
-              <q-tr :props="props">
-                <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.label}}
-                </q-th>
-                <q-th class="text-center">
-                  Acciones
-                </q-th>
-              </q-tr>
-            </template>
-            <template v-slot:body="props">
-              <q-tr :props="props" >
-                <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.value}}
-                </q-td>
-                <q-td class="text-center">
-                  <q-btn icon="visibility" color="primary" rounded size="sm" @click="viewDetail(props.row)">
-                  </q-btn>
-                </q-td>
-              </q-tr>
-            </template>
-
-          </q-table>
-        </div>
+        <data-table
+          title="list"
+          module="rate"
+          searchable
+          action
+          :column="rate"
+          :data="data"
+          :loading="loadingTable"
+          :optionPagination="optionPagination"
+          @search-data="searchData"
+          @view-details="viewDetails"
+          @on-load-data="loadData"
+        />
       </div>
     </div>
-    <q-dialog v-model="inception">
-      <q-card style="width:600px; max-width:80vw;">
-        <q-card-section class="row items-center q-pb-none">
-            <div class="text-h6">
-               {{titleForm}}
-            </div>
-          <q-space />
-          <q-btn icon="close" flat round dense @click="cleanForm" />
-        </q-card-section>
-
-        <q-card-section>
-          <div class="col-12">
-                <q-input v-model="name" label="Descripción" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="acronym" label="Unidad" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="cost" label="Costo ($)" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="date" label="Fecha" dense/>
-              </div>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="primary" v-close-popup />
-          <q-btn flat label="Aceptar" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
+    <q-dialog
+      position="right"
+      full-height
+      persistent
+      v-model="editDialog"
+    >
+      <dynamic-form-edition
+        module="rate"
+        :propsPanelEdition="propsPanelEdition"
+        :config="rate"
+        :loading="loadingForm"
+        @cancel="editDialog = false"
+        @update="update"
+      />
+    </q-dialog>
+    <q-dialog
+      position="right"
+      full-height
+      persistent
+      v-model="addDialig"
+    >
+      <dynamic-form
+        module="rate"
+        :config="rate"
+        :loading="loadingForm"
+        @cancel="addDialig = false"
+        @save="save"
+      />
     </q-dialog>
   </q-page>
 </template>
-
 <script>
+import DataTable from '../components/DataTable.vue'
+import DynamicFormEdition from '../components/DynamicFormEdition.vue'
+import DynamicForm from '../components/DynamicForm.vue'
+import { rate, propsPanelEdition, rateServices } from '../config-file/rate/rateConfig.js'
+import { mixins } from '../mixins'
 export default {
+  mixins: [mixins.containerMixin],
+  components: {
+    DataTable,
+    DynamicFormEdition,
+    DynamicForm
+  },
   data () {
     return {
-      titleForm: 'Agregar Medida',
-      visibleColumns: ['name', 'acronym', 'cost', 'date'],
-      name: '',
-      acronym: '',
-      cost: '',
-      date: '',
-      selector: false,
-      selected: [],
-      options: ['V', 'P'],
-      inception: false,
-      loading: false,
-      filter: '',
-      rowCount: 10,
-      columns: [
-        {
-          name: 'name',
-          required: true,
-          label: 'Descripción',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
-        },
-        { name: 'acronym', align: 'center', label: 'Unidad', field: 'acronym', sortable: true },
-        { name: 'cost', align: 'center', label: 'Costo ($)', field: 'cost', sortable: true },
-        { name: 'date', align: 'center', label: 'Fecha', field: 'date', sortable: true }
-      ],
-      data: [
-        {
-          id: 1,
-          name: 'Peso',
-          acronym: 'Kg',
-          cost: '1.0',
-          date: '10/04/2021'
-        },
-        {
-          id: 2,
-          name: 'Largo',
-          acronym: 'cm',
-          cost: '0.02',
-          date: '10/04/2021'
-        },
-        {
-          id: 3,
-          name: 'Ancho',
-          acronym: 'cm',
-          cost: '0.02',
-          date: '10/04/2021'
-        },
-        {
-          id: 4,
-          name: 'Profundidad',
-          acronym: 'cm',
-          cost: '0.02',
-          date: '10/04/2021'
-        },
-        {
-          id: 5,
-          name: 'Tiempo',
-          acronym: 'Hr',
-          cost: '0.5',
-          date: '10/04/2021'
-        },
-        {
-          id: 6,
-          name: 'Distancia',
-          acronym: 'Km',
-          cost: '0.05',
-          date: '10/04/2021'
-        },
-        {
-          id: 7,
-          name: 'Trayecto',
-          acronym: 'Tramo',
-          cost: '1.2',
-          date: '10/04/2021'
-        },
-        {
-          id: 8,
-          name: 'Trayecto',
-          acronym: 'Tramo',
-          cost: '1.2',
-          date: '10/04/2021'
-        },
-        {
-          id: 9,
-          name: 'Trayecto',
-          acronym: 'Tramo',
-          cost: '1.2',
-          date: '10/04/2021'
-        },
-        {
-          id: 10,
-          name: 'Trayecto',
-          acronym: 'Tramo',
-          cost: '1.2',
-          date: '10/04/2021'
+      loadingForm: false,
+      /**
+       * Selected data
+       * @type {Object}
+       */
+      selectedData: null,
+      /**
+       * Options pagination
+       * @type {Object}
+       */
+      optionPagination: {
+        rowsPerPage: 20,
+        paginate: true,
+        sortBy: 'id',
+        sortOrder: 'desc'
+      },
+      /**
+       * Params search
+       * @type {Object}
+       */
+      params: {
+        paginated: true,
+        sortBy: 'id',
+        sortOrder: 'desc',
+        dataSearch: {
+          name: '',
+          cost: ''
         }
-      ],
-      original: [
-        {
-          name: 'Peso',
-          acronym: 'Kg',
-          cost: '1.0',
-          date: '10/04/2021'
-        },
-        {
-          name: 'Largo',
-          acronym: 'cm',
-          cost: '0.02',
-          date: '10/04/2021'
-        },
-        {
-          name: 'Ancho',
-          acronym: 'cm',
-          cost: '0.02',
-          date: '10/04/2021'
-        },
-        {
-          name: 'Profundidad',
-          acronym: 'cm',
-          cost: '0.02',
-          date: '10/04/2021'
-        },
-        {
-          name: 'Tiempo',
-          acronym: 'Hr',
-          cost: '0.5',
-          date: '10/04/2021'
-        },
-        {
-          name: 'Distancia',
-          acronym: 'Km',
-          cost: '0.05',
-          date: '10/04/2021'
-        },
-        {
-          name: 'Trayecto',
-          acronym: 'Tramo',
-          cost: '1.2',
-          date: '10/04/2021'
-        },
-        {
-          name: 'Trayecto',
-          acronym: 'Tramo',
-          cost: '1.2',
-          date: '10/04/2021'
-        },
-        {
-          name: 'Trayecto',
-          acronym: 'Tramo',
-          cost: '1.2',
-          date: '10/04/2021'
-        },
-        {
-          name: 'Trayecto',
-          acronym: 'Tramo',
-          cost: '1.2',
-          date: '10/04/2021'
-        }
-      ]
+      },
+      rateServices,
+      /**
+       * Open add dialog
+       * @type {Boolean}
+       */
+      addDialig: false,
+      /**
+       * Config edition panel
+       * @type {Object}
+       */
+      propsPanelEdition,
+      /**
+       * File config module
+       * @type {Object}
+       */
+      rate,
+      /**
+       * Open edit dialog
+       * @type {Boolean}
+       */
+      editDialog: false,
+      /**
+       * Status loading table
+       * @type {Boolean}
+       */
+      loadingTable: false,
+      /**
+       * Data of table
+       * @type {Array}
+       */
+      data: []
     }
   },
-
+  created () {
+    this.getRates()
+    this.setRelationalData(this.rateServices, [], this)
+  },
   methods: {
-    // emulate fetching data from server
-    addRow () {
-      this.loading = true
-      setTimeout(() => {
-        const
-          index = Math.floor(Math.random() * (this.data.length + 1)),
-          row = this.original[Math.floor(Math.random() * this.original.length)]
-        if (this.data.length === 0) {
-          this.rowCount = 0
-        }
-        row.id = ++this.rowCount
-        const addRow = { ...row } // extend({}, row, { name: `${row.name} (${row.__count})` })
-        this.data = [...this.data.slice(0, index), addRow, ...this.data.slice(index)]
-        this.loading = false
-      }, 500)
+    /**
+     * Load data sorting
+     * @param  {Object}
+     */
+    loadData (data) {
+      this.params.page = data.page
+      this.params.sortBy = data.sortBy
+      this.params.sortOrder = data.sortOrder
+      this.params.perPage = data.rowsPerPage
+      this.optionPagination = data
+      this.getRates(this.params)
     },
-
-    removeRow () {
-      this.loading = true
-      setTimeout(() => {
-        const index = Math.floor(Math.random() * this.data.length)
-        this.data = [...this.data.slice(0, index), ...this.data.slice(index + 1)]
-        this.loading = false
-      }, 500)
+    /**
+     * Search branch offices
+     * @param  {Object}
+     */
+    searchData (data) {
+      for (const dataSearch in this.params.dataSearch) {
+        this.params.dataSearch[dataSearch] = data
+      }
+      this.getRates()
     },
-    viewDetail (data) {
-      this.name = data.name
-      this.acronym = data.acronym
-      this.cost = data.cost
-      this.date = data.date
-      this.changeTitleForm('Actualizar Atributos de Medida')
+    /**
+     * Save Branch Office
+     * @param  {Object}
+     */
+    save (data) {
+      console.log(data)
+      data.unit_of_measurement_id = data.unit_of_measurement.value
+      data.user_created_id = 1
+      this.loadingForm = true
+      console.log(data)
+      this.$services.postData(['rates'], data)
+        .then(({ res }) => {
+          this.addDialig = false
+          this.loadingForm = false
+          this.getRates(this.params)
+        })
+        .catch(() => {
+          this.loadingForm = false
+        })
     },
+    /**
+     * Update Branch Office
+     * @param  {Object}
+     */
+    update (data) {
+      data.destination_id = data.unit_of_measurement.value ?? data.unit_of_measurement.id
+      data.user_created_id = 1
+      this.loadingForm = true
+      this.$services.putData(['rates', this.selectedData.id], data)
+        .then(({ res }) => {
+          this.editDialog = false
+          this.loadingForm = false
+          this.getRates(this.params)
+        })
+        .catch(() => {
+          this.loadingForm = false
+        })
+    },
+    /**
+     * Set data dialog edition
+     * @param  {Object} data selected
+     */
+    viewDetails (data) {
+      this.editDialog = true
+      this.propsPanelEdition.data = data
+      this.selectedData = data
+    },
+    /**
+     * Open formulary
+     * @param  {String}
+     */
     changeTitleForm (title) {
       this.titleForm = title
-      this.inception = true
     },
-    cleanForm () {
-      this.name = ''
-      this.acronym = ''
-      this.cost = ''
-      this.date = ''
-      this.inception = false
+    /**
+     * Get all branch offices
+     */
+    getRates (params = this.params) {
+      this.loadingTable = true
+      this.$services.getData(['rates'], this.params)
+        .then(({ res }) => {
+          this.data = res.data
+          this.loadingTable = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.data = []
+          this.loadingTable = false
+        })
     }
   }
 }
