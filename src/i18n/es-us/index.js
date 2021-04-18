@@ -12,8 +12,7 @@ export default {
     reception: 'recepción',
     administration: 'administración',
     configuration: 'configuración',
-    stock: 'almacén'
-    home: 'inicio',
+    stock: 'almacén',
     search: 'buscar',
     actions: 'detalles',
     noResults: 'sin resultados'
