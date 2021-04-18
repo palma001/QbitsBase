@@ -16,13 +16,81 @@ export const categoryModules = [
   {
 
     name: 'reception',
-    icon: 'all_inbox',
+    icon: 'account_box',
     open: true,
     modules: [
       {
         name: 'new-shipment',
         route: 'NewShipment',
-        icon: 'inventory_2',
+        icon: 'safety_divider',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'check-shipping',
+        route: 'CheckShippingPage',
+        icon: 'sell',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'cash-register',
+        route: 'CashRegisterPage',
+        icon: 'account_balance_wallet',
+        devices: ['mobile', 'desktop']
+      }
+    ]
+  },
+  {
+    name: 'stock',
+    icon: 'calendar_view_month',
+    open: true,
+    modules: [
+      {
+        name: 'reception-pakages',
+        route: 'ReceptionPakagesPage',
+        icon: 'north_west',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'dispatch-packages',
+        route: 'DispatchPakagesPage',
+        icon: 'south_east',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'guides-management',
+        route: 'GuidesPakagesPage',
+        icon: 'copy_all',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'inventory-management',
+        route: 'InventoryPage',
+        icon: 'library_books',
+        devices: ['mobile', 'desktop']
+      }
+    ]
+  },
+  {
+    name: 'administration',
+    icon: 'app_registration',
+    open: true,
+    modules: [
+      {
+        name: 'payment-summary',
+        route: 'PaymentSummaryPage',
+        icon: 'point_of_sale',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'invoice-summary',
+        route: 'InvoiceSummaryPage',
+        icon: 'receipt_long',
+        devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'shipment summary',
+        route: 'ShipmentSummaryPage',
+        icon: 'checklist',
         devices: ['mobile', 'desktop']
       }
     ]
@@ -67,7 +135,14 @@ export const categoryModules = [
         route: 'MeasuresPage',
         icon: 'straighten',
         devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'payment-method',
+        route: 'PaymentMethodPage',
+        icon: 'credit_card',
+        devices: ['mobile', 'desktop']
       }
+
     ]
   }
 ]
