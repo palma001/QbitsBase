@@ -35,7 +35,7 @@ export default {
     'inventory-management': 'inventario',
     'payment-summary': 'resumen de ventas',
     'invoice-summary': 'resumen de facturación',
-    'shipment summary': 'resumen de envíos',
+    'shipment-summary': 'resumen de envíos',
     dashboard: 'tablero',
     geolocation: 'geolocalización',
     transporte: 'transporte',
