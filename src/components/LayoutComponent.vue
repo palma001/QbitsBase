@@ -79,43 +79,51 @@
       bordered
       show-if-above
       v-model="leftDrawerOpen"
+      class="q-pa-none"
     >
-      <q-expansion-item
-        expand-separator
-        v-for="category_module in dataMenu"
-        :key="category_module.id"
-        :icon="category_module.icon"
-        :default-opened="category_module.open"
-        :label="ucwords($t(`template.${category_module.name}`))"
+      <q-scroll-area
+        :thumb-style="thumbStyle"
+        :content-style="contentStyle"
+        :content-active-style="contentActiveStyle"
+        style="height: 94vh;"
       >
-        <div
-          v-for="list in category_module.modules"
-          :key="list.id"
+        <q-expansion-item
+          expand-separator
+          v-for="category_module in dataMenu"
+          :key="category_module.id"
+          :icon="category_module.icon"
+          :default-opened="category_module.open"
+          :label="ucwords($t(`template.${category_module.name}`))"
         >
-          <q-list
-            v-for="(divice, index) in list.devices"
-            :key="index"
+          <div
+            v-for="list in category_module.modules"
+            :key="list.id"
           >
-            <q-item
-              clickable
-              v-ripple
-              class="q-ml-md"
-              active-class="my-menu-link"
-              v-if="validateDivice(divice) && validateRole(list.access)"
-              :active="list.route === $route.name"
+            <q-list
+              v-for="(divice, index) in list.devices"
+              :key="index"
             >
-              <q-item-section avatar v-if="list.icon">
-                <q-icon :name="list.icon" />
-              </q-item-section>
-              <q-item-section @click="changeRoute(list.route)">
-                <q-item-label>
-                  {{ ucwords($t(`modules.${list.name}`)) }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </div>
-      </q-expansion-item>
+              <q-item
+                clickable
+                v-ripple
+                class="q-ml-md"
+                active-class="my-menu-link"
+                v-if="validateDivice(divice) && validateRole(list.access)"
+                :active="list.route === $route.name"
+              >
+                <q-item-section avatar v-if="list.icon">
+                  <q-icon :name="list.icon" />
+                </q-item-section>
+                <q-item-section @click="changeRoute(list.route)">
+                  <q-item-label>
+                    {{ ucwords($t(`modules.${list.name}`)) }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </q-expansion-item>
+      </q-scroll-area>
     </q-drawer>
     <q-page-container>
       <router-view />
@@ -168,6 +176,21 @@ export default {
 
   data () {
     return {
+      contentStyle: {
+        backgroundColor: 'rgba(0,0,0,0.02)',
+        color: '#555'
+      },
+
+      contentActiveStyle: {
+        color: 'black'
+      },
+      thumbStyle: {
+        right: '2px',
+        borderRadius: '5px',
+        backgroundColor: '#02718D',
+        width: '7px',
+        opacity: 1
+      },
       labelDrown: null,
       dataMenu: [],
       active: true,

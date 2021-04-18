@@ -64,7 +64,7 @@ export const categoryModules = [
       },
       {
         name: 'inventory-management',
-        route: 'InventoryPage',
+        route: 'InventoryPakagesPage',
         icon: 'library_books',
         devices: ['mobile', 'desktop']
       }
@@ -88,7 +88,7 @@ export const categoryModules = [
         devices: ['mobile', 'desktop']
       },
       {
-        name: 'shipment summary',
+        name: 'shipment-summary',
         route: 'ShipmentSummaryPage',
         icon: 'checklist',
         devices: ['mobile', 'desktop']
