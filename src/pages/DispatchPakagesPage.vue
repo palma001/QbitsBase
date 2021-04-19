@@ -462,8 +462,8 @@ export default {
     /**
      * Get one voucher
      */
-    getOneVoucher (code = this.codeVoucher) {
-      this.codeVoucher = code
+    getOneVoucher (code) {
+      this.codeVoucher = typeof code === 'string' ? code : this.codeVoucher
       this.$services.getOneData(['vouchers', this.codeVoucher])
         .then(({ res }) => {
           this.voucherSelected.push(res.data)
