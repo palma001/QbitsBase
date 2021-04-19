@@ -58,7 +58,9 @@ export default {
       default: false
     },
     label: {
-      type: String
+      type: String,
+      require: false,
+      default: ''
     },
     value: {
       type: [String, Object, Number, Array]
@@ -148,17 +150,19 @@ export default {
   },
   methods: {
     setModelSelect (data) {
-      if (!Array.isArray(data)) {
-        return {
-          label: data[this.dataLabel],
-          value: data[this.dataValue],
-          description: data[this.dataDescription],
-          icon: data[this.dataIcon]
+      if (data) {
+        if (!Array.isArray(data)) {
+          return {
+            label: data[this.dataLabel],
+            value: data[this.dataValue],
+            description: data[this.dataDescription],
+            icon: data[this.dataIcon]
+          }
+        } else {
+          return data.map(d => {
+            return this.setModelSelect(d)
+          })
         }
-      } else {
-        return data.map(d => {
-          return this.setModelSelect(d)
-        })
       }
     },
     /**

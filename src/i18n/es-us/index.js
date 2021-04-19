@@ -29,7 +29,10 @@ export default {
     reset: 'Limpiar',
     cancel: 'Cancelar',
     saveSuccess: 'usuario agregado exitosamente',
-    password: 'clave'
+    password: 'clave',
+    list: 'lista de usuarios',
+    roles: 'roles',
+    branch_offices: 'sucursales'
   },
   // modules
   modules: {
@@ -100,5 +103,13 @@ export default {
     update: 'editar médida',
     cancel: 'cancelar',
     reset: 'limpiar'
+  },
+  voucher: {
+    id: 'Número',
+    addressee: 'destinatario',
+    'branch-offices': 'sucursales',
+    destination: 'destino',
+    destinations: 'destinos',
+    list: 'lista de comprobantes'
   }
 }

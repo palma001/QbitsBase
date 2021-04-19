@@ -162,7 +162,7 @@ export default {
       this.getRates(this.params)
     },
     /**
-     * Search branch offices
+     * Search rate
      * @param  {Object}
      */
     searchData (data) {
@@ -217,14 +217,7 @@ export default {
       this.selectedData = data
     },
     /**
-     * Open formulary
-     * @param  {String}
-     */
-    changeTitleForm (title) {
-      this.titleForm = title
-    },
-    /**
-     * Get all branch offices
+     * Get all rate
      */
     getRates (params = this.params) {
       this.loadingTable = true

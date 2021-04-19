@@ -327,7 +327,7 @@ export default {
         destinations: this.destinationModel(this.routeSelected.destinations)
       })
       this.loadingRoute = false
-      this.notify(this, 'Ruta guardada exitosamente', 'primary', 'mood')
+      this.notify(this, 'Ruta guardada exitosamente', 'positive', 'mood')
     },
     destinationModel (data) {
       const destinations = data
@@ -354,7 +354,7 @@ export default {
         this.routeSelected.destinations = []
         this.nameRoute = null
         this.loadingRoute = false
-        this.notify(this, 'Ruta agregada exitosamente', 'primary', 'mood')
+        this.notify(this, 'Ruta agregada exitosamente', 'positive', 'mood')
       }
     },
     getDirection () {

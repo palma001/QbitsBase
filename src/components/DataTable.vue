@@ -10,8 +10,7 @@
       :selected.sync="selected"
       @update:pagination="setPagination">
       <template v-slot:loading>
-        <q-inner-loading showing
-          color="primary" />
+        <q-inner-loading showing color="primary" />
       </template>
       <template v-slot:header="props">
         <q-tr :props="props">
@@ -190,14 +189,14 @@ export default {
      * Selected all data
      */
     selectionToggleAll () {
-      this.$emit('selectedAll', this.selected)
+      this.$emit('selected', this.selected)
     },
     /**
      * Selected one data
      * @param {Object} Data selected
      */
     selectionToggle (data) {
-      this.$emit('selected', data, this.selected)
+      this.$emit('selected', this.selected, data)
     },
     /**
      * Details data
