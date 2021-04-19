@@ -28,7 +28,7 @@
             {{ ucwords((col.label) ? $t(`${module}.${col.label}`) : $t(`${module}.${col.name}`)) }}
           </q-th>
           <q-th align="center" v-if="action">
-             {{ ucwords($t('template.actions')) }}
+            {{ ucwords($t('template.actions')) }}
           </q-th>
         </q-tr>
       </template>
@@ -59,12 +59,16 @@
           </q-td>
           <q-td v-if="action" align="center"
           >
-            <q-btn size="sm"
-              color="primary"
+            <q-btn
               dense
               round
-              icon="fullscreen"
-              @click="viewDetails(props.row)"
+              v-for="buttonAction in buttonsActions"
+              :key="buttonAction.id"
+              :size="buttonAction.size"
+              :color="buttonAction.color"
+              :icon="buttonAction.icon"
+              :class="buttonAction.class"
+              @click="emitEvent(buttonAction.event, props.row)"
             />
           </q-td>
         </q-tr>
@@ -78,6 +82,23 @@ export default {
   name: 'DataTable',
   mixins: [mixins.containerMixin],
   props: {
+    /**
+     * Actions buttons
+     * @type {Array} array buttons
+     */
+    buttonsActions: {
+      type: Array,
+      default: () => {
+        return [
+          {
+            color: 'primary',
+            icon: 'fullscreen',
+            size: 'sm',
+            event: 'view-details'
+          }
+        ]
+      }
+    },
     /**
      * Visibility toggle
      * @type {Boolean} status toggle
@@ -202,8 +223,8 @@ export default {
      * Details data
      * @param  {Object} data
      */
-    viewDetails (data) {
-      this.$emit('view-details', data)
+    emitEvent (event, data) {
+      this.$emit(event, data)
     },
     /**
      * Set data pagination emit event

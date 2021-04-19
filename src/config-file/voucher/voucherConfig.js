@@ -34,6 +34,15 @@ export const voucherConfig = [
   }
 ]
 
+export const buttonsTable = [
+  {
+    color: 'negative',
+    icon: 'delete',
+    event: 'delete',
+    size: 'sm'
+  }
+]
+
 export const propsPanelEdition = {
   data: {},
   buttons: [

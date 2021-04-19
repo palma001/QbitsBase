@@ -1,16 +1,12 @@
 <template>
   <q-page padding>
-    <!-- <q-markup-table>
-      <thead>
-        <tr>
-          <th class="text-left">{{$t('voucher.number')}}</th>
-          <th class="text-left">{{$t('voucher.name')}}</th>
-          <th class="text-left">{{$t('voucher.destination')}}</th>
-        </tr>
-      </thead>
-    </q-markup-table> -->
-    <div class="row q-col-gutter-sm">
-      <div class="col-12 text-right">
+    <div class="row">
+      <div class="col-3 text-left">
+        <p class="text-h5">
+          Crear Guia
+        </p>
+      </div>
+      <div class="col-9 text-right">
         <q-btn
           color="primary"
           icon="save"
@@ -18,68 +14,118 @@
           class="q-mr-md"
           @click="prompt = true"
         />
-        <q-btn push color="teal" icon="filter_alt">
-          <q-popup-proxy>
-            <div class="row q-col-gutter-sm q-pa-md text-center">
-              <div class="col-6">
-                <q-radio
-                  name="shape"
-                  v-model="shape"
-                  val="branch-offices"
-                  :label="ucwords($t('voucher.branch-offices'))"
-                  @input="getFilter"
-                />
-              </div>
-              <div class="col-6">
-                <q-radio
-                  name="shape"
-                  v-model="shape"
-                  val="destinations"
-                  :label="ucwords($t('voucher.destinations'))"
-                  @input="getFilter"
-                />
-              </div>
-              <div class="col-12">
-                <b-search-select
-                  dense
-                  dataValue="id"
-                  :dataLabel="shape === 'destinations' ? 'city' : 'name'"
-                  :data="optionsFilter"
-                  v-model="valueFilter"
-                  :label="ucwords($t(`voucher.${shape}`))"
-                  @input="filter"
-                />
-              </div>
-              <div class="col-12">
-                <q-btn
-                  color="negative"
-                  class="full-width"
-                  icon="delete"
-                  dense
-                  size="md"
-                  push
-                  @click="clearFilter"
-                />
-              </div>
-            </div>
-          </q-popup-proxy>
-        </q-btn>
       </div>
       <div class="col-12">
-        <data-table
-          title="list"
-          module="voucher"
-          searchable
-          toggable
-          selection="multiple"
-          :column="voucherConfig"
-          :data="data"
-          :loading="loadingTable"
-          :optionPagination="optionPagination"
-          @search-data="searchData"
-          @on-load-data="loadData"
-          @selected="selected"
-        />
+        <q-card>
+          <q-tabs
+            v-model="tab"
+            class="text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="left"
+            narrow-indicator
+          >
+            <q-tab name="mails" label="Escanear código del comprobante" />
+            <q-tab name="alarms" label="Lista de comprobantes" />
+          </q-tabs>
+
+          <q-separator />
+
+          <q-tab-panels v-model="tab" animated>
+            <q-tab-panel name="mails">
+              <div class="row q-gutter-md">
+                <div class="col-3">
+                  <q-input
+                    label="Código"
+                    dense
+                    autofocus
+                    v-model="codeVoucher"
+                    @keyup.native.enter="getOneVoucher"
+                  />
+                </div>
+                <div class="col-12">
+                   <data-table
+                    title="list"
+                    module="voucher"
+                    action
+                    :buttonsActions="buttonsTable"
+                    :column="voucherConfig"
+                    :data="voucherSelected"
+                    :loading="loadingTable"
+                    :optionPagination="optionPagination"
+                    @delete="deleteVocuher"
+                />
+                </div>
+              </div>
+            </q-tab-panel>
+            <q-tab-panel name="alarms" class="row q-col-gutter-sm">
+              <div class="col-12 text-right">
+                <q-btn push color="teal" icon="filter_alt">
+                  <q-popup-proxy>
+                    <div class="row q-col-gutter-sm q-pa-md text-center">
+                      <div class="col-6">
+                        <q-radio
+                          name="shape"
+                          v-model="shape"
+                          val="branch-offices"
+                          :label="ucwords($t('voucher.branch-offices'))"
+                          @input="getFilter"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <q-radio
+                          name="shape"
+                          v-model="shape"
+                          val="destinations"
+                          :label="ucwords($t('voucher.destinations'))"
+                          @input="getFilter"
+                        />
+                      </div>
+                      <div class="col-12">
+                        <b-search-select
+                          dense
+                          dataValue="id"
+                          :dataLabel="shape === 'destinations' ? 'city' : 'name'"
+                          :data="optionsFilter"
+                          v-model="valueFilter"
+                          :label="ucwords($t(`voucher.${shape}`))"
+                          @input="filter"
+                        />
+                      </div>
+                      <div class="col-12">
+                        <q-btn
+                          color="negative"
+                          class="full-width"
+                          icon="delete"
+                          dense
+                          size="md"
+                          push
+                          @click="clearFilter"
+                        />
+                      </div>
+                    </div>
+                  </q-popup-proxy>
+                </q-btn>
+              </div>
+              <div class="col-12">
+                <data-table
+                  title="list"
+                  module="voucher"
+                  searchable
+                  toggable
+                  selection="multiple"
+                  :column="voucherConfig"
+                  :data="data"
+                  :loading="loadingTable"
+                  :optionPagination="optionPagination"
+                  @search-data="searchData"
+                  @on-load-data="loadData"
+                  @selected="selected"
+                />
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
+        </q-card>
       </div>
     </div>
     <q-dialog v-model="prompt" persistent>
@@ -162,7 +208,7 @@
 
 <script>
 import DataTable from '../components/DataTable.vue'
-import { voucherConfig } from '../config-file/voucher/voucherConfig'
+import { voucherConfig, buttonsTable } from '../config-file/voucher/voucherConfig'
 import { mixins } from '../mixins'
 import BSearchSelect from '../components/BSearchSelect'
 export default {
@@ -173,6 +219,9 @@ export default {
   },
   data () {
     return {
+      buttonsTable,
+      codeVoucher: null,
+      tab: 'mails',
       seals: [],
       seal: {},
       prompt: false,
@@ -219,8 +268,29 @@ export default {
     this.getVehicles()
     this.getCarriers()
     this.getBranchOffices()
+    this.$barcodeScanner.init(this.getOneVoucher)
   },
   methods: {
+    /**
+     * Delete voucher selected
+     */
+    deleteVocuher (data) {
+      this.$q.dialog({
+        title: 'Alert',
+        message: '¿Desea eliminar el comprabante?',
+        cancel: {
+          label: 'Cancelar',
+          color: 'negative'
+        },
+        persistent: true,
+        ok: {
+          label: 'Aceptar'
+        }
+      }).onOk(() => {
+        const index = this.voucherSelected.indexOf(data.id)
+        this.voucherSelected.splice(index, 1)
+      })
+    },
     /**
      * Add Seals
     */
@@ -319,7 +389,14 @@ export default {
      * @param {Array} selected vouchers selected
     */
     selected (selected) {
-      this.voucherSelected = selected.map(voucher => {
+      this.voucherSelected = selected
+    },
+    /**
+     * Model voucher
+     * @type {Array} list voucher
+     */
+    modelVoucher (voucher) {
+      return voucher.map(voucher => {
         return { voucher_id: voucher.id, user_created_id: 1 }
       })
     },
@@ -349,7 +426,7 @@ export default {
         destination_id: this.branchOffice.value,
         branch_office_id: 1,
         carrier_id: this.carrier.value,
-        vouchers: this.voucherSelected,
+        vouchers: this.modelVoucher(this.voucherSelected),
         seals: this.seals,
         user_created_id: 1
       })
@@ -358,6 +435,7 @@ export default {
           this.getVochers()
           this.clearInputs()
           this.prompt = false
+          this.voucherSelected = []
         })
     },
     /**
@@ -369,6 +447,18 @@ export default {
       this.carrier = null
       this.voucherSelected = []
       this.seals = []
+    },
+    /**
+     * Get one voucher
+     */
+    getOneVoucher (code = this.codeVoucher) {
+      console.log(code)
+      this.codeVoucher = code
+      this.$services.getOneData(['vouchers', this.codeVoucher])
+        .then(({ res }) => {
+          this.voucherSelected.push(res.data)
+          this.codeVoucher = null
+        })
     }
   }
 }
