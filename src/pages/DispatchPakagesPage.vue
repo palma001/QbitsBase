@@ -22,10 +22,22 @@
           <q-popup-proxy>
             <div class="row q-col-gutter-sm q-pa-md text-center">
               <div class="col-6">
-                <q-radio name="shape" v-model="shape" val="branch-offices" :label="ucwords($t('voucher.branch-offices'))" @input="getFilter"/>
+                <q-radio
+                  name="shape"
+                  v-model="shape"
+                  val="branch-offices"
+                  :label="ucwords($t('voucher.branch-offices'))"
+                  @input="getFilter"
+                />
               </div>
               <div class="col-6">
-                <q-radio name="shape" v-model="shape" val="destinations" :label="ucwords($t('voucher.destinations'))" @input="getFilter"/>
+                <q-radio
+                  name="shape"
+                  v-model="shape"
+                  val="destinations"
+                  :label="ucwords($t('voucher.destinations'))"
+                  @input="getFilter"
+                />
               </div>
               <div class="col-12">
                 <b-search-select
