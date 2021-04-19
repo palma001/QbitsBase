@@ -12,8 +12,12 @@
           icon="save"
           push
           class="q-mr-md"
-          @click="prompt = true"
-        />
+          @click="openDialogGuide"
+        >
+          <q-tooltip>
+            Guardar Guia
+          </q-tooltip>
+        </q-btn>
       </div>
       <div class="col-12">
         <q-card>
@@ -131,7 +135,7 @@
     <q-dialog v-model="prompt" persistent>
       <q-card style="min-width: 500px">
         <q-card-section>
-          <div class="text-h6">Your address</div>
+          <div class="text-h6">Agregar datos de la guia</div>
         </q-card-section>
         <q-card-section class="q-pt-none">
           <b-search-select
@@ -271,6 +275,13 @@ export default {
     this.$barcodeScanner.init(this.getOneVoucher)
   },
   methods: {
+    openDialogGuide () {
+      if (this.voucherSelected.length > 0) {
+        this.prompt = true
+      } else {
+        this.notify(this, 'Debe agregar un comprobante', 'negative', 'warning')
+      }
+    },
     /**
      * Delete voucher selected
      */
@@ -452,7 +463,6 @@ export default {
      * Get one voucher
      */
     getOneVoucher (code = this.codeVoucher) {
-      console.log(code)
       this.codeVoucher = code
       this.$services.getOneData(['vouchers', this.codeVoucher])
         .then(({ res }) => {
