@@ -114,8 +114,8 @@ export default {
   },
   vehicle: {
     list: 'lista de transportes',
-    add: 'agregar vehiculo',
-    update: 'editar vehiculo',
+    add: 'agregar transporte',
+    update: 'editar transporte',
     cancel: 'cancelar',
     reset: 'limpiar',
     unit_number: 'Número de unidad',
@@ -129,6 +129,6 @@ export default {
     number_of_axles: 'número de ejes',
     year: 'año',
     addSuccefull: 'agregado exitosamente',
-    editSuccefull: 'el vehiculo se edito exitosamente'
+    editSuccefull: 'el transporte se edito exitosamente'
   }
 }

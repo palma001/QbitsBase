@@ -108,6 +108,7 @@ export default {
           voucher_id: voucher.id,
           steerable_id: 1,
           steerable_type: 'App\\Models\\BranchOffice',
+          status: 'received',
           user_created_id: 1
         }
       })

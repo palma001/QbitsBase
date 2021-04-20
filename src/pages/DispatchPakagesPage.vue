@@ -415,7 +415,13 @@ export default {
      */
     modelVoucher (voucher) {
       return voucher.map(voucher => {
-        return { voucher_id: voucher.id, user_created_id: 1 }
+        return {
+          voucher_id: voucher.id,
+          steerable_type: 'App\\Models\\BranchOffice',
+          steerable_id: 1,
+          status: 'in_transit',
+          user_created_id: 1
+        }
       })
     },
     /**
