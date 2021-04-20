@@ -36,6 +36,14 @@
           hint="Datos del vehiculo"
         />
       </div>
+      <div class="col-lg-2 col-md-2 col-md-2 col-sm-2 col-xs-12" v-if="guide.vehicle">
+        <q-btn
+          push
+          color="primary"
+          icon="save"
+          @click="saveGuide"
+        />
+      </div>
       <div v-if="guide.seals" class="col-12 row q-col-gutter-md">
         <div class="col-3" v-for="(seal, index) in guide.seals" :key="seal.id">
           <q-input
@@ -51,11 +59,12 @@
           title="list"
           module="voucher"
           toggable
+          selection="multiple"
           :column="voucherConfig"
           :data="guide.vouchers"
           :loading="loadingTable"
           :optionPagination="optionPagination"
-          @delete="deleteVocuher"
+          @selected="selecedVoucher"
         />
       </div>
     </div>
@@ -93,8 +102,25 @@ export default {
     }
   },
   methods: {
-    deleteVocuher (data) {
-      console.log(data)
+    selecedVoucher (data) {
+      this.voucherSelected = data.map(voucher => {
+        return {
+          voucher_id: voucher.id,
+          steerable_id: 1,
+          steerable_type: 'App\\Models\\BranchOffice',
+          user_created_id: 1
+        }
+      })
+    },
+    saveGuide () {
+      this.guide.vouchers = this.voucherSelected
+      this.$services.putData(['guides', this.guide.id], this.guide)
+        .then(({ res }) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          this.notify(this, err.message, 'negative', 'warning')
+        })
     },
     /**
      * Get one voucher

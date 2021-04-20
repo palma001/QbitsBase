@@ -8,6 +8,58 @@
       </div>
       <div class="col-9 text-right">
         <q-btn
+          push
+          color="teal"
+          icon="filter_alt"
+          v-if="tab === 'alarms'"
+          class="q-mr-sm"
+        >
+          <q-popup-proxy>
+            <div class="row q-col-gutter-sm q-pa-md text-center">
+              <div class="col-6">
+                <q-radio
+                  name="shape"
+                  v-model="shape"
+                  val="branch-offices"
+                  :label="ucwords($t('voucher.branch-offices'))"
+                  @input="getFilter"
+                />
+              </div>
+              <div class="col-6">
+                <q-radio
+                  name="shape"
+                  v-model="shape"
+                  val="destinations"
+                  :label="ucwords($t('voucher.destinations'))"
+                  @input="getFilter"
+                />
+              </div>
+              <div class="col-12">
+                <b-search-select
+                  dense
+                  dataValue="id"
+                  :dataLabel="shape === 'destinations' ? 'city' : 'name'"
+                  :data="optionsFilter"
+                  v-model="valueFilter"
+                  :label="ucwords($t(`voucher.${shape}`))"
+                  @input="filter"
+                />
+              </div>
+              <div class="col-12">
+                <q-btn
+                  color="negative"
+                  class="full-width"
+                  icon="delete"
+                  dense
+                  size="md"
+                  push
+                  @click="clearFilter"
+                />
+              </div>
+            </div>
+          </q-popup-proxy>
+        </q-btn>
+        <q-btn
           color="primary"
           icon="save"
           push
@@ -63,54 +115,6 @@
               </div>
             </q-tab-panel>
             <q-tab-panel name="alarms" class="row q-col-gutter-sm">
-              <div class="col-12 text-right">
-                <q-btn push color="teal" icon="filter_alt">
-                  <q-popup-proxy>
-                    <div class="row q-col-gutter-sm q-pa-md text-center">
-                      <div class="col-6">
-                        <q-radio
-                          name="shape"
-                          v-model="shape"
-                          val="branch-offices"
-                          :label="ucwords($t('voucher.branch-offices'))"
-                          @input="getFilter"
-                        />
-                      </div>
-                      <div class="col-6">
-                        <q-radio
-                          name="shape"
-                          v-model="shape"
-                          val="destinations"
-                          :label="ucwords($t('voucher.destinations'))"
-                          @input="getFilter"
-                        />
-                      </div>
-                      <div class="col-12">
-                        <b-search-select
-                          dense
-                          dataValue="id"
-                          :dataLabel="shape === 'destinations' ? 'city' : 'name'"
-                          :data="optionsFilter"
-                          v-model="valueFilter"
-                          :label="ucwords($t(`voucher.${shape}`))"
-                          @input="filter"
-                        />
-                      </div>
-                      <div class="col-12">
-                        <q-btn
-                          color="negative"
-                          class="full-width"
-                          icon="delete"
-                          dense
-                          size="md"
-                          push
-                          @click="clearFilter"
-                        />
-                      </div>
-                    </div>
-                  </q-popup-proxy>
-                </q-btn>
-              </div>
               <div class="col-12">
                 <data-table
                   title="list"
@@ -243,6 +247,8 @@ export default {
         paginated: true,
         sortBy: 'id',
         sortOrder: 'desc',
+        branch_office_id: 1,
+        filterStatus: true,
         dataSearch: {
           id: ''
         }
@@ -295,7 +301,8 @@ export default {
         },
         persistent: true,
         ok: {
-          label: 'Aceptar'
+          label: 'Aceptar',
+          color: 'primary'
         }
       }).onOk(() => {
         const index = this.voucherSelected.indexOf(data.id)

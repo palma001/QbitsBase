@@ -96,11 +96,11 @@ export default {
   rate: {
     name: 'nombre',
     cost: 'costo',
-    unit_of_measurement_id: 'médida',
-    unit_of_measurement: 'médida',
-    list: 'lista de médidas',
-    add: 'agregar médida',
-    update: 'editar médida',
+    unit_of_measurement_id: 'medida',
+    unit_of_measurement: 'medida',
+    list: 'lista de medidas',
+    add: 'agregar medida',
+    update: 'editar medida',
     cancel: 'cancelar',
     reset: 'limpiar'
   },
@@ -111,5 +111,24 @@ export default {
     destination: 'destino',
     destinations: 'destinos',
     list: 'lista de comprobantes'
+  },
+  vehicle: {
+    list: 'lista de transportes',
+    add: 'agregar vehiculo',
+    update: 'editar vehiculo',
+    cancel: 'cancelar',
+    reset: 'limpiar',
+    unit_number: 'Número de unidad',
+    models: 'modelo',
+    colour: 'color',
+    type: 'tipo',
+    loading_capacity: 'capacidad de carga',
+    serial_body: 'searial',
+    brand: 'marca',
+    plate: 'placa',
+    number_of_axles: 'número de ejes',
+    year: 'año',
+    addSuccefull: 'agregado exitosamente',
+    editSuccefull: 'el vehiculo se edito exitosamente'
   }
 }

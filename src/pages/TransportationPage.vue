@@ -1,492 +1,244 @@
 <template>
   <q-page padding>
-    <div class="row">
+    <div class="row q-gutter-y-sm">
+      <div class="col-12 text-right">
+        <q-btn
+          color="primary"
+          icon="add_circle"
+          :label="$q.screen.lt.sm ? '' : $t('vehicle.add')"
+          @click="addDialig = true"
+        >
+        <q-tooltip
+          anchor="center right"
+          self="center left"
+          :offset="[10, 10]"
+          v-if="$q.screen.lt.sm"
+        >
+          {{
+            ucwords($t('vehicle.add'))
+          }}
+        </q-tooltip>
+      </q-btn>
+      </div>
       <div class="col-12">
-        <div class="q-pa-md">
-          <q-table
-            title="Treats"
-            :data="data"
-            :columns="columns"
-            row-key="id"
-            :filter="filter"
-            :loading="loading"
-            selection="multiple"
-            :selected.sync="selected"
-            :visible-columns="visibleColumns"
-          >
-            <template v-slot:top>
-              <q-btn color="primary" :disable="loading" label="Add row" @click="changeTitleForm('Agregar Transporte')" />
-              <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" />
-              <q-space />
-              <q-input dense debounce="300" color="primary" v-model="filter">
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </template>
-            <template v-slot:header="props">
-              <q-tr :props="props">
-                <q-th>
-                  <q-toggle v-model="props.selected"/>
-                </q-th>
-                <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.label}}
-                </q-th>
-                <q-th class="text-center">
-                  Acciones
-                </q-th>
-              </q-tr>
-            </template>
-            <template v-slot:body="props">
-              <q-tr :props="props" >
-                <q-td>
-                  <q-toggle v-model="props.selected"/>
-                </q-td>
-                <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.value}}
-                </q-td>
-                <q-td class="text-center">
-                  <q-btn icon="visibility" color="primary" rounded size="sm" @click="viewDetail(props.row)">
-                  </q-btn>
-                </q-td>
-              </q-tr>
-            </template>
-
-          </q-table>
-        </div>
+        <data-table
+          title="list"
+          module="vehicle"
+          searchable
+          action
+          :column="vehicle"
+          :data="data"
+          :loading="loadingTable"
+          :optionPagination="optionPagination"
+          @search-data="searchData"
+          @view-details="viewDetails"
+          @on-load-data="loadData"
+        />
       </div>
     </div>
-    <q-dialog v-model="inception">
-      <q-card style="width:600px; max-width:80vw;">
-        <q-card-section class='row'>
-          <div class='text-h6'>
-            {{titleForm}}
-          </div>
-          <q-space/>
-          <q-btn icon="close" flat round dense @click="cleanForm"/>
-        </q-card-section>
-
-        <q-card-section class='q-pa-none'>
-          <q-stepper
-          v-model="step"
-          ref="stepper"
-          color="primary"
-          animated
-        >
-          <q-step
-            :name="1"
-            title="Datos Básicos del Transporte"
-            icon="settings"
-            :done="step > 1"
-          >
-            <div class="row q-col-gutter-sm">
-              <div class="col-12">
-                <q-input v-model="transport_identifier" label="Unidad N°" dense/>
-              </div>
-              <div class="col-4">
-                <q-input v-model="model" label="Modelo" dense/>
-              </div>
-              <div class="col-4">
-                <q-input v-model="brand" label="Marca" dense/>
-              </div>
-              <div class="col-4">
-                <q-input v-model="year" label="Año" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="license_plate" label="¨Placa" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="vehicle_type" label="Tipo" dense/>
-              </div>
-             </div>
-          </q-step>
-
-          <q-step
-            :name="2"
-            title="Datos Adicionales del Transporte"
-            caption="Optional"
-            icon="create_new_folder"
-            :done="step > 2"
-          >
-            <div class="col-12">
-                <q-input v-model="body_serial" label="Serial de carrocería" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="loading_capacity" label="Capacidad de carga" dense/>
-              </div>
-              <div class="col-12">
-                <q-input v-model="number_of_axles" label="Número de ejes" dense/>
-              </div>
-          </q-step>
-
-          <template v-slot:navigation>
-            <q-stepper-navigation>
-              <q-btn @click="$refs.stepper.next()" color="primary" :label="step === 4 ? 'Finish' : 'Continue'" />
-              <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
-            </q-stepper-navigation>
-          </template>
-          </q-stepper>
-        </q-card-section>
-      </q-card>
+    <q-dialog
+      position="right"
+      full-height
+      persistent
+      v-model="editDialog"
+    >
+      <dynamic-form-edition
+        module="vehicle"
+        :propsPanelEdition="propsPanelEdition"
+        :config="vehicle"
+        :loading="loadingForm"
+        @cancel="editDialog = false"
+        @update="update"
+      />
+    </q-dialog>
+    <q-dialog
+      position="right"
+      full-height
+      persistent
+      v-model="addDialig"
+    >
+      <dynamic-form
+        module="vehicle"
+        :config="vehicle"
+        :loading="loadingForm"
+        @cancel="addDialig = false"
+        @save="save"
+      />
     </q-dialog>
   </q-page>
 </template>
-
 <script>
+import DataTable from '../components/DataTable.vue'
+import DynamicFormEdition from '../components/DynamicFormEdition.vue'
+import DynamicForm from '../components/DynamicForm.vue'
+import { vehicle, propsPanelEdition } from '../config-file/vehicle/vehicleConfig.js'
+import { mixins } from '../mixins'
 export default {
+  mixins: [mixins.containerMixin],
+  components: {
+    DataTable,
+    DynamicFormEdition,
+    DynamicForm
+  },
   data () {
     return {
-      selected: [],
-      titleForm: 'Agregar Unidad de Transporte',
-      visibleColumns: ['transport_identifier', 'license_plate', 'model', 'colour', 'vehicle_type', 'loading_capacity'],
-      transport_identifier: '',
-      license_plate: '',
-      model: '',
-      brand: '',
-      colour: '',
-      year: '',
-      vehicle_type: '',
-      body_serial: '',
-      loading_capacity: '',
-      number_of_axles: '',
-      step: 1,
-      inception: false,
-      loading: false,
-      filter: '',
-      rowCount: 10,
-      columns: [
-        {
-          name: 'transport_identifier',
-          required: true,
-          label: 'Unidad N°',
-          align: 'left',
-          field: row => row.transport_identifier,
-          format: val => `${val}`,
-          sortable: true
-        },
-        { name: 'model', align: 'center', label: 'Modelo', field: 'model' },
-        { name: 'brand', align: 'center', label: 'Marca', field: 'brand' },
-        { name: 'colour', align: 'center', label: 'Color', field: 'colour' },
-        { name: 'year', align: 'center', label: 'Año', field: 'year' },
-        { name: 'license_plate', align: 'center', label: 'Placa', field: 'license_plate' },
-        { name: 'vehicle_type', align: 'center', label: 'Tipo', field: 'vehicle_type', sortable: true },
-        { name: 'body_serial', align: 'center', label: 'Serial Carrocería', field: 'body_serial' },
-        { name: 'loading_capacity', align: 'center', label: 'Capacidade de Carga (Kg)', field: 'loading_capacity' },
-        { name: 'number_of_axles', align: 'center', label: 'N° de Ejes', field: 'number_of_axles' }
-      ],
-      data: [
-        {
-          id: 1,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          id: 2,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          id: 3,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          id: 4,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          id: 5,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          id: 6,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          id: 7,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          id: 8,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          id: 9,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          id: 10,
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
+      loadingForm: false,
+      /**
+       * Selected data
+       * @type {Object}
+       */
+      selectedData: null,
+      /**
+       * Options pagination
+       * @type {Object}
+       */
+      optionPagination: {
+        rowsPerPage: 20,
+        paginate: true,
+        sortBy: 'id',
+        sortOrder: 'desc'
+      },
+      /**
+       * Params search
+       * @type {Object}
+       */
+      params: {
+        paginated: true,
+        sortBy: 'id',
+        sortOrder: 'desc',
+        dataSearch: {
+          plate: ''
         }
-      ],
-      original: [
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        },
-        {
-          transport_identifier: 'U-001',
-          model: 'Panel  L300',
-          brand: 'Mitsubishi',
-          colour: 'blanco',
-          year: '2009',
-          license_plate: 'AA053BU',
-          vehicle_type: 'Utilitario',
-          body_serial: 'XPZ423D456SD2387K1',
-          loading_capacity: '1000',
-          number_of_axles: '2'
-        }
-      ]
+      },
+      /**
+       * Open add dialog
+       * @type {Boolean}
+       */
+      addDialig: false,
+      /**
+       * Config edition panel
+       * @type {Object}
+       */
+      propsPanelEdition,
+      /**
+       * File config module
+       * @type {Object}
+       */
+      vehicle,
+      /**
+       * Open edit dialog
+       * @type {Boolean}
+       */
+      editDialog: false,
+      /**
+       * Status loading table
+       * @type {Boolean}
+       */
+      loadingTable: false,
+      /**
+       * Data of table
+       * @type {Array}
+       */
+      data: []
     }
   },
-
+  created () {
+    this.getVehicles()
+  },
   methods: {
-    // emulate fetching data from server
-    addRow () {
-      this.loading = true
-      setTimeout(() => {
-        const
-          index = Math.floor(Math.random() * (this.data.length + 1)),
-          row = this.original[Math.floor(Math.random() * this.original.length)]
-        if (this.data.length === 0) {
-          this.rowCount = 0
-        }
-        row.id = ++this.rowCount
-        const addRow = { ...row } // extend({}, row, { name: `${row.name} (${row.__count})` })
-        this.data = [...this.data.slice(0, index), addRow, ...this.data.slice(index)]
-        this.loading = false
-      }, 500)
+    /**
+     * Load data sorting
+     * @param  {Object}
+     */
+    loadData (data) {
+      this.params.page = data.page
+      this.params.sortBy = data.sortBy
+      this.params.sortOrder = data.sortOrder
+      this.params.perPage = data.rowsPerPage
+      this.optionPagination = data
+      this.getVehicles(this.params)
     },
-
-    removeRow () {
-      this.loading = true
-      setTimeout(() => {
-        const index = Math.floor(Math.random() * this.data.length)
-        this.data = [...this.data.slice(0, index), ...this.data.slice(index + 1)]
-        this.loading = false
-      }, 500)
+    /**
+     * Search branch offices
+     * @param  {Object}
+     */
+    searchData (data) {
+      for (const dataSearch in this.params.dataSearch) {
+        this.params.dataSearch[dataSearch] = data
+      }
+      this.getVehicles()
     },
-    viewDetail (data) {
-      this.transport_identifier = data.transport_identifier
-      this.model = data.model
-      this.brand = data.brand
-      this.colour = data.colour
-      this.year = data.year
-      this.license_plate = data.license_plate
-      this.vehicle_type = data.vehicle_type
-      this.body_serial = data.body_serial
-      this.loading_capacity = data.loading_capacity
-      this.number_of_axles = data.number_of_axles
-      this.changeTitleForm('Modificar Datos de Transporte')
+    /**
+     * Save Branch Office
+     * @param  {Object}
+     */
+    save (data) {
+      data.user_created_id = 1
+      data.branch_office_id = 1
+      this.loadingForm = true
+      this.$services.postData(['vehicles'], data)
+        .then(({ res }) => {
+          this.addDialig = false
+          this.loadingForm = false
+          this.getVehicles(this.params)
+          this.notify(this, 'vehicle.addSuccefull', 'positive', 'mood')
+        })
+        .catch((err) => {
+          this.loadingForm = false
+          this.notify(this, err.message, 'negative', 'warning')
+        })
     },
+    /**
+     * Update Branch Office
+     * @param  {Object}
+     */
+    update (data) {
+      data.user_updated_id = 1
+      data.branch_office_id = 1
+      this.loadingForm = true
+      this.$services.putData(['vehicles', this.selectedData.id], data)
+        .then(({ res }) => {
+          this.editDialog = false
+          this.loadingForm = false
+          this.notify(this, 'vehicle.editSuccefull', 'positive', 'mood')
+          this.getVehicles(this.params)
+        })
+        .catch((err) => {
+          this.loadingForm = false
+          this.notify(this, err.message, 'negative', 'warning')
+        })
+    },
+    /**
+     * Set data dialog edition
+     * @param  {Object} data selected
+     */
+    viewDetails (data) {
+      this.editDialog = true
+      this.propsPanelEdition.data = data
+      this.selectedData = data
+    },
+    /**
+     * Open formulary
+     * @param  {String}
+     */
     changeTitleForm (title) {
       this.titleForm = title
-      this.inception = true
     },
-    cleanForm () {
-      this.transport_identifier = ''
-      this.model = ''
-      this.brand = ''
-      this.colour = ''
-      this.year = ''
-      this.license_plate = ''
-      this.vehicle_type = ''
-      this.body_serial = ''
-      this.loading_capacity = ''
-      this.number_of_axles = ''
-      this.inception = false
-      this.step = 1
+    /**
+     * Get all branch offices
+     */
+    getVehicles (params = this.params) {
+      this.loadingTable = true
+      this.$services.getData(['vehicles'], this.params)
+        .then(({ res }) => {
+          this.data = res.data
+          this.loadingTable = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.data = []
+          this.loadingTable = false
+        })
     }
   }
 }
