@@ -85,7 +85,7 @@
         :thumb-style="thumbStyle"
         :content-style="contentStyle"
         :content-active-style="contentActiveStyle"
-        style="height: 94vh;"
+        style="height: 91vh;"
       >
         <q-expansion-item
           expand-separator
