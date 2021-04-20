@@ -104,6 +104,11 @@ const routes = [
         name: 'PaymentSummaryPage'
       },
       {
+        path: 'currency-rate',
+        component: () => import('src/pages/CurrencyRatePage.vue'),
+        name: 'CurrencyRatePage'
+      },
+      {
         path: '/invoice-summary',
         component: () => import('src/pages/InvoiceSummaryPage.vue'),
         name: 'InvoiceSummaryPage'

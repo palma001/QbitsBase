@@ -141,8 +141,13 @@ export const categoryModules = [
         route: 'PaymentMethodPage',
         icon: 'credit_card',
         devices: ['mobile', 'desktop']
+      },
+      {
+        name: 'currency-rate',
+        route: 'CurrencyRatePage',
+        icon: 'paid',
+        devices: ['mobile', 'desktop']
       }
-
     ]
   }
 ]
