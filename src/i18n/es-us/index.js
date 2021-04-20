@@ -130,5 +130,10 @@ export default {
     year: 'año',
     addSuccefull: 'agregado exitosamente',
     editSuccefull: 'el transporte se edito exitosamente'
+  },
+  guide: {
+    voucherReceptSuccessfull: 'comprbantes guardados exitosamente',
+    voucherEmty: 'Debe seleccionar al menos un comprobante',
+    notFound: 'Guia no encontrada'
   }
 }

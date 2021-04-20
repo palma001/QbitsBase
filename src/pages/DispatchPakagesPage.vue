@@ -161,7 +161,6 @@
             dataLabel="full_name"
             v-model="carrier"
             :data="carriers"
-            @keyup.enter="prompt = false"
           />
         </q-card-section>
         <q-card-section class="q-pt-none">
@@ -172,7 +171,16 @@
             :data="branchOffices"
             dataValue="id"
             dataLabel="name"
-            @keyup.enter="prompt = false"
+          />
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <b-search-select
+            dense
+            label="Asistente"
+            v-model="helper"
+            :data="helpers"
+            dataValue="id"
+            dataLabel="full_name"
           />
         </q-card-section>
         <q-card-section
@@ -269,7 +277,9 @@ export default {
       branchOffice: null,
       carriers: [],
       carrier: null,
-      voucherSelected: []
+      voucherSelected: [],
+      helpers: [],
+      helper: null
     }
   },
   created () {
@@ -279,13 +289,14 @@ export default {
     this.getCarriers()
     this.getBranchOffices()
     this.$barcodeScanner.init(this.getOneVoucher)
+    this.getHelpers()
   },
   methods: {
     openDialogGuide () {
       if (this.voucherSelected.length > 0) {
         this.prompt = true
       } else {
-        this.notify(this, 'Debe agregar un comprobante', 'negative', 'warning')
+        this.notify(this, 'guide.voucherEmty', 'negative', 'warning')
       }
     },
     /**
@@ -393,6 +404,16 @@ export default {
         })
     },
     /**
+     * Get filters
+     * @param {String} data url of petitions
+    */
+    getHelpers () {
+      this.$services.getData(['helpers'], { paginated: false })
+        .then(({ res }) => {
+          this.helpers = res.data
+        })
+    },
+    /**
      * Search vouchers
      * @param  {Object}
      */
@@ -450,6 +471,7 @@ export default {
         destination_id: this.branchOffice.value,
         branch_office_id: 1,
         carrier_id: this.carrier.value,
+        helper_id: this.helper.value,
         vouchers: this.modelVoucher(this.voucherSelected),
         seals: this.seals,
         user_created_id: 1
