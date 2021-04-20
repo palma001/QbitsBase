@@ -97,23 +97,31 @@
       </template>
 
       <template v-slot:after>
-        <div class="q-pl-md q-pr-md row q-col-gutter-y-md">
+        <div class="q-pl-md q-pr-md row q-col-gutter-y-sm">
           <div class="col-12 text-right" v-if="guide.helper">
             <q-btn
               push
               color="primary"
               icon="save"
-              label="Guardar guia"
+              round
               @click="saveGuide"
-            />
+            >
+              <q-tooltip>
+                Guardad guia
+              </q-tooltip>
+            </q-btn>
             <q-btn
               push
               color="negative"
               icon="close"
-              label="Cancelar"
               class="q-ml-sm"
+              round
               @click="cancelRepction"
-            />
+            >
+              <q-tooltip>
+                Cancelar
+              </q-tooltip>
+            </q-btn>
           </div>
           <div class="col-12">
             <data-table
@@ -193,12 +201,15 @@ export default {
        * @type {Object}
        */
       optionPagination: {
-        rowsPerPage: 20,
+        rowsPerPage: 200,
         paginate: true,
         sortBy: 'id',
         sortOrder: 'desc'
       }
     }
+  },
+  created () {
+    this.$barcodeScanner.init(this.getOneGuide)
   },
   methods: {
     /**

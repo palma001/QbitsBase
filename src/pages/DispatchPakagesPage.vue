@@ -9,11 +9,15 @@
       <div class="col-9 text-right">
         <q-btn
           push
+          round
           color="teal"
           icon="filter_alt"
           v-if="tab === 'alarms'"
           class="q-mr-sm"
         >
+          <q-tooltip>
+            Filtros
+          </q-tooltip>
           <q-popup-proxy>
             <div class="row q-col-gutter-sm q-pa-md text-center">
               <div class="col-6">
@@ -63,6 +67,7 @@
           color="primary"
           icon="save"
           push
+          round
           class="q-mr-md"
           @click="openDialogGuide"
         >
