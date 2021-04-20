@@ -58,10 +58,12 @@ export default {
       default: false
     },
     label: {
-      type: String
+      type: String,
+      require: false,
+      default: ''
     },
     value: {
-      type: [String, Object, Number]
+      type: [String, Object, Number, Array]
     },
     data: {
       type: Array,
@@ -149,11 +151,17 @@ export default {
   methods: {
     setModelSelect (data) {
       if (data) {
-        return {
-          label: data[this.dataLabel],
-          value: data[this.dataValue],
-          description: data[this.dataDescription],
-          icon: data[this.dataIcon]
+        if (!Array.isArray(data)) {
+          return {
+            label: data[this.dataLabel],
+            value: data[this.dataValue],
+            description: data[this.dataDescription],
+            icon: data[this.dataIcon]
+          }
+        } else {
+          return data.map(d => {
+            return this.setModelSelect(d)
+          })
         }
       }
     },

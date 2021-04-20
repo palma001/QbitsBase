@@ -6,14 +6,21 @@
       :title="ucwords($t(`${module}.${title}`))"
       :pagination="paginationConfig"
       :loading="loading"
+      :selection="selection"
+      :selected.sync="selected"
       @update:pagination="setPagination">
       <template v-slot:loading>
-        <q-inner-loading showing
-          color="primary" />
+        <q-inner-loading showing color="primary" />
       </template>
-      <!-- @update:pagination ="rowsPerPage"> -->
       <template v-slot:header="props">
         <q-tr :props="props">
+          <q-th v-if="toggable" align="left">
+            <q-toggle
+              v-model="props.selected"
+              size="xs"
+              @input="selectionToggleAll"
+            />
+          </q-th>
           <q-th v-for="col in props.cols"
             :key="col.name"
             :props="props"
@@ -21,7 +28,7 @@
             {{ ucwords((col.label) ? $t(`${module}.${col.label}`) : $t(`${module}.${col.name}`)) }}
           </q-th>
           <q-th align="center" v-if="action">
-             {{ ucwords($t('template.actions')) }}
+            {{ ucwords($t('template.actions')) }}
           </q-th>
         </q-tr>
       </template>
@@ -38,6 +45,13 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props">
+          <q-td v-if="toggable">
+            <q-toggle
+              v-model="props.selected"
+              size="xs"
+              @input="selectionToggle(props.row)"
+            />
+          </q-td>
           <q-td v-for="col in props.cols"
             :key="col.name"
             :props="props">
@@ -45,12 +59,16 @@
           </q-td>
           <q-td v-if="action" align="center"
           >
-            <q-btn size="sm"
-              color="primary"
+            <q-btn
               dense
               round
-              icon="fullscreen"
-              @click="viewDetails(props.row)"
+              v-for="buttonAction in buttonsActions"
+              :key="buttonAction.id"
+              :size="buttonAction.size"
+              :color="buttonAction.color"
+              :icon="buttonAction.icon"
+              :class="buttonAction.class"
+              @click="emitEvent(buttonAction.event, props.row)"
             />
           </q-td>
         </q-tr>
@@ -64,6 +82,39 @@ export default {
   name: 'DataTable',
   mixins: [mixins.containerMixin],
   props: {
+    /**
+     * Actions buttons
+     * @type {Array} array buttons
+     */
+    buttonsActions: {
+      type: Array,
+      default: () => {
+        return [
+          {
+            color: 'primary',
+            icon: 'fullscreen',
+            size: 'sm',
+            event: 'view-details'
+          }
+        ]
+      }
+    },
+    /**
+     * Visibility toggle
+     * @type {Boolean} status toggle
+     */
+    toggable: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * Selection type
+     * @type {String} selection type
+     */
+    selection: {
+      type: String,
+      default: 'single'
+    },
     /**
      * Actions
      * @type {Boolean} status
@@ -142,7 +193,8 @@ export default {
        * Content the column
        * @type {Array}
        */
-      columnData: []
+      columnData: [],
+      selected: []
     }
   },
   computed: {
@@ -155,11 +207,24 @@ export default {
   },
   methods: {
     /**
+     * Selected all data
+     */
+    selectionToggleAll () {
+      this.$emit('selected', this.selected)
+    },
+    /**
+     * Selected one data
+     * @param {Object} Data selected
+     */
+    selectionToggle (data) {
+      this.$emit('selected', this.selected, data)
+    },
+    /**
      * Details data
      * @param  {Object} data
      */
-    viewDetails (data) {
-      this.$emit('view-details', data)
+    emitEvent (event, data) {
+      this.$emit(event, data)
     },
     /**
      * Set data pagination emit event

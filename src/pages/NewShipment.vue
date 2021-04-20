@@ -313,7 +313,11 @@ export default {
         user_created_id: this[GETTERS.GET_USER].id
       }
       const { res } = await this.$services.postData(['bills'], params)
+      this.notify(this, 'la factura se guardo exitosamente', 'positive', 'mood')
+      this.paymentTypes = []
+      this.dialogPayment = false
       this.printBillAndVoucher(res.data)
+      this.packages = []
     },
     /**
      * Print Bill

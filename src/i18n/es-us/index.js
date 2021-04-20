@@ -17,6 +17,23 @@ export default {
     actions: 'detalles',
     noResults: 'sin resultados'
   },
+  user: {
+    add: 'agregar usuario',
+    sender_type: 'tipo de remitente',
+    name: 'nombre o razón social',
+    last_name: 'apellido',
+    document_number: 'número de documento',
+    document_type: 'tipo de documento',
+    phone_number: 'número de telefono',
+    email: 'correo',
+    reset: 'Limpiar',
+    cancel: 'Cancelar',
+    saveSuccess: 'usuario agregado exitosamente',
+    password: 'clave',
+    list: 'lista de usuarios',
+    roles: 'roles',
+    branch_offices: 'sucursales'
+  },
   // modules
   modules: {
     'new-shipment': 'enviar / entregar',
@@ -86,5 +103,13 @@ export default {
     update: 'editar médida',
     cancel: 'cancelar',
     reset: 'limpiar'
+  },
+  voucher: {
+    id: 'Número',
+    addressee: 'destinatario',
+    'branch-offices': 'sucursales',
+    destination: 'destino',
+    destinations: 'destinos',
+    list: 'lista de comprobantes'
   }
 }
