@@ -5,7 +5,7 @@
         <q-btn
           color="primary"
           icon="add_circle"
-          :label="$q.screen.lt.sm ? '' : $t('rate.add')"
+          :label="$q.screen.lt.sm ? '' : $t('paymentMethod.add')"
           @click="addDialig = true"
         >
         <q-tooltip
@@ -15,7 +15,7 @@
           v-if="$q.screen.lt.sm"
         >
           {{
-            ucwords($t('rate.add'))
+            ucwords($t('paymentMethod.add'))
           }}
         </q-tooltip>
       </q-btn>
@@ -23,10 +23,10 @@
       <div class="col-12">
         <data-table
           title="list"
-          module="rate"
+          module="paymentMethod"
           searchable
           action
-          :column="rate"
+          :column="paymentMethod"
           :data="data"
           :loading="loadingTable"
           :optionPagination="optionPagination"
@@ -43,9 +43,9 @@
       v-model="editDialog"
     >
       <dynamic-form-edition
-        module="rate"
+        module="paymentMethod"
         :propsPanelEdition="propsPanelEdition"
-        :config="rate"
+        :config="paymentMethod"
         :loading="loadingForm"
         @cancel="editDialog = false"
         @update="update"
@@ -58,8 +58,8 @@
       v-model="addDialig"
     >
       <dynamic-form
-        module="rate"
-        :config="rate"
+        module="paymentMethod"
+        :config="paymentMethod"
         :loading="loadingForm"
         @cancel="addDialig = false"
         @save="save"
@@ -71,7 +71,7 @@
 import DataTable from '../components/DataTable.vue'
 import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
-import { rate, propsPanelEdition, rateServices } from '../config-file/rate/rateConfig.js'
+import { paymentMethod, propsPanelEdition, paymentMethodServices } from '../config-file/paymentMethod/paymentMethodConfig.js'
 import { mixins } from '../mixins'
 export default {
   mixins: [mixins.containerMixin],
@@ -111,7 +111,7 @@ export default {
           cost: ''
         }
       },
-      rateServices,
+      paymentMethodServices,
       /**
        * Open add dialog
        * @type {Boolean}
@@ -126,7 +126,7 @@ export default {
        * File config module
        * @type {Object}
        */
-      rate,
+      paymentMethod,
       /**
        * Open edit dialog
        * @type {Boolean}
@@ -145,8 +145,8 @@ export default {
     }
   },
   created () {
-    this.getRates()
-    this.setRelationalData(this.rateServices, [], this)
+    this.getPaymentMethods()
+    this.setRelationalData(this.paymentMethodServices, [], this)
   },
   methods: {
     /**
@@ -159,31 +159,32 @@ export default {
       this.params.sortOrder = data.sortOrder
       this.params.perPage = data.rowsPerPage
       this.optionPagination = data
-      this.getRates(this.params)
+      this.getPaymentMethods(this.params)
     },
     /**
-     * Search rate
+     * Search paymentMethod
      * @param  {Object}
      */
     searchData (data) {
       for (const dataSearch in this.params.dataSearch) {
         this.params.dataSearch[dataSearch] = data
       }
-      this.getRates()
+      this.getPaymentMethods()
     },
     /**
      * Save Branch Office
      * @param  {Object}
      */
     save (data) {
-      data.unit_of_measurement_id = data.unit_of_measurement.value
       data.user_created_id = 1
+      data.payment_destination_id = data.payment_destination.value
+      data.coin_id = data.coin.value
       this.loadingForm = true
-      this.$services.postData(['rates'], data)
+      this.$services.postData(['payment-types'], data)
         .then(({ res }) => {
           this.addDialig = false
           this.loadingForm = false
-          this.getRates(this.params)
+          this.getPaymentMethods(this.params)
         })
         .catch(() => {
           this.loadingForm = false
@@ -194,14 +195,15 @@ export default {
      * @param  {Object}
      */
     update (data) {
-      data.unit_of_measurement_id = data.unit_of_measurement.value ?? data.unit_of_measurement.id
       data.user_updated_id = 1
+      data.payment_destination_id = data.payment_destination.value ?? data.payment_destination.id
+      data.coin_id = data.coin.value ?? data.coin.id
       this.loadingForm = true
-      this.$services.putData(['rates', this.selectedData.id], data)
+      this.$services.putData(['payment-types', this.selectedData.id], data)
         .then(({ res }) => {
           this.editDialog = false
           this.loadingForm = false
-          this.getRates(this.params)
+          this.getPaymentMethods(this.params)
         })
         .catch(() => {
           this.loadingForm = false
@@ -217,11 +219,11 @@ export default {
       this.selectedData = data
     },
     /**
-     * Get all rate
+     * Get all paymentMethod
      */
-    getRates (params = this.params) {
+    getPaymentMethods (params = this.params) {
       this.loadingTable = true
-      this.$services.getData(['rates'], this.params)
+      this.$services.getData(['payment-types'], this.params)
         .then(({ res }) => {
           this.data = res.data
           this.loadingTable = false

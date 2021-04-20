@@ -135,5 +135,18 @@ export default {
     voucherReceptSuccessfull: 'comprbantes guardados exitosamente',
     voucherEmty: 'Debe seleccionar al menos un comprobante',
     notFound: 'Guia no encontrada'
+  },
+  paymentMethod: {
+    list: 'lista de metodos de pago',
+    add: 'agregar metodo de pago',
+    update: 'editar metodo de pago',
+    cancel: 'cancelar',
+    reset: 'limpiar',
+    name: 'nombre',
+    symbol: 'Simbolo',
+    coin: 'moneda',
+    coin_id: 'moneda',
+    payment_destination_id: 'destino del pago',
+    payment_destination: 'destino del pago'
   }
 }
