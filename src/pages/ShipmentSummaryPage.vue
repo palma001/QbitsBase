@@ -41,7 +41,7 @@
 
             <template v-slot:before>
               <div class="q-pa-md">
-              <div class="text-h6 q-mb-xs">Mobilidad de Paquetes</div>
+              <div class="text-h6 q-mb-xs">Movilidad de Paquetes</div>
                 <div class="row q-col-gutter-xs">
                     <div class="col-3">
                         <q-card dark bordered class="bg-blue-grey-9  my-card">
