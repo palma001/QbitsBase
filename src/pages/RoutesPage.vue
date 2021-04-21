@@ -81,7 +81,7 @@
                       size="sm"
                       icon="add"
                       aria-label="add"
-                      round
+                      rounded
                       class="q-mt-sm"
                       type="submit"
                     >

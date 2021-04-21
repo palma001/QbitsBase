@@ -44,7 +44,7 @@
               <div class="text-h6 q-mb-xs">Métodos de Pagos</div>
                 <div class="row q-col-gutter-xs">
                   <div class="col-3" v-for="paymentType in paymentTypes" :key="paymentType.id">
-                    <q-card dark bordered class="bg-purple-10 my-card">
+                    <q-card dark bordered class="bg-blue-grey-9 my-card">
                       <q-card-section>
                         <div class="text-h6">{{paymentType.name}}</div>
                         <div class="text-subtitle2">$256.45</div>
@@ -52,7 +52,7 @@
                     </q-card>
                   </div>
                   <div class="col-3">
-                    <q-card dark bordered class="bg-grey-9 my-card">
+                    <q-card dark bordered class="bg-grey-14 my-card">
                       <q-card-section>
                         <div class="text-h6">Total</div>
                         <div class="text-subtitle2">$256.45</div>
@@ -141,7 +141,7 @@
       <q-card style="width: 1300px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="q-mb-xs">
-            <p class="text-h6">Resumen de operaciones
+            <p class="text-h6">Consolidado de operaciones
             </p>
           </div>
           <q-space/>
@@ -233,7 +233,7 @@ export default {
   data () {
     return {
       splitterModel: 16, // start at 50%
-      insideModel: 31,
+      insideModel: 32,
       alert: false,
       address: '',
       paymentTypes: [],
@@ -526,104 +526,103 @@ export default {
       ],
       originalt: [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
+          id: 1,
+          name: '15/04/2021',
+          reference: '142459',
+          paymentMethod: 'Zelle',
+          destination: 'Bank Of America',
+          employee: 'María Salazar',
+          role: 'Cajero (a)',
+          amount: '348.25'
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
+          id: 2,
+          name: '15/04/2021',
+          reference: '1424248',
+          destination: 'Banesco',
+          paymentMethod: 'Pago Móvil',
+          employee: 'María Salazar',
+          role: 'Cajero (a)',
+          amount: '120.00'
         },
         {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          sodium: 337,
-          calcium: '6%',
-          iron: '7%'
+          id: 3,
+          name: '15/04/2021',
+          reference: '142459',
+          destination: 'Banco de Venezuela',
+          paymentMethod: 'Tarjeta de Crédito',
+          employee: 'Juan Martínez',
+          role: 'Supervisor (a)',
+          amount: '85.00'
         },
         {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          sodium: 413,
-          calcium: '3%',
-          iron: '8%'
+          name: '15/04/2021',
+          reference: '142459',
+          paymentMethod: 'Tarjeta de Débito',
+          destination: 'Banco de Venezuela',
+          employee: 'Juan Martínez',
+          role: 'Supervisor (a)',
+          amount: '45.00'
         },
         {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          sodium: 327,
-          calcium: '7%',
-          iron: '16%'
+          id: 5,
+          name: '15/04/2021',
+          reference: '-',
+          paymentMethod: 'Divisa',
+          destination: 'Caja',
+          employee: 'María Salazar',
+          role: 'Cajero (a)',
+          amount: '20.00'
         },
         {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          sodium: 50,
-          calcium: '0%',
-          iron: '0%'
+          id: 6,
+          name: '15/04/2021',
+          reference: '142459',
+          paymentMethod: 'Zelle',
+          destination: 'Chase',
+          employee: 'Juan Martínez',
+          role: 'Supervisor (a)',
+          amount: '70.00'
         },
         {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          sodium: 38,
-          calcium: '0%',
-          iron: '2%'
+          id: 7,
+          name: '15/04/2021',
+          reference: '458729',
+          paymentMethod: 'Transferencia',
+          destination: 'Banco de Venezuela',
+          employee: 'María Salazar',
+          role: 'Cajero (a)',
+          amount: '15.00'
         },
         {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          sodium: 562,
-          calcium: '0%',
-          iron: '45%'
+          id: 8,
+          name: '15/04/2021',
+          reference: '142459',
+          paymentMethod: 'Efectivo',
+          destination: 'Caja',
+          employee: 'María Salazar',
+          role: 'Cajero (a)',
+          amount: '2.40'
         },
         {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          sodium: 326,
-          calcium: '2%',
-          iron: '22%'
+          id: 9,
+          name: '15/04/2021',
+          reference: '142459',
+          paymentMethod: 'Zelle',
+          destination: 'Chase',
+          employee: 'Juan Martínez',
+          role: 'Supervisor (a)',
+          amount: '90.00'
         },
         {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          sodium: 54,
-          calcium: '12%',
-          iron: '6%'
+          id: 10,
+          name: '15/04/2021',
+          reference: '142459',
+          paymentMethod: 'Transferencia',
+          destination: 'Banco de Venezuela',
+          employee: 'Juan Martínez',
+          role: 'Supervisor (a)',
+          amount: '280.00'
         }
       ]
     }

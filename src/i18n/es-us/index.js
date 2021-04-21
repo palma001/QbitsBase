@@ -46,7 +46,7 @@ export default {
     'routes-management': 'rutas',
     'measures-management': 'medidas',
     'payment-method': 'métodos de pagos',
-    'currency-rate': 'Tasa cambiaria',
+    'currency-rate': 'tasa cambiaria',
     'reception-pakages': 'recepción',
     'dispatch-packages': 'despacho',
     'guides-management': 'guías',

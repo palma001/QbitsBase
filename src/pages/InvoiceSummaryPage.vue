@@ -53,7 +53,7 @@
                             </div>
                             <div class="row q-col-gutter-x-sm text-left justify-center">
                               <div class="col-3 q-pt-sm">
-                                <q-radio v-model="shape" val="Del" label="Del" />
+                                <q-radio v-model="shape" val="Del" label="Del"/>
                               </div>
                               <div class="col-8">
                                 <q-select v-model="model" :options="options" label="Filtrar" dense/>
@@ -62,10 +62,10 @@
                                 <q-radio v-model="shape" val="Rango" label="Rango" />
                               </div>
                               <div class="col-4">
-                                <q-input type="date" hint="Desde" v-model="desde" dense/>
+                                <q-input type="date" hint="Desde" v-model="desde" dense class="text-white"/>
                               </div>
                               <div class="col-4">
-                                <q-input type="date" hint="Hasta" v-model="hasta" dense/>
+                                <q-input type="date" hint="Hasta" v-model="hasta" dense class="text-white"/>
                               </div>
                             </div>
                           </div>
@@ -92,7 +92,9 @@
                               {{col.value}}
                             </q-td>
                             <q-td class="text-center">
-                              <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true">
+                              <q-btn icon="print" color="primary" rounded size="sm" @click="alert=true" align="center">
+                              </q-btn>
+                              <q-btn class="q-ml-md" icon="do_not_disturb" color="negative" rounded size="sm" @click="alert=true" align="center">
                               </q-btn>
                             </q-td>
                           </q-tr>
@@ -104,94 +106,6 @@
 
         </q-splitter>
     </div>
-    <q-dialog v-model="alert">
-      <q-card style="width: 1300px; max-width: 80vw;">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="q-mb-xs">
-            <p class="text-h6">Resumen de Operaciones
-            </p>
-          </div>
-          <q-space/>
-          <q-btn icon="close" flat color="primary" v-close-popup/>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <q-table
-            title="Treats"
-            :data="datat"
-            :columns="transactions"
-            row-key="id"
-            :filter="filter"
-            :loading="loading"
-          >
-            <template v-slot:top>
-                <div class="row q-col-gutter-x-sm text-left justify-center">
-                <div class="col-3 q-pt-sm">
-                  <q-radio v-model="shape" val="Del" label="Del" value="true"/>
-                </div>
-                <div class="col-8">
-                  <q-select v-model="model" :options="options" label="Filtrar" dense/>
-                </div>
-                <div class="col-3 q-pt-sm">
-                  <q-radio v-model="shape" val="Rango" label="Rango" />
-                </div>
-                <div class="col-4">
-                  <q-input type="date" hint="Desde" v-model="desde" dense/>
-                </div>
-                <div class="col-4">
-                  <q-input type="date" hint="Hasta" v-model="hasta" dense/>
-                </div>
-                </div>
-                <q-space />
-                <q-input dense debounce="300" color="primary" v-model="filter" label="Buscar">
-                  <template v-slot:append>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
-            </template>
-            <template v-slot:header="props">
-              <q-tr :props="props">
-                <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.label}}
-                </q-th>
-                <q-th class="text-center">
-                  Acciones
-                </q-th>
-              </q-tr>
-            </template>
-            <template v-slot:body="props">
-              <q-tr :props="props" >
-                <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.value}}
-                </q-td>
-                <q-td class="text-center">
-                  <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true">
-                    <q-popup-proxy>
-                      <q-banner>
-                         <div class="row">
-                          <div class="col-12">
-                            <q-space/>
-                            <q-btn icon="close" flat color="primary" v-close-popup class="float-right"/>
-                          </div>
-                         </div>
-                        <div class="row">
-                          <div class="col-12">
-                            <p class="h4">Datos Adicionales</p>
-                            <q-input label="Cliente" dense/>
-                            <q-input label="Teléfono" dense/>
-                            <q-input label="email" dense/>
-                          </div>
-                        </div>
-                      </q-banner>
-                    </q-popup-proxy>
-                  </q-btn>
-                </q-td>
-              </q-tr>
-            </template>
-          </q-table>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </q-page>
 </template>
 
@@ -201,8 +115,6 @@ export default {
     return {
       splitterModel: 16, // start at 50%
       alert: false,
-      address: '',
-      paymentTypes: [],
       branchOffices: [],
       desde: null,
       hasta: null,
@@ -224,80 +136,91 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'employee', align: 'center', label: 'Empleado', field: 'employee', sortable: true },
-        { name: 'role', align: 'center', label: 'Cargo', field: 'role' },
-        { name: 'amount', align: 'center', label: 'Monto ($)', field: 'amount' }
+        { name: 'invoiceNumber', align: 'center', label: 'Número de Factura', field: 'invoiceNumber', sortable: true },
+        { name: 'amount', align: 'center', label: 'Monto ($)', field: 'amount' },
+        { name: 'client', align: 'center', label: 'Cliente', field: 'client', sortable: true },
+        { name: 'identificationNumber', align: 'center', label: 'N° de Identificación', field: 'identificationNumber', sortable: true }
       ],
       data: [
         {
           id: 1,
           name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '1078,00'
+          invoiceNumber: '300052468',
+          amount: '48,00',
+          client: 'Laura Bustamante',
+          identificationNumber: '15784210'
         },
         {
           id: 2,
-          name: '16/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '340,00'
+          name: '15/04/2021',
+          invoiceNumber: '4385889',
+          amount: '423,55',
+          client: 'Juan Colmenares',
+          identificationNumber: '14852468'
         },
         {
           id: 3,
-          name: '17/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120,00'
+          name: '15/04/2021',
+          invoiceNumber: '4385889',
+          amount: '458,55',
+          client: 'Juan Colmenares',
+          identificationNumber: '14854768'
         },
         {
           id: 4,
-          name: '18/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$287,00'
+          name: '15/04/2021',
+          invoiceNumber: '4385889',
+          amount: '458,55',
+          client: 'Juan Colmenares',
+          identificationNumber: '14852468'
         },
         {
           id: 5,
-          name: '19/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$545,23'
+          name: '15/04/2021',
+          invoiceNumber: '4385889',
+          amount: '458,55',
+          client: 'Juan Colmenares',
+          identificationNumber: '14852468'
         },
         {
           id: 6,
-          name: '20/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$124,00'
+          name: '15/04/2021',
+          invoiceNumber: '4385889',
+          amount: '458,55',
+          client: 'Juan Colmenares',
+          identificationNumber: '14852468'
         },
         {
           id: 7,
-          name: '21/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$478,00'
+          name: '15/04/2021',
+          invoiceNumber: '4385889',
+          amount: '458,55',
+          client: 'Juan Colmenares',
+          identificationNumber: '14852468'
         },
         {
           id: 8,
-          name: '22/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$130,00'
+          name: '15/04/2021',
+          invoiceNumber: '4385889',
+          amount: '458,55',
+          client: 'Juan Colmenares',
+          identificationNumber: '14852468'
         },
         {
           id: 9,
-          name: '23/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$279,00'
+          name: '15/04/2021',
+          invoiceNumber: '4385889',
+          amount: '458,55',
+          client: 'Juan Colmenares',
+          identificationNumber: '14852468'
         },
         {
           id: 10,
-          name: '24/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$780,00'
+          name: '15/04/2021',
+          invoiceNumber: '4385889',
+          amount: '458,55',
+          client: 'Juan Colmenares',
+          identificationNumber: '14852468'
         }
       ],
       original: [
@@ -382,11 +305,9 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'reference', align: 'center', label: 'Referencia', field: 'reference', sortable: true },
-        { name: 'paymentMethod', align: 'center', label: 'Método de Pago', field: 'paymentMethod', sortable: true },
-        { name: 'destination', align: 'center', label: 'Destino', field: 'destination', sortable: true },
-        { name: 'employee', align: 'center', label: 'Empleado', field: 'employee', sortable: true },
-        { name: 'role', align: 'center', label: 'Cargo', field: 'role' },
+        { name: 'invoiceNumber', align: 'center', label: 'Número de Factura', field: 'invoiceNumber', sortable: true },
+        { name: 'client', align: 'center', label: 'Cliente', field: 'client', sortable: true },
+        { name: 'identificationNumber', align: 'center', label: 'N° de Identificación', field: 'identificationNumber', sortable: true },
         { name: 'amount', align: 'center', label: 'Monto ($)', field: 'amount' }
       ],
       datat: [

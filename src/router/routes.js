@@ -24,7 +24,7 @@ const routes = [
     beforeEnter: validationSession,
     children: [
       {
-        path: '/cash-register',
+        path: '/new-shipment',
         component: () => import('pages/NewShipment.vue'),
         name: 'NewShipment'
       },
