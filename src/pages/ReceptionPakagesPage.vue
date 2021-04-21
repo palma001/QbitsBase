@@ -1,9 +1,39 @@
 
 <template>
   <q-page padding>
-    <p class="text-h5">
-      Recepción de guias
-    </p>
+    <div class="row">
+      <div class="col-4">
+        <p class="text-h5">
+          Recepción de guias
+        </p>
+      </div>
+      <div class="col-8 text-right" v-if="guide.helper">
+        <q-btn
+          push
+          color="primary"
+          icon="save"
+          class="q-mr-sm"
+          round
+          @click="saveGuide"
+        >
+          <q-tooltip>
+            Guardar guia
+          </q-tooltip>
+        </q-btn>
+        <q-btn
+          push
+          color="negative"
+          icon="close"
+          class="q-mr-md"
+          round
+          @click="cancelRepction"
+        >
+          <q-tooltip>
+            Cancelar
+          </q-tooltip>
+        </q-btn>
+      </div>
+    </div>
     <q-splitter
       v-model="splitterModel"
       style="height: 78vh"
@@ -98,31 +128,6 @@
 
       <template v-slot:after>
         <div class="q-pl-md q-pr-md row q-col-gutter-y-sm">
-          <div class="col-12 text-right" v-if="guide.helper">
-            <q-btn
-              push
-              color="primary"
-              icon="save"
-              round
-              @click="saveGuide"
-            >
-              <q-tooltip>
-                Guardad guia
-              </q-tooltip>
-            </q-btn>
-            <q-btn
-              push
-              color="negative"
-              icon="close"
-              class="q-ml-sm"
-              round
-              @click="cancelRepction"
-            >
-              <q-tooltip>
-                Cancelar
-              </q-tooltip>
-            </q-btn>
-          </div>
           <div class="col-12">
             <data-table
               title="list"
