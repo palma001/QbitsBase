@@ -89,9 +89,9 @@
                 {{ col.value }}
               </q-td>
               <q-td auto-width class="q-gutter-x-sm">
-                <q-btn size="13px" color="primary" round dense @click="props.expand = !props.expand" icon="visibility" />
+                <!-- <q-btn size="13px" color="primary" round dense @click="props.expand = !props.expand" icon="visibility" /> -->
                 <q-btn size="13px" color="negative" round dense @click="deletePackage(props)" icon="delete" />
-                <q-btn size="13px" color="positive" round dense @click="props.expand = !props.expand" icon="content_copy" />
+                <!-- <q-btn size="13px" color="positive" round dense @click="props.expand = !props.expand" icon="content_copy" /> -->
               </q-td>
             </q-tr>
           </template>
@@ -309,6 +309,8 @@ export default {
       this.dialogPayment = false
       this.printBillAndVoucher(res.data)
       this.packages = []
+      this.total = 0
+      this.sender = null
     },
     /**
      * Print Bill

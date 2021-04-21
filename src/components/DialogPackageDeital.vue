@@ -28,10 +28,9 @@
               icon="settings"
               :name="1"
               :done="step > 1"
-              :error="!errorRate"
             >
-              <q-card>
-                <q-form ref="myForm" class="row">
+              <q-card class="row">
+                <!-- <q-form ref="myForm" class="row"> -->
                   <q-card-section
                     class="col-12"
                     v-for="(rate, index) in rates"
@@ -41,7 +40,6 @@
                       dense
                       v-model="rateValue[rate.id]"
                       type="number"
-                      :rules="[ val => val && val.length > 0 || `El campo ${rate.name} es requerido` ]"
                       :autofocus="index === 0"
                       :label="`${rate.name} (${rate.unit_of_measurement.acronym})`"
                     />
@@ -54,10 +52,9 @@
                         v-model="rateValue.amount"
                         type="number"
                         label="Costo del paquete"
-                        :rules="[ val => val && val.length > 0 || `El campo costo es requerido` ]"
                       />
                   </q-card-section>
-                </q-form>
+                <!-- </q-form> -->
               </q-card>
               </q-step>
               <q-step
@@ -65,10 +62,9 @@
                 icon="create_new_folder"
                 :name="2"
                 :done="step > 2"
-                :error="!errorDirection"
               >
-                <q-card>
-                  <q-form ref="step2" class="row">
+                <q-card class="row">
+                  <!-- <q-form ref="step2" class="row"> -->
                     <q-card-section class="col-12">
                       <q-select
                         v-model="deliveryType"
@@ -84,7 +80,6 @@
                           dense
                           label="Sucursales"
                           :options="branchOffices"
-                          :rules="[ val => val && val.length > 0 || `El campo sucursal es requerido` ]"
                         />
                       </q-card-section>
                       <q-card-section class="col-12 q-pt-none row q-col-gutter-md" v-else>
@@ -94,25 +89,21 @@
                           label="Destino"
                           dense
                           class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
-                          :rules="[ val => val && val.length > 0 || `El campo destino es requerido` ]"
                         />
                         <q-input
                           dense
                           v-model="referencePoin"
                           label="Punto de referencia"
                           class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
-                          :rules="[ val => val && val.length > 0 || `El campo punto de referencia es requerido` ]"
                         />
                         <q-input
                           dense
                           v-model="address"
                           label="Dirección"
                           type="textarea"
-                          class="col-12"
-                          :rules="[ val => val && val.length > 0 || `El campo dirección es requerido` ]"
                         />
                       </q-card-section>
-                  </q-form>
+                  <!-- </q-form> -->
                 </q-card>
               </q-step>
               <q-step
@@ -176,7 +167,7 @@
           icon="navigate_next"
           color="primary"
           v-if="step < 3"
-          @click="nextAndBack"
+          @click="$refs.stepper.next()"
         />
         <q-btn
           label="Guardar"
@@ -250,34 +241,34 @@ export default {
     this.getAllDestinations()
   },
   methods: {
-    async nextAndBack () {
-      if (this.step === 1) {
-        await this.validateRate()
-        if (this.errorRate) {
-          this.$refs.stepper.next()
-        }
-      }
-      if (this.step === 2) {
-        await this.validateBranchOffice()
-        if (this.errorDirection) {
-          this.$refs.stepper.next()
-        }
-      }
-    },
-    validateRate () {
-      if (this.$refs.myForm) {
-        this.$refs.myForm.validate().then(success => {
-          this.errorRate = success
-        })
-      }
-    },
-    validateBranchOffice () {
-      if (this.$refs.step2) {
-        this.$refs.step2.validate().then(success => {
-          this.errorDirection = success
-        })
-      }
-    },
+    // async nextAndBack () {
+    //   if (this.step === 1) {
+    //     await this.validateRate()
+    //     if (this.errorRate) {
+    //       this.$refs.stepper.next()
+    //     }
+    //   }
+    //   if (this.step === 2) {
+    //     await this.validateBranchOffice()
+    //     if (this.errorDirection) {
+    //       this.$refs.stepper.next()
+    //     }
+    //   }
+    // },
+    // validateRate () {
+    //   if (this.$refs.myForm) {
+    //     this.$refs.myForm.validate().then(success => {
+    //       this.errorRate = success
+    //     })
+    //   }
+    // },
+    // validateBranchOffice () {
+    //   if (this.$refs.step2) {
+    //     this.$refs.step2.validate().then(success => {
+    //       this.errorDirection = success
+    //     })
+    //   }
+    // },
     /**
      * Save vocuher
      */
