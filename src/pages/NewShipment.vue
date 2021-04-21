@@ -157,7 +157,7 @@
               dense
               label="Codigo de referencia"
               :hint="paymentType.label"
-              v-model="paymentType.refrence"
+              v-model="paymentType.reference"
             />
           </div>
         </q-card-section>
@@ -326,6 +326,7 @@ export default {
         return {
           payment_type_id: payment.value,
           amount: payment.amount,
+          reference: payment.reference,
           user_created_id: this[GETTERS.GET_USER].id
         }
       })
