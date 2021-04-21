@@ -10,7 +10,7 @@
                 <template v-slot:before>
                 <div class="q-pa-md">
                     <div class="row">
-                        <p class="text-h6">Métodos de Pago</p>
+                        <p class="text-h6">Métodos de pago</p>
                         <q-space />
                         <q-btn
                           color="orange"

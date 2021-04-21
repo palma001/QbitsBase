@@ -41,7 +41,7 @@
 
             <template v-slot:before>
               <div class="q-pa-md">
-              <div class="text-h6 q-mb-xs">Métodos de Pagos</div>
+              <div class="text-h6 q-mb-xs">Métodos de pagos</div>
                 <div class="row q-col-gutter-xs">
                   <div class="col-3" v-for="paymentType in paymentTypes" :key="paymentType.id">
                     <q-card dark bordered class="bg-blue-grey-9 my-card">
