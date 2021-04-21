@@ -30,15 +30,15 @@
                         <q-card dark bordered class="bg-blue-grey-9 my-card">
                         <q-card-section>
                             <div class="text-h6">{{paymentType.name}}</div>
-                            <div class="text-subtitle2">$256.45</div>
+                            <div class="text-subtitle2">${{paymentType.amount}}</div>
                         </q-card-section>
                         </q-card>
                     </div>
                     <div class="col-3">
-                        <q-card dark bordered class="bg-grey-14 my-card">
+                        <q-card dark bordered class="bg-green my-card">
                         <q-card-section>
                             <div class="text-h6">Total</div>
-                            <div class="text-subtitle2">$256.45</div>
+                            <div class="text-subtitle2">${{total}}</div>
                         </q-card-section>
                         </q-card>
                     </div>
@@ -49,7 +49,7 @@
                 <template v-slot:after>
                 <q-table
                     title="Treats"
-                    :data="data"
+                    :data="bills"
                     :columns="columns"
                     row-key="id"
                     :filter="filter"
@@ -84,7 +84,7 @@
                             {{col.value}}
                         </q-td>
                         <q-td class="text-center">
-                            <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true">
+                            <q-btn icon="visibility" color="primary" rounded size="sm" @click="viewBillDetail(props.row)">
                             </q-btn>
                         </q-td>
                         </q-tr>
@@ -108,7 +108,7 @@
                 <q-card-section class="q-pt-none">
                 <q-table
                     title="Treats"
-                    :data="datat"
+                    :data="detailBillPayments"
                     :columns="transactions"
                     row-key="id"
                     :filter="filter"
@@ -171,6 +171,7 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 export default {
   data () {
     return {
@@ -185,20 +186,24 @@ export default {
       rowCount: 10,
       name: '',
       employee: '',
+      total: 0,
+      bills: [],
+      detailBillPayments: [],
+      sourceDate: [],
       columns: [
         {
-          name: 'date',
+          name: 'created_at',
           required: true,
           label: 'Fecha',
           align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
+          field: row => row.created_at,
           sortable: true
         },
-        { name: 'invoiceNumber', align: 'center', label: 'Número de Factura', field: 'invoiceNumber', sortable: true },
-        { name: 'amount', align: 'center', label: 'Monto ($)', field: 'amount' },
-        { name: 'client', align: 'center', label: 'Cliente', field: 'client', sortable: true },
-        { name: 'identificationNumber', align: 'center', label: 'N° de Identificación', field: 'identificationNumber', sortable: true }
+        { name: 'id', align: 'center', label: 'Número de Factura', field: 'id', sortable: true },
+        // { name: 'invoiceNumber', align: 'center', label: 'Número de Factura', field: 'invoiceNumber', sortable: true },
+        { name: 'total', align: 'center', label: 'Monto ($)', field: 'total' },
+        { name: 'sender', align: 'center', label: 'Cliente', field: row => row.sender.full_name, sortable: true },
+        { name: 'document_number', align: 'center', label: 'N° de Identificación', field: row => row.sender.document_number, sortable: true }
       ],
       data: [
         {
@@ -356,19 +361,19 @@ export default {
       ],
       transactions: [
         {
-          name: 'date',
+          name: 'created_at',
           required: true,
           label: 'Fecha',
           align: 'left',
-          field: row => row.name,
+          field: row => this.formatDate(row.created_at),
           format: val => `${val}`,
           sortable: true
         },
         { name: 'reference', align: 'center', label: 'Referencia', field: 'reference', sortable: true },
-        { name: 'paymentMethod', align: 'center', label: 'Método de Pago', field: 'paymentMethod', sortable: true },
-        { name: 'destination', align: 'center', label: 'Destino', field: 'destination', sortable: true },
-        { name: 'employee', align: 'center', label: 'Empleado', field: 'employee', sortable: true },
-        { name: 'role', align: 'center', label: 'Cargo', field: 'role' },
+        { name: 'payment_type', align: 'center', label: 'Método de Pago', field: row => row.payment_type.name, sortable: true },
+        { name: 'destination', align: 'center', label: 'Destino', field: row => row.payment_type.payment_destination.name, sortable: true },
+        { name: 'employee', align: 'center', label: 'Empleado', field: row => row.user.name, sortable: true },
+        { name: 'role', align: 'center', label: 'Cargo', field: row => row.user.name },
         { name: 'amount', align: 'center', label: 'Monto ($)', field: 'amount' }
       ],
       datat: [
@@ -460,13 +465,15 @@ export default {
   created () {
     this.getPaymentType()
     this.getBranchOffice()
+    this.getBills()
   },
   methods: {
     getPaymentType () {
-      this.$services.getData(['payment-types'], { paginated: false })
+      this.$services.getData(['reports', 'consolidated-payment-types'], { paginated: false })
         .then(({ res }) => {
           // console.log(res)
           this.paymentTypes = res.data
+          this.calcTotalPaymentMethod()
         })
     },
     getBranchOffice () {
@@ -474,6 +481,30 @@ export default {
         .then(({ res }) => {
           this.branchOffices = res.data
         })
+    },
+    getBills () {
+      this.$services.getData(['bills'], { paginated: false })
+        .then(({ res }) => {
+          this.bills = res.data.map(data => {
+            data.created_at = this.formatDate(data.created_at)
+            return data
+          })
+        })
+    },
+    viewBillDetail (data) {
+      console.log(data)
+      this.alert = true
+      this.detailBillPayments = data.bill_payments
+    },
+    formatDate (sourceDate) {
+      return date.formatDate(sourceDate, 'DD-MM-YYYY')
+    },
+    calcTotalPaymentMethod () {
+      if (this.paymentTypes.length > 0) {
+        this.paymentTypes.forEach((data) => {
+          this.total += Number(data.amount)
+        })
+      }
     }
   }
 }
