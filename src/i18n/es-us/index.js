@@ -97,11 +97,11 @@ export default {
   rate: {
     name: 'nombre',
     cost: 'costo',
-    unit_of_measurement_id: 'médida',
-    unit_of_measurement: 'médida',
-    list: 'lista de médidas',
-    add: 'agregar médida',
-    update: 'editar médida',
+    unit_of_measurement_id: 'medida',
+    unit_of_measurement: 'medida',
+    list: 'lista de medidas',
+    add: 'agregar medida',
+    update: 'editar medida',
     cancel: 'cancelar',
     reset: 'limpiar'
   },
@@ -112,5 +112,42 @@ export default {
     destination: 'destino',
     destinations: 'destinos',
     list: 'lista de comprobantes'
+  },
+  vehicle: {
+    list: 'lista de transportes',
+    add: 'agregar transporte',
+    update: 'editar transporte',
+    cancel: 'cancelar',
+    reset: 'limpiar',
+    unit_number: 'Número de unidad',
+    models: 'modelo',
+    colour: 'color',
+    type: 'tipo',
+    loading_capacity: 'capacidad de carga',
+    serial_body: 'searial',
+    brand: 'marca',
+    plate: 'placa',
+    number_of_axles: 'número de ejes',
+    year: 'año',
+    addSuccefull: 'agregado exitosamente',
+    editSuccefull: 'el transporte se edito exitosamente'
+  },
+  guide: {
+    voucherReceptSuccessfull: 'comprbantes guardados exitosamente',
+    voucherEmty: 'Debe seleccionar al menos un comprobante',
+    notFound: 'Guia no encontrada'
+  },
+  paymentMethod: {
+    list: 'lista de metodos de pago',
+    add: 'agregar metodo de pago',
+    update: 'editar metodo de pago',
+    cancel: 'cancelar',
+    reset: 'limpiar',
+    name: 'nombre',
+    symbol: 'Simbolo',
+    coin: 'moneda',
+    coin_id: 'moneda',
+    payment_destination_id: 'destino del pago',
+    payment_destination: 'destino del pago'
   }
 }

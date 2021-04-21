@@ -143,7 +143,7 @@
           v-for="paymentType in paymentTypes"
             :key="paymentType.id"
           >
-          <div class="col-xs-12 col-sm-4 col-md-4">
+          <div class="col-xs-12 col-sm-6 col-md-6">
             <q-input
               dense
               label="Monto"
@@ -152,21 +152,12 @@
               @input="calcTotalModalPaid"
             />
           </div>
-          <div class="col-xs-12 col-sm-4 col-md-4">
+          <div class="col-xs-12 col-sm-6 col-md-6">
             <q-input
               dense
               label="Codigo de referencia"
               :hint="paymentType.label"
               v-model="paymentType.refrence"
-            />
-          </div>
-          <div class="col-xs-12 col-sm-4 col-md-4">
-            <q-select
-              dense
-              v-model="paymentType.paymentTypesDestination"
-              label="Destino del pago"
-              :options="paymentTypesDestinations"
-              :hint="paymentType.label"
             />
           </div>
         </q-card-section>
@@ -334,7 +325,6 @@ export default {
       return payments.map(payment => {
         return {
           payment_type_id: payment.value,
-          payment_destination_id: payment.paymentTypesDestination.value,
           amount: payment.amount,
           user_created_id: this[GETTERS.GET_USER].id
         }

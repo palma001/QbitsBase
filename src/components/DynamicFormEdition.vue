@@ -482,25 +482,48 @@ export default {
           ]
         ),
         createElement('q-separator'),
-        createElement('q-card-section',
+        createElement('q-scroll-area',
           {
-            class: {
-              col: true,
-              scroll: true
-            }
+            props: {
+              'thumb-style': {
+                right: '2px',
+                borderRadius: '5px',
+                backgroundColor: '#02718D',
+                width: '7px',
+                opacity: 1
+              },
+              'content-style': {
+                backgroundColor: 'rgba(0,0,0,0.02)',
+                color: '#555'
+              },
+              'content-active-style': {
+                color: 'black'
+              }
+            },
+            style: 'height: 72vh'
           },
           [
-            createElement('q-form',
+            createElement('q-card-section',
               {
-                ref: 'form',
                 class: {
-                  row: true,
-                  'justify-evenly': true,
-                  'q-gutter-sm': true
+                  col: true,
+                  scroll: true
                 }
               },
               [
-                self.createInput(createElement, self.config, self)
+                createElement('q-form',
+                  {
+                    ref: 'form',
+                    class: {
+                      row: true,
+                      'justify-evenly': true,
+                      'q-gutter-sm': true
+                    }
+                  },
+                  [
+                    self.createInput(createElement, self.config, self)
+                  ]
+                )
               ]
             )
           ]

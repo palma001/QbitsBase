@@ -18,7 +18,7 @@ export const getData = function (url, params) {
     if (err) {
       return {
         status: false,
-        response: err
+        res: err
       }
     }
   })
@@ -34,7 +34,7 @@ export const getOneData = function (url) {
     if (err) {
       return {
         status: false,
-        response: err
+        res: err
       }
     }
   })
@@ -49,7 +49,7 @@ export const postData = function (url, params) {
     if (err) {
       return {
         status: false,
-        response: err
+        res: err
       }
     }
   })
@@ -65,7 +65,7 @@ export const putData = function (url, params) {
     if (err) {
       return {
         status: false,
-        response: err
+        res: err
       }
     }
   })
@@ -80,7 +80,7 @@ export const deleteData = function (url, params) {
     if (err) {
       return {
         status: false,
-        response: err
+        res: err
       }
     }
   })
