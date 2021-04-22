@@ -15,6 +15,15 @@ export const currencyRate = [
       },
       {
         tabulated: {
+          name: 'hours',
+          align: 'left',
+          field: row => date.formatDate(row.created_at, 'HH:mm:ss'),
+          sortable: false,
+          visible: true
+        }
+      },
+      {
+        tabulated: {
           name: 'amount',
           align: 'left',
           field: row => row.amount,

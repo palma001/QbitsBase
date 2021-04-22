@@ -350,8 +350,10 @@ export default {
      * @param {Object} data value select
      */
     filter (data) {
+      const destination = ['App', 'Models', 'Destination']
+      const branchOffice = ['App', 'Models', 'BranchOffice']
       this.params.dataFilter = {
-        destinable_type: this.shape === 'destinations' ? 'App\\Models\\Destination' : 'App\\Models\\BranchOffice',
+        destinable_type: this.shape === 'destinations' ? destination.join('\\') : branchOffice.join('\\'),
         destinable_id: data.value
       }
       this.getVochers(this.params)

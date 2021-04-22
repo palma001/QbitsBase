@@ -157,6 +157,8 @@ export default {
     add: 'Agregar tasa',
     reset: 'limpiar',
     cancel: 'cancelar',
+    hours: 'hora',
+    list: 'Lista de cambio',
     user: {
       name: 'responsable'
     }

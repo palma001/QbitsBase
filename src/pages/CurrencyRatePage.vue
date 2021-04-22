@@ -90,8 +90,9 @@ export default {
         sortBy: 'id',
         sortOrder: 'desc',
         dataSearch: {
-          name: '',
-          cost: ''
+          source: '',
+          amount: '',
+          'user.name': ''
         }
       },
       /**
