@@ -154,10 +154,10 @@
           :thumb-style="thumbStyle"
           :content-style="contentStyle"
           :content-active-style="contentActiveStyle"
-          style="height: 30vh"
+          style="height: 45vh"
         >
           <q-card-section
-            class="row q-col-gutter-md text-center"
+            class="row q-col-gutter-sm text-center"
             v-for="(paymentType, index) in paymentTypes"
               :key="paymentType.id"
             >
@@ -165,18 +165,17 @@
               <q-input
                 dense
                 label="Monto"
+                v-model="paymentType[`amount-${index}`]"
                 :hint="paymentType.label"
-                v-model="paymentType.amount"
                 @input="calcTotalModalPaid"
-                :rules="[ val => val <= total || 'Aporte supera el total de la factura', ]"
               />
             </div>
             <div class="col-xs-5 col-sm-5 col-md-5">
               <q-input
                 dense
                 label="Codigo de referencia"
+                v-model="paymentType[`reference-${index}`]"
                 :hint="paymentType.label"
-                v-model="paymentType.reference"
               />
             </div>
             <div class="col-xs-2 col-sm-2 col-md-2 q-mt-md text-center">
@@ -195,8 +194,8 @@
             </div>
           </q-card-section>
         </q-scroll-area>
-        <q-card-section>
-          <q-list bordered separator>
+        <q-card-section class="q-py-xs">
+          <q-list bordered separator dense>
             <q-item
               clickable
               v-ripple
@@ -228,7 +227,7 @@
             </q-item>
           </q-list>
         </q-card-section>
-        <q-card-actions class="q-pa-md" align="right">
+        <q-card-actions class="q-pa-xs" align="right">
           <q-btn color="primary" label="Pagar" @click="validBill" />
         </q-card-actions>
       </q-card>
@@ -348,7 +347,6 @@ export default {
      */
     selectedPaymnetType () {
       this.paymentTypes.push(this.paymentType)
-      this.paymentTypes.reverse()
     },
     /**
      * Validate bill
@@ -403,11 +401,11 @@ export default {
       * @param {Array} payments data payments
      */
     modelPayment (payments) {
-      return payments.map(payment => {
+      return payments.map((payment, index) => {
         return {
           payment_type_id: payment.value,
-          amount: payment.amount,
-          reference: payment.reference,
+          amount: payment[`amount-${index}`],
+          reference: payment[`reference-${index}`],
           user_created_id: this.userSession.id
         }
       })
@@ -513,9 +511,9 @@ export default {
       */
     calcTotalModalPaid () {
       let total = 0
-      this.paymentTypes.forEach((data) => {
-        if (data.amount) {
-          total = Number(total) + Number(data.amount)
+      this.paymentTypes.forEach((data, index) => {
+        if (data[`amount-${index}`]) {
+          total = Number(total) + Number(data[`amount-${index}`])
         }
       })
       this.totalPayment = total
