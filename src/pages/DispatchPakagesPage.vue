@@ -94,7 +94,7 @@
 
           <q-tab-panels v-model="tab" animated>
             <q-tab-panel name="mails">
-              <div class="row q-gutter-md">
+              <div class="row q-gutter-y-md">
                 <div class="col-3">
                   <q-input
                     label="Código"
@@ -105,21 +105,47 @@
                   />
                 </div>
                 <div class="col-12">
-                   <data-table
-                    title="list"
-                    module="voucher"
-                    action
-                    :buttonsActions="buttonsTable"
-                    :column="voucherConfig"
-                    :data="voucherSelected"
-                    :loading="loadingTable"
-                    :optionPagination="optionPagination"
-                    @delete="deleteVocuher"
-                />
+                    <q-table
+                      :title="ucwords($t('voucher.list'))"
+                      :data="voucherSelected"
+                      :columns="columns"
+                      row-key="number"
+                      :pagination="{ rowsPerPage: 0 }"
+                      hide-bottom
+                    >
+                      <template v-slot:header="props">
+                        <q-tr :props="props">
+                          <q-th
+                            v-for="col in props.cols"
+                            :key="col.name"
+                            :props="props"
+                          >
+                            {{ col.label }}
+                          </q-th>
+                          <q-th auto-width>
+                            Accione
+                          </q-th>
+                        </q-tr>
+                      </template>
+                      <template v-slot:body="props">
+                        <q-tr :props="props">
+                          <q-td
+                            v-for="col in props.cols"
+                            :key="col.name"
+                            :props="props"
+                          >
+                            {{ col.value }}
+                          </q-td>
+                          <q-td auto-width class="text-right">
+                            <q-btn color="negative" round icon="delete" size="sm" @click="deleteVocuher(props.row)"/>
+                          </q-td>
+                        </q-tr>
+                      </template>
+                    </q-table>
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel name="alarms" class="row q-col-gutter-sm">
+            <q-tab-panel name="alarms" class="row">
               <div class="col-12">
                 <data-table
                   title="list"
@@ -240,6 +266,30 @@ export default {
   },
   data () {
     return {
+      columns: [
+        {
+          name: 'number',
+          required: true,
+          label: 'Número',
+          align: 'left',
+          field: row => row.number,
+          sortable: true
+        },
+        {
+          name: 'addresse',
+          align: 'center',
+          label: 'Destinatario',
+          field: row => row.addressee.full_name,
+          sortable: true
+        },
+        {
+          name: 'destination',
+          label: 'Destino)',
+          align: 'center',
+          field: row => row.destinable.city ?? row.destinable.name,
+          sortable: true
+        }
+      ],
       buttonsTable,
       codeVoucher: null,
       tab: 'mails',
@@ -260,6 +310,7 @@ export default {
         paginated: true,
         sortBy: 'id',
         sortOrder: 'desc',
+        perPage: 1,
         branch_office_id: 1,
         filterStatus: true,
         dataSearch: {
@@ -273,6 +324,7 @@ export default {
       optionPagination: {
         rowsPerPage: 20,
         paginate: true,
+        rowsNumber: 20,
         sortBy: 'id',
         sortOrder: 'desc'
       },
@@ -459,7 +511,8 @@ export default {
       this.loadingTable = true
       this.$services.getData(['vouchers'], params)
         .then(({ res }) => {
-          this.data = res.data
+          this.data = res.data.data
+          this.optionPagination.rowsNumber = res.data.total
           this.loadingTable = false
         })
         .catch(err => {
