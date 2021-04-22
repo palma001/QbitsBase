@@ -273,11 +273,8 @@ export default {
     cancelRepction () {
       this.guide = { vouchers: [] }
       this.codeGuide = null
+      this.voucherSelected = []
     }
   }
 }
 </script>
-
-<style>
-
-</style>

@@ -105,43 +105,43 @@
                   />
                 </div>
                 <div class="col-12">
-                    <q-table
-                      :title="ucwords($t('voucher.list'))"
-                      :data="voucherSelected"
-                      :columns="columns"
-                      row-key="number"
-                      :pagination="{ rowsPerPage: 0 }"
-                      hide-bottom
-                    >
-                      <template v-slot:header="props">
-                        <q-tr :props="props">
-                          <q-th
-                            v-for="col in props.cols"
-                            :key="col.name"
-                            :props="props"
-                          >
-                            {{ col.label }}
-                          </q-th>
-                          <q-th auto-width>
-                            Accione
-                          </q-th>
-                        </q-tr>
-                      </template>
-                      <template v-slot:body="props">
-                        <q-tr :props="props">
-                          <q-td
-                            v-for="col in props.cols"
-                            :key="col.name"
-                            :props="props"
-                          >
-                            {{ col.value }}
-                          </q-td>
-                          <q-td auto-width class="text-right">
-                            <q-btn color="negative" round icon="delete" size="sm" @click="deleteVocuher(props.row)"/>
-                          </q-td>
-                        </q-tr>
-                      </template>
-                    </q-table>
+                  <q-table
+                    :title="ucwords($t('voucher.list'))"
+                    :data="voucherSelected"
+                    :columns="columns"
+                    row-key="number"
+                    :pagination="{ rowsPerPage: 0 }"
+                    hide-bottom
+                  >
+                    <template v-slot:header="props">
+                      <q-tr :props="props">
+                        <q-th
+                          v-for="col in props.cols"
+                          :key="col.name"
+                          :props="props"
+                        >
+                          {{ col.label }}
+                        </q-th>
+                        <q-th auto-width>
+                          Accione
+                        </q-th>
+                      </q-tr>
+                    </template>
+                    <template v-slot:body="props">
+                      <q-tr :props="props">
+                        <q-td
+                          v-for="col in props.cols"
+                          :key="col.name"
+                          :props="props"
+                        >
+                          {{ col.value }}
+                        </q-td>
+                        <q-td auto-width class="text-right">
+                          <q-btn color="negative" round icon="delete" size="sm" @click="deleteVocuher(props.row)"/>
+                        </q-td>
+                      </q-tr>
+                    </template>
+                  </q-table>
                 </div>
               </div>
             </q-tab-panel>
