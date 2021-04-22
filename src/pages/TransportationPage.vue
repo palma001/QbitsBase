@@ -98,6 +98,7 @@ export default {
        */
       optionPagination: {
         rowsPerPage: 20,
+        rowsNumber: 20,
         paginate: true,
         sortBy: 'id',
         sortOrder: 'desc'
@@ -109,6 +110,7 @@ export default {
       params: {
         paginated: true,
         sortBy: 'id',
+        perPage: 1,
         sortOrder: 'desc',
         dataSearch: {
           plate: ''
@@ -243,13 +245,15 @@ export default {
       this.loadingTable = true
       this.$services.getData(['vehicles'], this.params)
         .then(({ res }) => {
-          this.data = res.data
+          this.data = res.data.data
+          this.optionPagination.rowsNumber = res.data.total
           this.loadingTable = false
         })
         .catch(err => {
           console.log(err)
           this.data = []
           this.loadingTable = false
+          this.optionPagination.rowsNumber = 0
         })
     }
   }

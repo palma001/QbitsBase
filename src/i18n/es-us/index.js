@@ -93,7 +93,8 @@ export default {
     update: 'editar sucursal',
     cancel: 'cancelar',
     reset: 'limpiar',
-    address: 'dirección'
+    address: 'dirección',
+    deleteSuccessfull: 'sucursal eliminada exitosamente'
   },
   rate: {
     name: 'nombre',

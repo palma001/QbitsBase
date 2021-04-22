@@ -96,7 +96,8 @@ export default {
        */
       optionPagination: {
         rowsPerPage: 20,
-        paginate: true,
+        rowsNumber: 20,
+        paginated: true,
         sortBy: 'id',
         sortOrder: 'desc'
       },
@@ -107,10 +108,13 @@ export default {
       params: {
         paginated: true,
         sortBy: 'id',
+        perPage: 1,
         sortOrder: 'desc',
         dataSearch: {
-          name: '',
-          cost: ''
+          cretaed_at: '',
+          amount: '',
+          source: '',
+          'user.name': ''
         }
       },
       rateServices,
@@ -165,7 +169,7 @@ export default {
      */
     loadData (data) {
       this.params.page = data.page
-      this.params.sortBy = data.sortBy
+      this.params.sortBy = data.sortBy ?? this.params.sortBy
       this.params.sortOrder = data.sortOrder
       this.params.perPage = data.rowsPerPage
       this.optionPagination = data
@@ -187,7 +191,7 @@ export default {
      */
     save (data) {
       data.unit_of_measurement_id = data.unit_of_measurement.value
-      data.user_created_id = 1
+      data.user_created_id = this.userSession.id
       this.loadingForm = true
       this.$services.postData(['rates'], data)
         .then(({ res }) => {
@@ -205,7 +209,7 @@ export default {
      */
     update (data) {
       data.unit_of_measurement_id = data.unit_of_measurement.value ?? data.unit_of_measurement.id
-      data.user_updated_id = 1
+      data.user_updated_id = this.userSession.id
       this.loadingForm = true
       this.$services.putData(['rates', this.selectedData.id], data)
         .then(({ res }) => {
@@ -233,13 +237,15 @@ export default {
       this.loadingTable = true
       this.$services.getData(['rates'], this.params)
         .then(({ res }) => {
-          this.data = res.data
+          this.data = res.data.data
+          this.optionPagination.rowsNumber = res.data.total
           this.loadingTable = false
         })
         .catch(err => {
           console.log(err)
           this.data = []
           this.loadingTable = false
+          this.optionPagination.rowsNumber = 0
         })
     }
   }

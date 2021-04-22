@@ -358,3 +358,22 @@ export const branchOfficeServices = {
   propData: 'data',
   relationalData: relationalDataConfiguration
 }
+/**
+* Actions buttons
+* @type {Array} array buttons
+*/
+export const buttonsActions = [
+  {
+    color: 'primary',
+    icon: 'fullscreen',
+    size: 'sm',
+    event: 'view-details'
+  },
+  {
+    color: 'negative',
+    icon: 'delete',
+    size: 'sm',
+    event: 'delete',
+    class: 'q-ml-sm'
+  }
+]

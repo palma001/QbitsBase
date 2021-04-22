@@ -240,7 +240,7 @@ export default {
         this.guide.vouchers = this.voucherSelected
         this.$services.putData(['guides', this.guide.id], this.guide)
           .then(({ res }) => {
-            this.notify(this, 'guide.voucherReceptSuccessfull', 'negative', 'warning')
+            this.notify(this, 'guide.voucherReceptSuccessfull', 'positive', 'mood')
             this.cancelRepction()
           })
           .catch((err) => {
@@ -273,11 +273,8 @@ export default {
     cancelRepction () {
       this.guide = { vouchers: [] }
       this.codeGuide = null
+      this.voucherSelected = []
     }
   }
 }
 </script>
-
-<style>
-
-</style>
