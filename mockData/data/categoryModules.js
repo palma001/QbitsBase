@@ -135,7 +135,7 @@ export const categoryModules = [
       {
         name: 'roles-management',
         route: 'RolesPage',
-        icon: 'people_alt',
+        icon: 'groups',
         devices: ['mobile', 'desktop'],
         access: ['super_admin']
       },
