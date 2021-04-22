@@ -30,6 +30,8 @@
           :data="data"
           :loading="loadingTable"
           :optionPagination="optionPagination"
+          :buttonsActions="buttonsActions"
+          @delete="deleteData"
           @search-data="searchData"
           @view-details="viewDetails"
           @on-load-data="loadData"
@@ -71,7 +73,7 @@
 import DataTable from '../components/DataTable.vue'
 import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
-import { rate, propsPanelEdition, rateServices } from '../config-file/rate/rateConfig.js'
+import { rate, propsPanelEdition, rateServices, buttonsActions } from '../config-file/rate/rateConfig.js'
 import { mixins } from '../mixins'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
@@ -84,6 +86,7 @@ export default {
   },
   data () {
     return {
+      buttonsActions,
       loadingForm: false,
       /**
        * Selected data
@@ -164,6 +167,29 @@ export default {
   },
   methods: {
     /**
+     * Delete data
+     * @param {Object} data data selected
+     */
+    deleteData (data) {
+      this.$q.dialog({
+        title: 'Alert',
+        message: '¿Desea eliminar la medida?',
+        cancel: {
+          label: 'Cancelar',
+          color: 'negative'
+        },
+        persistent: true,
+        ok: {
+          label: 'Aceptar',
+          color: 'primary'
+        }
+      }).onOk(async () => {
+        await this.$services.deleteData(['rates', data.id])
+        this.notify(this, 'rate.deleteSuccessfull', 'positive', 'mood')
+        this.getRates()
+      })
+    },
+    /**
      * Load data sorting
      * @param  {Object}
      */
@@ -197,6 +223,7 @@ export default {
         .then(({ res }) => {
           this.addDialig = false
           this.loadingForm = false
+          this.notify(this, 'rate.addSuccessfull', 'positive', 'mood')
           this.getRates(this.params)
         })
         .catch(() => {
@@ -216,6 +243,7 @@ export default {
           this.editDialog = false
           this.loadingForm = false
           this.getRates(this.params)
+          this.notify(this, 'rate.editSuccessfull', 'positive', 'mood')
         })
         .catch(() => {
           this.loadingForm = false

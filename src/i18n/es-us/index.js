@@ -105,7 +105,10 @@ export default {
     add: 'agregar medida',
     update: 'editar medida',
     cancel: 'cancelar',
-    reset: 'limpiar'
+    reset: 'limpiar',
+    deleteSuccessfull: 'medida eliminada exitosamente',
+    addSuccessfull: 'medida agregada exitosamente',
+    editSuccessfull: 'medida editada exitosamente'
   },
   voucher: {
     id: 'Número',
@@ -119,6 +122,7 @@ export default {
     delivered: 'entregado'
   },
   vehicle: {
+    deleteSuccessfull: 'transporte eliminado exitosamente',
     list: 'lista de transportes',
     add: 'agregar transporte',
     update: 'editar transporte',
@@ -153,7 +157,10 @@ export default {
     coin: 'moneda',
     coin_id: 'moneda',
     payment_destination_id: 'destino del pago',
-    payment_destination: 'destino del pago'
+    payment_destination: 'destino del pago',
+    deleteSuccessfull: 'metodo de pago eliminada exitosamente',
+    addSuccessfull: 'metodo de pago agregado exitosamente',
+    editSuccessfull: 'metodo de pago editado exitosamente'
   },
   currencyRate: {
     amount: 'monto',
@@ -164,6 +171,9 @@ export default {
     cancel: 'cancelar',
     hours: 'hora',
     list: 'Lista de cambio',
+    deleteSuccessfull: 'tasa de cambio eliminada exitosamente',
+    addSuccessfull: 'tasa de cambio agregada exitosamente',
+    editSuccessfull: 'tasa de cambio editada exitosamente',
     user: {
       name: 'responsable'
     }

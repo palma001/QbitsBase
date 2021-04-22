@@ -29,10 +29,12 @@
           :column="paymentMethod"
           :data="data"
           :loading="loadingTable"
+          :buttonsActions="buttonsActions"
           :optionPagination.sync="optionPagination"
           @search-data="searchData"
           @view-details="viewDetails"
           @on-load-data="loadData"
+          @delete="deleteData"
         />
       </div>
     </div>
@@ -71,7 +73,7 @@
 import DataTable from '../components/DataTable.vue'
 import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
-import { paymentMethod, propsPanelEdition, paymentMethodServices } from '../config-file/paymentMethod/paymentMethodConfig.js'
+import { paymentMethod, propsPanelEdition, paymentMethodServices, buttonsActions } from '../config-file/paymentMethod/paymentMethodConfig.js'
 import { mixins } from '../mixins'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
@@ -84,6 +86,7 @@ export default {
   },
   data () {
     return {
+      buttonsActions,
       loadingForm: false,
       /**
        * Selected data
@@ -163,6 +166,29 @@ export default {
   },
   methods: {
     /**
+     * Delete data
+     * @param {Object} data data selected
+     */
+    deleteData (data) {
+      this.$q.dialog({
+        title: 'Alert',
+        message: '¿Desea eliminar el metodo de pago?',
+        cancel: {
+          label: 'Cancelar',
+          color: 'negative'
+        },
+        persistent: true,
+        ok: {
+          label: 'Aceptar',
+          color: 'primary'
+        }
+      }).onOk(async () => {
+        await this.$services.deleteData(['payment-types', data.id])
+        this.notify(this, 'paymentMethod.deleteSuccessfull', 'positive', 'mood')
+        this.getPaymentMethods()
+      })
+    },
+    /**
      * Load data sorting
      * @param  {Object}
      */
@@ -198,6 +224,7 @@ export default {
           this.addDialig = false
           this.loadingForm = false
           this.getPaymentMethods(this.params)
+          this.notify(this, 'paymentMethod.addSuccessfull', 'positive', 'mood')
         })
         .catch(() => {
           this.loadingForm = false
@@ -217,6 +244,7 @@ export default {
           this.editDialog = false
           this.loadingForm = false
           this.getPaymentMethods(this.params)
+          this.notify(this, 'paymentMethod.editSuccessfull', 'positive', 'mood')
         })
         .catch(() => {
           this.loadingForm = false
