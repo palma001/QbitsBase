@@ -87,6 +87,21 @@
         :content-active-style="contentActiveStyle"
         style="height: 91vh;"
       >
+        <q-list>
+          <q-item
+            clickable
+            v-ripple
+          >
+            <q-item-section avatar class="">
+              <q-icon name="maps_home_work"/>
+            </q-item-section>
+            <q-item-section class="q-mr-xl">
+              <q-item-label>
+                {{ ucwords(branchOffice.name) }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
         <q-expansion-item
           expand-separator
           v-for="category_module in dataMenu"
@@ -106,12 +121,11 @@
               <q-item
                 clickable
                 v-ripple
-                class="q-ml-md"
                 active-class="my-menu-link"
                 v-if="validateDivice(divice) && validateRole(list.access)"
                 :active="list.route === $route.name"
               >
-                <q-item-section avatar v-if="list.icon">
+                <q-item-section avatar v-if="list.icon" class="q-ml-sm">
                   <q-icon :name="list.icon" />
                 </q-item-section>
                 <q-item-section @click="changeRoute(list.route)">
@@ -129,7 +143,6 @@
       <router-view />
     </q-page-container>
     <q-inner-loading :showing="visible">
-      {{ route }}
       <q-spinner-gears size="100px" color="primary"/>
     </q-inner-loading>
   </q-layout>
@@ -176,6 +189,7 @@ export default {
 
   data () {
     return {
+      branchOffice: null,
       contentStyle: {
         backgroundColor: 'rgba(0,0,0,0.02)',
         color: '#555'
@@ -217,22 +231,23 @@ export default {
   },
   created () {
     this.loadingPage()
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
   },
   computed: {
     /**
      * Getters Vuex
      */
-    ...mapGetters([GETTERS.GET_USER])
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_ROLE, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
     validateRole (access = []) {
-      const user = this[GETTERS.GET_USER]
-      if (access && access.length > 0 && user) {
+      const rol = this[GETTERS.GET_ROLE]
+      if (access && access.length > 0 && rol) {
         return access.filter(element => {
-          return element === user.rol
+          return element === rol.acronym
         })[0]
       }
-      return true
+      return false
     },
     /**
      * Emit event logout

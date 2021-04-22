@@ -73,6 +73,8 @@ import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
 import { paymentMethod, propsPanelEdition, paymentMethodServices } from '../config-file/paymentMethod/paymentMethodConfig.js'
 import { mixins } from '../mixins'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   mixins: [mixins.containerMixin],
   components: {
@@ -147,6 +149,14 @@ export default {
   created () {
     this.getPaymentMethods()
     this.setRelationalData(this.paymentMethodServices, [], this)
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
     /**
@@ -176,7 +186,7 @@ export default {
      * @param  {Object}
      */
     save (data) {
-      data.user_created_id = 1
+      data.user_created_id = this.userSession.id
       data.payment_destination_id = data.payment_destination.value
       data.coin_id = data.coin.value
       this.loadingForm = true
@@ -195,7 +205,7 @@ export default {
      * @param  {Object}
      */
     update (data) {
-      data.user_updated_id = 1
+      data.user_updated_id = this.userSession.id
       data.payment_destination_id = data.payment_destination.value ?? data.payment_destination.id
       data.coin_id = data.coin.value ?? data.coin.id
       this.loadingForm = true

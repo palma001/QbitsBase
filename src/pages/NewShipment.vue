@@ -216,13 +216,13 @@ export default {
       bill,
       buttonsSender,
       senderConfig,
+      senderLoadingAdd: false,
       payments: {},
       paymentTypes: null,
       dialogPayment: false,
       paymentTypesAll: [],
       paymentTypesDestinations: [],
       paymentTypesDestination: null,
-      senderLoadingAdd: false,
       dialogPackage: false,
       dialogSender: false,
       sender: null,
@@ -255,7 +255,9 @@ export default {
       total: 0,
       tax: 12,
       exchange: 10000,
-      totalPayment: 0
+      totalPayment: 0,
+      userSession: null,
+      branchOffice: null
     }
   },
   created () {
@@ -264,12 +266,14 @@ export default {
     this.getAllPaymentTypes()
     this.getAllPaymentTypeDestinations()
     this.printBillAndVoucher(bill)
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
   },
   computed: {
     /**
      * Getters Vuex
      */
-    ...mapGetters([GETTERS.GET_USER])
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   watch: {
     paymentTypes () {
@@ -298,7 +302,7 @@ export default {
       const params = {
         sender_id: this.sender.value,
         receptionist_id: this[GETTERS.GET_USER].id,
-        branch_office_id: 1,
+        branch_office_id: this.branchOffice.id,
         vouchers: this.modelVoucher(this.packages),
         billPayments: this.modelPayment(this.paymentTypes),
         user_created_id: this[GETTERS.GET_USER].id
@@ -329,7 +333,7 @@ export default {
           payment_type_id: payment.value,
           amount: payment.amount,
           reference: payment.reference,
-          user_created_id: this[GETTERS.GET_USER].id
+          user_created_id: this.userSession.id
         }
       })
     },
@@ -349,7 +353,7 @@ export default {
           tax: this.tax,
           coin_id: 1,
           exchange: this.exchange,
-          user_created_id: this[GETTERS.GET_USER].id,
+          user_created_id: this.userSession.id,
           rate: this.modelRate(pack.rate)
         }
       })
@@ -365,7 +369,7 @@ export default {
           valueReturn.push({
             rate_id: key,
             description: rates[key],
-            user_created_id: this[GETTERS.GET_USER].id
+            user_created_id: this.userSession.id
           })
         }
       }
@@ -446,6 +450,7 @@ export default {
      * @param {Object} data data to save
      */
     saveSender (data) {
+      this.senderLoadingAdd = true
       this.$services.postData(['senders'], {
         name: data.sender_type.value === 'NAT' ? data.name : null,
         last_name: data.last_name,
@@ -455,7 +460,7 @@ export default {
         phone_number: data.phone_number,
         document_number: data.document_number,
         document_type: data.document_type.value,
-        branch_office_id: 1
+        branch_office_id: this.branchOffice.id
       })
         .then(({ res }) => {
           this.sender = {
@@ -463,8 +468,13 @@ export default {
             label: `${res.data.full_name} (${res.data.document_type} - ${res.data.document_number})`
           }
           this.dialogSender = false
+          this.senderLoadingAdd = false
           this.getAllSenders()
           this.notify(this, 'sender.saveSuccess', 'positive', 'mood')
+        })
+        .catch(err => {
+          console.log(err.message)
+          this.senderLoadingAdd = false
         })
     },
     /**

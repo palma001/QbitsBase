@@ -73,6 +73,8 @@ import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
 import { vehicle, propsPanelEdition } from '../config-file/vehicle/vehicleConfig.js'
 import { mixins } from '../mixins'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   mixins: [mixins.containerMixin],
   components: {
@@ -82,6 +84,8 @@ export default {
   },
   data () {
     return {
+      branchOffice: null,
+      userSession: null,
       loadingForm: false,
       /**
        * Selected data
@@ -144,6 +148,14 @@ export default {
   },
   created () {
     this.getVehicles()
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
     /**
@@ -173,8 +185,8 @@ export default {
      * @param  {Object}
      */
     save (data) {
-      data.user_created_id = 1
-      data.branch_office_id = 1
+      data.user_created_id = this.userSession.id
+      data.branch_office_id = this.branchOffice.id
       this.loadingForm = true
       this.$services.postData(['vehicles'], data)
         .then(({ res }) => {
@@ -193,8 +205,8 @@ export default {
      * @param  {Object}
      */
     update (data) {
-      data.user_updated_id = 1
-      data.branch_office_id = 1
+      data.user_updated_id = this.userSession.id
+      data.branch_office_id = this.branchOffice.id
       this.loadingForm = true
       this.$services.putData(['vehicles', this.selectedData.id], data)
         .then(({ res }) => {

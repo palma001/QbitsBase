@@ -271,6 +271,8 @@ export default {
       step: 0,
       nameRoute: null,
       optionsCities: [],
+      userSession: null,
+      branchOffice: null,
       markers: [
         { position: { lat: 10.196248389913245, lng: -64.62544711587066 } },
         { position: { lat: 8.879893326702739, lng: -64.23543248221198 } }
@@ -281,12 +283,14 @@ export default {
     /**
      * Getters Vuex
      */
-    ...mapGetters([GETTERS.GET_USER])
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   created () {
     // this.getDirection()
     this.getRoutes()
     this.getCities()
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
   },
   methods: {
     filterCity (val, update, abort) {
@@ -323,7 +327,7 @@ export default {
       this.loadingRoute = true
       await this.$services.putData(['routes', this.routeSelected.id], {
         name: this.routeSelected.name,
-        user_updated_id: 1,
+        user_updated_id: this.userSession.id,
         destinations: this.destinationModel(this.routeSelected.destinations)
       })
       this.loadingRoute = false
@@ -335,7 +339,7 @@ export default {
         return {
           destination_id: destination.destination_id ?? destination.id,
           order: index,
-          user_created_id: 1
+          user_created_id: this.userSession.id
         }
       })
     },
@@ -346,7 +350,7 @@ export default {
       this.loadingRoute = true
       const { res } = await this.$services.postData(['routes'], {
         name: this.nameRoute,
-        user_created_id: 1
+        user_created_id: this.userSession.id
       })
       if (res.data) {
         this.routes.push(res.data)

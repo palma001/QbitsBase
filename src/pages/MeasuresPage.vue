@@ -73,6 +73,8 @@ import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
 import { rate, propsPanelEdition, rateServices } from '../config-file/rate/rateConfig.js'
 import { mixins } from '../mixins'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   mixins: [mixins.containerMixin],
   components: {
@@ -147,6 +149,14 @@ export default {
   created () {
     this.getRates()
     this.setRelationalData(this.rateServices, [], this)
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
     /**

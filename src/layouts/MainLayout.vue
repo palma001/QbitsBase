@@ -28,14 +28,14 @@ export default {
 
   created () {
     this.getAllModules()
-    this.loadCron()
+    // this.loadCron()
   },
 
   computed: {
     /**
      * Getters Vuex
      */
-    ...mapGetters([GETTERS.GET_USER])
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_ROLE])
   },
   methods: {
     loadCron () {

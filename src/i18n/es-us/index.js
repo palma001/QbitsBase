@@ -149,5 +149,16 @@ export default {
     coin_id: 'moneda',
     payment_destination_id: 'destino del pago',
     payment_destination: 'destino del pago'
+  },
+  currencyRate: {
+    amount: 'monto',
+    created_at: 'fecha',
+    source: 'fuente',
+    add: 'Agregar tasa',
+    reset: 'limpiar',
+    cancel: 'cancelar',
+    user: {
+      name: 'responsable'
+    }
   }
 }

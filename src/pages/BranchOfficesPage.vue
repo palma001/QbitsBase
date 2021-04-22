@@ -73,6 +73,8 @@ import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
 import { branchOffice, propsPanelEdition, branchOfficeServices } from '../config-file/branchOffice/branchOfficeConfig.js'
 import { mixins } from '../mixins'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
   mixins: [mixins.containerMixin],
   components: {
@@ -82,6 +84,8 @@ export default {
   },
   data () {
     return {
+      userSession: null,
+      branchOfficeSession: null,
       loadingForm: false,
       /**
        * Selected data
@@ -154,6 +158,14 @@ export default {
   created () {
     this.getBanchOffices()
     this.setRelationalData(this.branchOfficeServices, [], this)
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOfficeSession = this[GETTERS.GET_BRANCH_OFFICE]
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
     /**
@@ -185,7 +197,7 @@ export default {
     save (data) {
       data.destination_id = data.destination.value
       data.in_charge_id = data.in_charge.value
-      data.user_created_id = 1
+      data.user_created_id = this.userSession.id
       this.loadingForm = true
       this.$services.postData(['branch-offices'], data)
         .then(({ res }) => {
@@ -204,7 +216,7 @@ export default {
     update (data) {
       data.destination_id = data.destination.value ?? data.destination.id
       data.in_charge_id = data.in_charge.value ?? data.in_charge.id
-      data.user_created_id = 1
+      data.user_updated_id = this.userSession.id
       this.loadingForm = true
       this.$services.putData(['branch-offices', this.selectedData.id], data)
         .then(({ res }) => {

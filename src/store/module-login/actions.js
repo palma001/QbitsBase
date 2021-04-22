@@ -18,6 +18,8 @@ export const actions = {
         commit(MUTATIONS.SET_EXPIRE_IN, Number(res.data.expires_in))
         commit(MUTATIONS.SET_ID, Number(res.data.user.id))
         dispatch(ACTIONS.AUTO_LOGOUT, Number(res.data.expires_in))
+        commit(MUTATIONS.SET_ROLE, res.data.user.roles[0])
+        commit(MUTATIONS.SET_BRANCH_OFFICE, res.data.user.branch_offices[0])
         self.$router.push({ name: 'NewShipment' })
         self.btnDisable = false
       })
@@ -44,6 +46,8 @@ export const actions = {
    */
   [ACTIONS.VALID_SESSION]: ({ commit, dispatch }) => {
     const user = JSON.parse(localStorage.getItem('user_session'))
+    const role = JSON.parse(localStorage.getItem('roleSelected'))
+    const branchOffice = JSON.parse(localStorage.getItem('branchOffice'))
     // const userActive = localStorage.getItem('session_active')
     const invalidUser = !user || user === null
     if (invalidUser) {
@@ -51,6 +55,8 @@ export const actions = {
       return false
     }
     commit(MUTATIONS.SET_USER, user)
+    commit(MUTATIONS.SET_ROLE, role)
+    commit(MUTATIONS.SET_BRANCH_OFFICE, branchOffice)
     return true
   },
   /**
