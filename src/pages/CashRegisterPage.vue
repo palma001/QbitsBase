@@ -9,40 +9,42 @@
 
                 <template v-slot:before>
                 <div class="q-pa-md">
-                    <div class="row">
-                        <p class="text-h6">Métodos de pago</p>
-                        <q-space />
-                        <q-btn
-                          color="orange"
-                          text-color="white"
-                          icon="save"
-                          aria-label="save"
-                          rounded
-                          type="submit"
-                        >
-                            <q-tooltip>
-                                Cerrar caja
-                            </q-tooltip>
-                        </q-btn>
-                    </div>
-                    <div class="row q-col-gutter-xs q-mt-md">
+                  <div class="row">
+                    <p class="text-h6">Métodos de pago</p>
+                  </div>
+                  <div class="row q-col-gutter-xs q-mt-md">
                     <div class="col-3" v-for="paymentType in paymentTypes" :key="paymentType.id">
-                        <q-card dark bordered class="bg-blue-grey-9 my-card">
-                        <q-card-section>
-                            <div class="text-h6">{{paymentType.name}}</div>
-                            <div class="text-subtitle2">${{paymentType.amount}}</div>
+                      <q-card dark bordered class="bg-blue-grey-9 my-card" style="height: 83px;">
+                       <q-card-section>
+                          <div class="text-h6">{{paymentType.name}}</div>
+                          <div class="text-subtitle2">${{paymentType.amount}}</div>
                         </q-card-section>
-                        </q-card>
+                      </q-card>
                     </div>
                     <div class="col-3">
-                        <q-card dark bordered class="bg-green my-card">
-                        <q-card-section>
-                            <div class="text-h6">Total</div>
-                            <div class="text-subtitle2">${{total}}</div>
+                      <q-card dark bordered class="bg-cyan-9 my-card" style="height: 83px;">
+                        <q-card-section class="row q-pr-xs">
+                          <div class="text-h6 col-12 text-bold">Total</div>
+                          <div class="text-subtitle2 col-10">${{total}}</div>
+                          <div class="col-2 text-right">
+                            <q-btn
+                              color="white"
+                              text-color="primary"
+                              icon="lock"
+                              aria-label="save"
+                              size="sm"
+                              round
+                              type="submit"
+                            >
+                              <q-tooltip>
+                                  Cerrar caja
+                              </q-tooltip>
+                            </q-btn>
+                          </div>
                         </q-card-section>
-                        </q-card>
+                      </q-card>
                     </div>
-                    </div>
+                  </div>
                 </div>
                 </template>
 
@@ -199,8 +201,7 @@ export default {
           field: row => row.created_at,
           sortable: true
         },
-        { name: 'id', align: 'center', label: 'Número de Factura', field: 'id', sortable: true },
-        // { name: 'invoiceNumber', align: 'center', label: 'Número de Factura', field: 'invoiceNumber', sortable: true },
+        { name: 'invoiceNumber', align: 'center', label: 'Número de Factura', field: row => row.number, sortable: true },
         { name: 'total', align: 'center', label: 'Monto ($)', field: 'total' },
         { name: 'sender', align: 'center', label: 'Cliente', field: row => row.sender.full_name, sortable: true },
         { name: 'document_number', align: 'center', label: 'N° de Identificación', field: row => row.sender.document_number, sortable: true }
@@ -469,7 +470,10 @@ export default {
   },
   methods: {
     getPaymentType () {
-      this.$services.getData(['reports', 'consolidated-payment-types'], { paginated: false })
+      this.$services.getData(['reports', 'consolidated-payment-types'], {
+        from: date.formatDate(Date.now(), 'YYYY-MM-DD'),
+        to: date.formatDate(Date.now(), 'YYYY-MM-DD')
+      })
         .then(({ res }) => {
           // console.log(res)
           this.paymentTypes = res.data
@@ -483,7 +487,14 @@ export default {
         })
     },
     getBills () {
-      this.$services.getData(['bills'], { paginated: false })
+      this.$services.getData(['bills'], {
+        paginated: false,
+        dateFilter: {
+          from: date.formatDate(Date.now(), 'YYYY-MM-DD'),
+          to: date.formatDate(Date.now(), 'YYYY-MM-DD'),
+          field: 'created_at'
+        }
+      })
         .then(({ res }) => {
           this.bills = res.data.map(data => {
             data.created_at = this.formatDate(data.created_at)
@@ -497,7 +508,8 @@ export default {
       this.detailBillPayments = data.bill_payments
     },
     formatDate (sourceDate) {
-      return date.formatDate(sourceDate, 'DD-MM-YYYY')
+      const timeStamp = date.extractDate(sourceDate, 'YYYY-MM-DD')
+      return date.formatDate(timeStamp, 'DD-MM-YYYY')
     },
     calcTotalPaymentMethod () {
       if (this.paymentTypes.length > 0) {

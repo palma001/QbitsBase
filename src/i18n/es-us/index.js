@@ -32,7 +32,8 @@ export default {
     password: 'clave',
     list: 'lista de usuarios',
     roles: 'roles',
-    branch_offices: 'sucursales'
+    branch_offices: 'sucursales',
+    update: 'Editar usuario'
   },
   // modules
   modules: {
@@ -52,8 +53,8 @@ export default {
     'guides-management': 'guías',
     'inventory-management': 'inventario',
     'payment-summary': 'resumen de ventas',
-    'invoice-summary': 'resumen de facturación',
-    'shipment-summary': 'resumen de envíos',
+    'invoice-summary': 'resumen de facturas',
+    'shipment-summary': 'resumen de operaciones',
     dashboard: 'tablero',
     geolocation: 'geolocalización',
     transporte: 'transporte',
@@ -111,7 +112,10 @@ export default {
     'branch-offices': 'sucursales',
     destination: 'destino',
     destinations: 'destinos',
-    list: 'lista de comprobantes'
+    list: 'lista de comprobantes',
+    received: 'recibido',
+    in_transit: 'en tránsito',
+    delivered: 'entregado'
   },
   vehicle: {
     list: 'lista de transportes',
