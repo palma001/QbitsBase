@@ -1,6 +1,5 @@
 export const categoryModules = [
   {
-
     name: 'home',
     icon: 'home',
     open: true,
