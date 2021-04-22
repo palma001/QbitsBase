@@ -4,11 +4,13 @@
       :data="data"
       :columns="columnData"
       :title="ucwords($t(`${module}.${title}`))"
-      :pagination="paginationConfig"
+      :pagination.sync="paginationConfig"
       :loading="loading"
       :selection="selection"
       :selected.sync="selected"
-      @update:pagination="setPagination">
+      binary-state-sort
+      @request="setPagination"
+    >
       <template v-slot:loading>
         <q-inner-loading showing color="primary" />
       </template>
@@ -182,11 +184,19 @@ export default {
      */
     optionPagination: {
       type: Object,
-      required: false
+      required: true
     }
+  },
+  mounted () {
+    // get initial data from server (1st page)
+    this.setPagination({
+      pagination: this.paginationConfig,
+      filter: undefined
+    })
   },
   data () {
     return {
+      // paginationConfig: null,
       confirm: false,
       filter: '',
       /**
@@ -231,7 +241,8 @@ export default {
      * @param  {Object} data value pagination
      */
     setPagination (data) {
-      this.$emit('on-load-data', data)
+      data.pagination.sortOrder = data.pagination.descending ? 'asc' : 'desc'
+      this.$emit('on-load-data', data.pagination)
     },
     /**
      * setHeaders gets headers of table

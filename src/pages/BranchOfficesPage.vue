@@ -29,7 +29,7 @@
           :column="branchOffice"
           :data="data"
           :loading="loadingTable"
-          :optionPagination="optionPagination"
+          :optionPagination.sync="optionPagination"
           @search-data="searchData"
           @view-details="viewDetails"
           @on-load-data="loadData"
@@ -100,7 +100,8 @@ export default {
         rowsPerPage: 20,
         paginate: true,
         sortBy: 'id',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
+        rowsNumber: 20
       },
       /**
        * Params search
@@ -110,6 +111,7 @@ export default {
         paginated: true,
         sortBy: 'id',
         sortOrder: 'desc',
+        perPage: 1,
         dataSearch: {
           name: '',
           phone_number: '',
@@ -251,13 +253,15 @@ export default {
       this.loadingTable = true
       this.$services.getData(['branch-offices'], this.params)
         .then(({ res }) => {
-          this.data = res.data
+          this.data = res.data.data
+          this.optionPagination.rowsNumber = res.data.total
           this.loadingTable = false
         })
         .catch(err => {
           console.log(err)
           this.data = []
           this.loadingTable = false
+          this.optionPagination.rowsNumber = 0
         })
     }
   }

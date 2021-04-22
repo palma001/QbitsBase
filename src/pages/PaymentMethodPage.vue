@@ -29,7 +29,7 @@
           :column="paymentMethod"
           :data="data"
           :loading="loadingTable"
-          :optionPagination="optionPagination"
+          :optionPagination.sync="optionPagination"
           @search-data="searchData"
           @view-details="viewDetails"
           @on-load-data="loadData"
@@ -98,7 +98,8 @@ export default {
         rowsPerPage: 20,
         paginate: true,
         sortBy: 'id',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
+        rowsNumber: 20
       },
       /**
        * Params search
@@ -108,9 +109,11 @@ export default {
         paginated: true,
         sortBy: 'id',
         sortOrder: 'desc',
+        perPage: 1,
         dataSearch: {
           name: '',
-          cost: ''
+          symbol: '',
+          'coin.name': ''
         }
       },
       paymentMethodServices,
@@ -235,13 +238,17 @@ export default {
       this.loadingTable = true
       this.$services.getData(['payment-types'], this.params)
         .then(({ res }) => {
-          this.data = res.data
-          this.loadingTable = false
+          if (res.data) {
+            this.data = res.data.data
+            this.optionPagination.rowsNumber = res.data.total
+            this.loadingTable = false
+          }
         })
         .catch(err => {
           console.log(err)
           this.data = []
           this.loadingTable = false
+          this.optionPagination.rowsNumber = 0
         })
     }
   }

@@ -77,6 +77,7 @@ export default {
        */
       optionPagination: {
         rowsPerPage: 20,
+        rowsNumber: 20,
         paginate: true,
         sortBy: 'id',
         sortOrder: 'desc'
@@ -89,6 +90,7 @@ export default {
         paginated: true,
         sortBy: 'id',
         sortOrder: 'desc',
+        perPage: 1,
         dataSearch: {
           source: '',
           amount: '',
@@ -140,7 +142,7 @@ export default {
      */
     loadData (data) {
       this.params.page = data.page
-      this.params.sortBy = data.sortBy
+      this.params.sortBy = data.sortBy ?? this.params.sortBy
       this.params.sortOrder = data.sortOrder
       this.params.perPage = data.rowsPerPage
       this.optionPagination = data
@@ -181,13 +183,15 @@ export default {
       this.loadingTable = true
       this.$services.getData(['currency-rates'], this.params)
         .then(({ res }) => {
-          this.data = res.data
+          this.data = res.data.data
+          this.optionPagination.rowsNumber = res.data.total
           this.loadingTable = false
         })
         .catch(err => {
           console.log(err)
           this.data = []
           this.loadingTable = false
+          this.optionPagination.rowsNumber = 0
         })
     }
   }
