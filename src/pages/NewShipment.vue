@@ -121,6 +121,7 @@
     <q-dialog
       v-model="dialogPayment"
       persistent
+      full-height
     >
       <q-card style="width: 900px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">
@@ -131,38 +132,70 @@
         <q-card-section class="q-pt-md">
           <q-select
             label="Tipos de pago"
-            multiple
             dense
-            use-chips
-            v-model="paymentTypes"
+            v-model="paymentType"
             :options="paymentTypesAll"
-          />
-        </q-card-section>
-        <q-card-section
-          class="row q-col-gutter-md"
-          v-for="paymentType in paymentTypes"
-            :key="paymentType.id"
+            @input="selectedPaymnetType"
           >
-          <div class="col-xs-12 col-sm-6 col-md-6">
-            <q-input
-              dense
-              label="Monto"
-              :hint="paymentType.label"
-              v-model="paymentType.amount"
-              @input="calcTotalModalPaid"
-            />
-          </div>
-          <div class="col-xs-12 col-sm-6 col-md-6">
-            <q-input
-              dense
-              label="Codigo de referencia"
-              :hint="paymentType.label"
-              v-model="paymentType.reference"
-            />
-          </div>
+            <template v-if="paymentType" v-slot:append>
+              <q-icon name="add_circle" color="teal" @click.stop="selectedPaymnetType(paymentType)" class="cursor-pointer">
+                <q-tooltip
+                  anchor="center left"
+                  self="center right"
+                  :offset="[10, 10]"
+                >
+                  <strong>Agregar {{ paymentType.label }}</strong>
+                </q-tooltip>
+              </q-icon>
+            </template>
+          </q-select>
         </q-card-section>
-        <q-card-section>
-          <q-list bordered separator>
+        <q-scroll-area
+          :thumb-style="thumbStyle"
+          :content-style="contentStyle"
+          :content-active-style="contentActiveStyle"
+          style="height: 45vh"
+        >
+          <q-card-section
+            class="row q-col-gutter-sm text-center"
+            v-for="(paymentType, index) in paymentTypes"
+              :key="paymentType.id"
+            >
+            <div class="col-xs-5 col-sm-5 col-md-5">
+              <q-input
+                dense
+                label="Monto"
+                v-model="paymentType[`amount-${index}`]"
+                :hint="paymentType.label"
+                @input="calcTotalModalPaid"
+              />
+            </div>
+            <div class="col-xs-5 col-sm-5 col-md-5">
+              <q-input
+                dense
+                label="Codigo de referencia"
+                v-model="paymentType[`reference-${index}`]"
+                :hint="paymentType.label"
+              />
+            </div>
+            <div class="col-xs-2 col-sm-2 col-md-2 q-mt-md text-center">
+              <q-btn
+                dense
+                icon="delete"
+                size="md"
+                color="negative"
+                round
+                @click="deletePayment(index)"
+              >
+                <q-tooltip>
+                  Eliminar metodo de pago
+                </q-tooltip>
+              </q-btn>
+            </div>
+          </q-card-section>
+        </q-scroll-area>
+        <q-card-section class="q-py-xs">
+          <q-list bordered separator dense>
             <q-item
               clickable
               v-ripple
@@ -185,11 +218,16 @@
               <q-item-section>
                 $ {{  total - totalPayment }}
               </q-item-section>
-              <q-item-section side>Saldo</q-item-section>
+              <q-item-section side v-if="total - totalPayment < 0">
+                Cambio
+              </q-item-section>
+              <q-item-section side v-else>
+                Saldo
+              </q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
-        <q-card-actions class="q-pa-md" align="right">
+        <q-card-actions class="q-pa-xs" align="right">
           <q-btn color="primary" label="Pagar" @click="validBill" />
         </q-card-actions>
       </q-card>
@@ -213,12 +251,28 @@ export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
+      contentStyle: {
+        backgroundColor: 'rgba(0,0,0,0.02)',
+        color: '#555'
+      },
+
+      contentActiveStyle: {
+        color: 'black'
+      },
+      thumbStyle: {
+        right: '2px',
+        borderRadius: '5px',
+        backgroundColor: '#02718D',
+        width: '7px',
+        opacity: 1
+      },
       bill,
       buttonsSender,
       senderConfig,
       senderLoadingAdd: false,
       payments: {},
-      paymentTypes: null,
+      paymentType: null,
+      paymentTypes: [],
       dialogPayment: false,
       paymentTypesAll: [],
       paymentTypesDestinations: [],
@@ -281,6 +335,22 @@ export default {
     }
   },
   methods: {
+    /**
+     * Delete payment method
+     * @param {Number} index index array
+     */
+    deletePayment (index) {
+      this.paymentTypes.splice(index, 1)
+    },
+    /**
+     * Set payment method selected
+     */
+    selectedPaymnetType () {
+      this.paymentTypes.push(this.paymentType)
+    },
+    /**
+     * Validate bill
+     */
     validBill () {
       const saldo = this.total - this.totalPayment
       switch (true) {
@@ -297,6 +367,9 @@ export default {
           break
       }
     },
+    /**
+     * Save bill
+     */
     async saveBill () {
       this.$refs.sender.validate()
       const params = {
@@ -328,11 +401,11 @@ export default {
       * @param {Array} payments data payments
      */
     modelPayment (payments) {
-      return payments.map(payment => {
+      return payments.map((payment, index) => {
         return {
           payment_type_id: payment.value,
-          amount: payment.amount,
-          reference: payment.reference,
+          amount: payment[`amount-${index}`],
+          reference: payment[`reference-${index}`],
           user_created_id: this.userSession.id
         }
       })
@@ -438,9 +511,9 @@ export default {
       */
     calcTotalModalPaid () {
       let total = 0
-      this.paymentTypes.forEach((data) => {
-        if (data.amount) {
-          total = Number(total) + Number(data.amount)
+      this.paymentTypes.forEach((data, index) => {
+        if (data[`amount-${index}`]) {
+          total = Number(total) + Number(data[`amount-${index}`])
         }
       })
       this.totalPayment = total

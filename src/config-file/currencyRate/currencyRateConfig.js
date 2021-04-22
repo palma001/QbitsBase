@@ -112,3 +112,17 @@ export const currencyRate = [
     ]
   }
 ]
+
+/**
+* Actions buttons
+* @type {Array} array buttons
+*/
+export const buttonsActions = [
+  {
+    color: 'negative',
+    icon: 'delete',
+    size: 'sm',
+    event: 'delete',
+    class: 'q-ml-sm'
+  }
+]

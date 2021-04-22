@@ -182,6 +182,26 @@ export const propsPanelEdition = {
   ]
 }
 
+/**
+* Actions buttons
+* @type {Array} array buttons
+*/
+export const buttonsActions = [
+  {
+    color: 'primary',
+    icon: 'fullscreen',
+    size: 'sm',
+    event: 'view-details'
+  },
+  {
+    color: 'negative',
+    icon: 'delete',
+    size: 'sm',
+    event: 'delete',
+    class: 'q-ml-sm'
+  }
+]
+
 export const relationalDataConfiguration = [
   {
     targetPropTag: 'unit_of_measurement',

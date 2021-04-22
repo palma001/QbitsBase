@@ -30,9 +30,11 @@
           :data="data"
           :loading="loadingTable"
           :optionPagination="optionPagination"
+          :buttonsActions="buttonsActions"
           @search-data="searchData"
           @view-details="viewDetails"
           @on-load-data="loadData"
+          @delete="deleteData"
         />
       </div>
     </div>
@@ -71,7 +73,7 @@
 import DataTable from '../components/DataTable.vue'
 import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
-import { vehicle, propsPanelEdition } from '../config-file/vehicle/vehicleConfig.js'
+import { vehicle, propsPanelEdition, buttonsActions } from '../config-file/vehicle/vehicleConfig.js'
 import { mixins } from '../mixins'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
@@ -84,6 +86,7 @@ export default {
   },
   data () {
     return {
+      buttonsActions,
       branchOffice: null,
       userSession: null,
       loadingForm: false,
@@ -160,6 +163,29 @@ export default {
     ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
+    /**
+     * Delete data
+     * @param {Object} data data selected
+     */
+    deleteData (data) {
+      this.$q.dialog({
+        title: 'Alert',
+        message: '¿Desea eliminar el transporte?',
+        cancel: {
+          label: 'Cancelar',
+          color: 'negative'
+        },
+        persistent: true,
+        ok: {
+          label: 'Aceptar',
+          color: 'primary'
+        }
+      }).onOk(async () => {
+        await this.$services.deleteData(['vehicles', data.id])
+        this.notify(this, 'vehicle.deleteSuccessfull', 'positive', 'mood')
+        this.getVehicles()
+      })
+    },
     /**
      * Load data sorting
      * @param  {Object}
