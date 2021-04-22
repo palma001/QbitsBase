@@ -40,7 +40,13 @@
         </q-select>
       </div>
       <div class="col-xs-12 col-sm-6 col-lg-4 text-right">
-        <p class="text-h4 float-right">${{ total }}</p>
+        <p class="text-h4 float-right">
+          ${{ total }}
+          <q-tooltip content-class="bg-cyan-10" content-style="font-size: 20px" anchor="bottom left" self="top middle">
+            <q-icon name="change_circle"></q-icon>
+            {{ change }}
+          </q-tooltip>
+        </p>
         <q-btn
           icon="fa fa-credit-card"
           class="q-mr-md q-mt-xs"
@@ -124,8 +130,8 @@
       full-height
     >
       <q-card style="width: 900px; max-width: 80vw;">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Pagar</div>
+        <q-card-section class="row items-center q-pb-md bg-primary">
+          <div class="text-h6">Pagar factura</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
@@ -154,7 +160,7 @@
           :thumb-style="thumbStyle"
           :content-style="contentStyle"
           :content-active-style="contentActiveStyle"
-          style="height: 45vh"
+          style="height: 42vh"
         >
           <q-card-section
             class="row q-col-gutter-sm text-center"
@@ -168,6 +174,7 @@
                 v-model="paymentType[`amount-${index}`]"
                 :hint="paymentType.label"
                 @input="calcTotalModalPaid"
+                type="number"
               />
             </div>
             <div class="col-xs-5 col-sm-5 col-md-5">
@@ -227,7 +234,7 @@
             </q-item>
           </q-list>
         </q-card-section>
-        <q-card-actions class="q-pa-xs" align="right">
+        <q-card-actions class="q-px-md" align="right">
           <q-btn color="primary" label="Pagar" @click="validBill" />
         </q-card-actions>
       </q-card>
@@ -311,7 +318,9 @@ export default {
       exchange: 10000,
       totalPayment: 0,
       userSession: null,
-      branchOffice: null
+      branchOffice: null,
+      change: 0,
+      currencyRate: null
     }
   },
   created () {
@@ -322,6 +331,7 @@ export default {
     this.printBillAndVoucher(bill)
     this.userSession = this[GETTERS.GET_USER]
     this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
+    this.getCurrencyRate()
   },
   computed: {
     /**
@@ -505,6 +515,7 @@ export default {
         total = Number(total) + Number(data.rate.amount)
       })
       this.total = total
+      this.change = total * this.currencyRate.amount
     },
     /**
       * Calcula el total
@@ -616,6 +627,18 @@ export default {
           value: paymentTypeDestination.id
         }
       })
+    },
+
+    /**
+     * Get Currency rate all
+     */
+    async getCurrencyRate () {
+      const { res } = await this.$services.getData(['currency-rates'], {
+        paginated: false,
+        sortBy: 'id',
+        sortOrder: 'desc'
+      })
+      this.currencyRate = res.data[0]
     }
   }
 }
