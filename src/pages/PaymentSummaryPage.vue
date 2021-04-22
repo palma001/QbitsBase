@@ -41,21 +41,21 @@
 
             <template v-slot:before>
               <div class="q-pa-md">
-              <div class="text-h6 q-mb-xs">Métodos de Pagos</div>
+              <div class="text-h6 q-mb-xs">Métodos de pagos</div>
                 <div class="row q-col-gutter-xs">
                   <div class="col-3" v-for="paymentType in paymentTypes" :key="paymentType.id">
                     <q-card dark bordered class="bg-blue-grey-9 my-card">
                       <q-card-section>
                         <div class="text-h6">{{paymentType.name}}</div>
-                        <div class="text-subtitle2">$256.45</div>
+                        <div class="text-subtitle2">$----</div>
                       </q-card-section>
                     </q-card>
                   </div>
                   <div class="col-3">
-                    <q-card dark bordered class="bg-grey-14 my-card">
+                    <q-card dark bordered class="bg-cyan-9 my-card">
                       <q-card-section>
                         <div class="text-h6">Total</div>
-                        <div class="text-subtitle2">$256.45</div>
+                        <div class="text-subtitle2">Por Hacer</div>
                       </q-card-section>
                     </q-card>
                   </div>

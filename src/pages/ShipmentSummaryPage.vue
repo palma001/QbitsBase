@@ -11,7 +11,7 @@
             <div class="text-h5 q-mb-md">Sucursales</div>
               <div class="q-gutter-md q-mt-xs">
                 <q-list bordered padding class="rounded-borders" style="max-width: 350px">
-                  <q-item clickable v-ripple v-for="branchOffice in branchOffices" :key="branchOffice.id">
+                  <q-item clickable v-ripple v-for="branchOffice in branchOffices" :key="branchOffice.id" @click="filterBranchOffice(branchOffice.id)">
                     <q-item-section avatar top>
                       <q-avatar icon="maps_home_work" color="primary" text-color="white" />
                     </q-item-section>
@@ -41,7 +41,7 @@
 
             <template v-slot:before>
               <div class="q-pa-md">
-              <div class="text-h6 q-mb-xs">Movilidad de Paquetes</div>
+              <div class="text-h6 q-mb-xs">Movilidad de paquetes</div>
                 <div class="row q-col-gutter-xs">
                     <div class="col-3">
                         <q-card dark bordered class="bg-blue-grey-9  my-card">
@@ -65,17 +65,17 @@
                         <q-card dark bordered class="bg-blue-grey-9  my-card">
                         <q-card-section>
                             <div class="text-h6">Entregados</div>
-                            <div class="text-subtitle2">300 Paquetes</div>
-                            <div class="text-subtitle2">8421,00 Kg</div>
+                            <div class="text-subtitle2">### Paquetes</div>
+                            <div class="text-subtitle2">####,## Kg</div>
                         </q-card-section>
                         </q-card>
                     </div>
                     <div class="col-3">
-                        <q-card dark bordered class="bg-grey-14 my-card">
+                        <q-card dark bordered class="bg-cyan-9 my-card">
                         <q-card-section>
                             <div class="text-h6">Total</div>
-                            <div class="text-subtitle2">454 Paquetes</div>
-                            <div class="text-subtitle2">3200,40 Kg</div>
+                            <div class="text-subtitle2">## Paquetes</div>
+                            <div class="text-subtitle2">###,## Kg</div>
                         </q-card-section>
                         </q-card>
                     </div>
@@ -90,7 +90,7 @@
                     <div class="col-12">
                       <q-table
                         title="Treats"
-                        :data="data"
+                        :data="vouchers"
                         :columns="columns"
                         row-key="id"
                         :filter="filter"
@@ -99,23 +99,23 @@
                         <template v-slot:top>
                           <div class="q-mb-xs q-pb-none">
                             <div class="row">
-                              <p class="text-h6">Consolidado de operaciones</p>
+                              <p class="text-h6">Operaciones</p>
                             </div>
                             <div class="row q-col-gutter-x-sm text-left justify-center">
                               <div class="col-3 q-pt-sm">
                                 <q-radio v-model="shape" val="Del" label="Del" />
                               </div>
                               <div class="col-8">
-                                <q-select v-model="model" :options="options" label="Filtrar" dense/>
+                                <q-select v-model="model" :options="options" label="Filtrar" dense  @input="queryTime"/>
                               </div>
                               <div class="col-3 q-pt-sm">
                                 <q-radio v-model="shape" val="Rango" label="Rango" />
                               </div>
                               <div class="col-4">
-                                <q-input type="date" hint="Desde" v-model="desde" dense/>
+                                <q-input type="date" hint="Desde" v-model="desde" dense @input="range(desde, hasta)"/>
                               </div>
                               <div class="col-4">
-                                <q-input type="date" hint="Hasta" v-model="hasta" dense/>
+                                <q-input type="date" hint="Hasta" v-model="hasta" dense @input="range(desde, hasta)"/>
                               </div>
                             </div>
                           </div>
@@ -131,8 +131,11 @@
                             <q-th v-for="col in props.cols" :key="col.name" :props="props">
                               {{col.label}}
                             </q-th>
+                            <q-th>
+                              Datos del paquete
+                            </q-th>
                             <q-th class="text-center">
-                              Acciones
+                              Destinatario
                             </q-th>
                           </q-tr>
                         </template>
@@ -141,25 +144,45 @@
                             <q-td v-for="col in props.cols" :key="col.name" :props="props">
                               {{col.value}}
                             </q-td>
-                            <q-td class="text-center">
-                              <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true">
+                            <q-td align="center">
+                              <q-btn
+                                color="primary"
+                                icon="inventory_2"
+                                size="sm"
+                                round
+                              >
                                 <q-popup-proxy>
-                                    <q-banner>
-                                    <div class="row">
-                                    <div class="col-12">
-                                        <q-space/>
-                                        <q-btn icon="close" flat color="primary" v-close-popup class="float-right"/>
-                                    </div>
-                                    </div>
-                                    <div class="row">
-                                    <div class="col-12">
-                                        <p class="h4">Datos adicionales</p>
-                                        <q-input label="Cliente" dense/>
-                                        <q-input label="Teléfono" dense/>
-                                        <q-input label="email" dense/>
-                                    </div>
-                                    </div>
-                                    </q-banner>
+                                  <div class="q-pa-md">
+                                    <q-input
+                                      readonly
+                                      v-for="rate in props.row.rates"
+                                      :key="rate.x" :label="rate.name"
+                                      :value="`${rate.pivot.description} ${rate.unit_of_measurement.acronym}`"
+                                    />
+                                  </div>
+                                </q-popup-proxy>
+                              </q-btn>
+                            </q-td>
+                            <q-td class="text-center">
+                              <q-btn icon="person" color="primary" round size="sm" @click="alert=true">
+                                <q-popup-proxy>
+                                  <div class="q-pa-md">
+                                    <q-input
+                                      readonly
+                                      label="Nombre"
+                                      :value="props.row.addressee.full_name"
+                                    />
+                                    <q-input
+                                      readonly
+                                      label="Teléfono"
+                                      :value="props.row.addressee.phone_number"
+                                    />
+                                    <q-input
+                                      readonly
+                                      label="email"
+                                      :value="props.row.addressee.email"
+                                    />
+                                  </div>
                                 </q-popup-proxy>
                               </q-btn>
                             </q-td>
@@ -179,14 +202,17 @@
 </template>
 
 <script>
+import { date } from 'quasar'
+import { mixins } from '../mixins'
 export default {
+  mixins: [mixins.containerMixin],
   data () {
     return {
       splitterModel: 16, // start at 50%
       insideModel: 32,
       alert: false,
-      // address: '',
-      shippingStatus: [], // Variable para controlar de forma dinámica los estatus de envíos (Recibido, En Tránsito, Entregado)
+      vouchers: [],
+      shippingStatus: [],
       branchOffices: [],
       desde: null,
       hasta: null,
@@ -195,25 +221,32 @@ export default {
       options: ['Día', 'Día anterior', 'Mes', 'Mes anterior'],
       loading: false,
       filter: '',
+      params: {
+        paginated: false,
+        dataFilter: {},
+        dateFilter: {
+          field: 'created_at',
+          to: date.formatDate(new Date(), 'YYYY-MM-DD'),
+          from: date.formatDate(new Date(), 'YYYY-MM-DD')
+        }
+      },
       rowCount: 10,
       name: '',
-      // employee: '',
       columns: [
         {
           name: 'date',
           required: true,
           label: 'Fecha',
           align: 'left',
-          field: row => row.name,
+          field: row => this.formatDate(row.created_at),
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'voucherNumber', align: 'center', label: 'N° de Comprobante', field: 'voucherNumber', sortable: true },
-        { name: 'sender', align: 'center', label: 'Remitente', field: 'sender' },
-        { name: 'destination', align: 'center', label: 'Destino', field: 'destination' },
-        { name: 'weight', align: 'center', label: 'Peso (Kg)', field: 'weight' },
-        { name: 'status', align: 'center', label: 'Estatus', field: 'status' },
-        { name: 'addressee', align: 'center', label: 'Destinatario', field: 'addressee' }
+        { name: 'voucherNumber', align: 'center', label: 'N° de Comprobante', field: row => row.number, sortable: true },
+        { name: 'sender', align: 'center', label: 'Remitente', field: row => row.bill.sender.full_name },
+        { name: 'destination', align: 'center', label: 'Destino', field: row => row.destinable.city ?? row.destinable.name },
+        { name: 'status', align: 'center', label: 'Estatus', field: row => this.$t('voucher.' + row.status) },
+        { name: 'addressee', align: 'center', label: 'Destinatario', field: row => row.addressee.full_name }
       ],
       data: [
         {
@@ -422,24 +455,55 @@ export default {
     }
   },
   created () {
-    // this.getShippingStatus()
     this.getBranchOffice()
+    this.getVoucher()
   },
   methods: {
-    /* Método para consultar las estatus de los envíos
-    (Retorna el total de paquetes. de acuerdo a su estatus {Recibido, En Tránsito, Entregado} y el total del peso en Kg)
-    getShippingStatus () {
-      this.$services.getData(['payment-types'], { paginated: false })
-        .then(({ res }) => {
-          // console.log(res)
-          this.paymentTypes = res.data
-        })
-    }, */
     getBranchOffice () {
       this.$services.getData(['branch-offices'], { paginated: false })
         .then(({ res }) => {
           this.branchOffices = res.data
+          this.filterBranchOffice(this.branchOffices[0].id)
         })
+    },
+    filterBranchOffice (sucursal) {
+      this.params.dataFilter = {
+        'bill.branch_office_id': sucursal
+      }
+      this.getVoucher(this.params)
+    },
+    getVoucher (params = this.params) {
+      this.$services.getData(['vouchers'], params)
+        .then(({ res }) => {
+          this.vouchers = res.data
+        })
+    },
+    filterVoucher (comprobante) {
+      this.params.dataFilter.voucher = comprobante
+      this.getBranchOffice6(this.params)
+    },
+    formatDate (sourceDate) {
+      if (sourceDate) {
+        const timeStamp = date.extractDate(sourceDate, 'YYYY-MM-DD')
+        return date.formatDate(timeStamp, 'DD-MM-YYYY')
+      }
+      return '-'
+    },
+    queryTime () {
+      const queryTime = this.unitTime(this.model)
+      this.range(queryTime.from, queryTime.to)
+    },
+    range (desde, hasta) {
+      if (desde && hasta) {
+        this.params = {
+          dateFilter: {
+            field: 'created_at',
+            from: desde,
+            to: hasta
+          }
+        }
+        this.getVoucher(this.params)
+      }
     }
   }
 }

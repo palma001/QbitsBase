@@ -35,7 +35,7 @@ const routes = [
       },
       {
         path: '/check-shipping',
-        component: () => import('pages/CheckShippingPage.vue'),
+        component: () => import('src/pages/CheckShippingPage.vue'),
         name: 'CheckShippingPage'
       },
       {

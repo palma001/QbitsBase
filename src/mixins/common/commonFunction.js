@@ -1,3 +1,4 @@
+import { date } from 'quasar'
 /**
  * Translates the tags in Entities
  * @param {String} message tag to translate
@@ -96,7 +97,7 @@ export const can = (self, module, permission) => {
   }
 }
 
-export const date = (dateFormating) => {
+export const date2 = (dateFormating) => {
   const newDate = new Date(dateFormating)
   return `${newDate.getDate()}-${newDate.getMonth() + 1}-${newDate.getFullYear()}`
 }
@@ -114,6 +115,44 @@ export const notify = (self, message, color, icon, position = 'bottom-right') =>
     icon: icon
   })
 }
+export const unitTime = (param) => {
+  let between = {}
+  if (param === 'Día anterior') {
+    let newDate = date.subtractFromDate(new Date(), { days: 1 })
+    newDate = date.formatDate(newDate, 'YYYY-MM-DD')
+    between = {
+      from: newDate,
+      to: newDate
+    }
+  }
+  if (param === 'Día') {
+    const newDate = date.formatDate(Date.now(), 'YYYY-MM-DD')
+    between = {
+      from: newDate,
+      to: newDate
+    }
+  }
+  if (param === 'Mes') {
+    const newDate = date.formatDate(Date.now(), 'YYYY-MM-DD')
+    const initDate = date.startOfDate(newDate, 'month')
+    const endDate = date.endOfDate(newDate, 'month')
+    between = {
+      from: initDate,
+      to: endDate
+    }
+  }
+  if (param === 'Mes anterior') {
+    let newDate = date.formatDate(Date.now(), 'YYYY-MM-DD')
+    newDate = date.subtractFromDate(newDate, { month: 1 })
+    const initDate = date.startOfDate(newDate, 'month')
+    const endDate = date.endOfDate(newDate, 'month')
+    between = {
+      from: initDate,
+      to: endDate
+    }
+  }
+  return between
+}
 
 export const methods = {
   translateEntity,
@@ -123,6 +162,7 @@ export const methods = {
   can,
   notify,
   errorRequest,
-  date,
-  time
+  date2,
+  time,
+  unitTime
 }
