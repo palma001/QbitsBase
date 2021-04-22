@@ -25,12 +25,15 @@
           title="list"
           module="currencyRate"
           searchable
+          action
           :column="currencyRate"
           :data="data"
           :loading="loadingTable"
+          :buttonsActions="buttonsActions"
           :optionPagination="optionPagination"
           @search-data="searchData"
           @on-load-data="loadData"
+          @delete="deleteData"
         />
       </div>
     </div>
@@ -53,7 +56,7 @@
 <script>
 import DataTable from '../components/DataTable.vue'
 import DynamicForm from '../components/DynamicForm.vue'
-import { currencyRate } from '../config-file/currencyRate/currencyRateConfig.js'
+import { currencyRate, buttonsActions } from '../config-file/currencyRate/currencyRateConfig.js'
 import { mixins } from '../mixins'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
@@ -65,6 +68,7 @@ export default {
   },
   data () {
     return {
+      buttonsActions,
       loadingForm: false,
       /**
        * Selected data
@@ -137,6 +141,29 @@ export default {
   },
   methods: {
     /**
+     * Delete data
+     * @param {Object} data data selected
+     */
+    deleteData (data) {
+      this.$q.dialog({
+        title: 'Alert',
+        message: '¿Desea eliminar la tasa de cambio?',
+        cancel: {
+          label: 'Cancelar',
+          color: 'negative'
+        },
+        persistent: true,
+        ok: {
+          label: 'Aceptar',
+          color: 'primary'
+        }
+      }).onOk(async () => {
+        await this.$services.deleteData(['currency-rates', data.id])
+        this.notify(this, 'currencyRate.deleteSuccessfull', 'positive', 'mood')
+        this.getCurrencyRates()
+      })
+    },
+    /**
      * Load data sorting
      * @param  {Object}
      */
@@ -171,6 +198,7 @@ export default {
           this.addDialig = false
           this.loadingForm = false
           this.getCurrencyRates(this.params)
+          this.notify(this, 'currencyRate.addSuccessfull', 'positive', 'mood')
         })
         .catch(() => {
           this.loadingForm = false
