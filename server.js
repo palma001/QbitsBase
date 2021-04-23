@@ -8,14 +8,21 @@ const port = process.env.PORT || 5000
 
 app.use('/', express.static(path.join(__dirname, '/dist/pwa')))
 app.get('/print', function (req, res) {
+  const options = {
+    printer: ['facturas']
+  }
   ptp
-    .getPrinters()
+    .print('./public/prueba.pdf', options)
     .then(print => {
       return res.json({
         print: print
       })
     })
-    .catch(console.error)
+    .catch((err) => {
+      return res.json({
+        print: err
+      })
+    })
 })
 
 app.listen(port)
