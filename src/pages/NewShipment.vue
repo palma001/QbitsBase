@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="q-gutter-lg">
+  <q-page padding>
     <div class="row justify-between q-gutter-y-sm">
       <div class="col-xs-12 col-sm-6 col-lg-4">
         <q-select
@@ -56,59 +56,84 @@
         />
       </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <q-table
-          hide-bottom
-          :title="ucwords($t('newShipment.packages'))"
-          :data="packages"
-          :columns="columns"
-        >
-           <template v-slot:top-right>
-            <q-btn
-              color="primary"
-              :label="ucwords($t('newShipment.addPackages'))"
-              @click="dialogPackage = !dialogPackage"
-            />
-          </template>
-          <template v-slot:header="props">
-            <q-tr :props="props">
-              <q-th
-                v-for="col in props.cols"
-                :key="col.name"
-                :props="props"
-              >
-                {{ col.label }}
-              </q-th>
-              <q-th auto-width>
-                Acciones
-              </q-th>
-            </q-tr>
-          </template>
-          <template v-slot:body="props">
-            <q-tr :props="props">
-              <q-td
-                v-for="col in props.cols"
-                :key="col.name"
-                :props="props"
-              >
-                {{ col.value }}
-              </q-td>
-              <q-td auto-width class="q-gutter-x-sm">
-                <!-- <q-btn size="13px" color="primary" round dense @click="props.expand = !props.expand" icon="visibility" /> -->
-                <q-btn size="13px" color="negative" round dense @click="deletePackage(props)" icon="delete" />
-                <!-- <q-btn size="13px" color="positive" round dense @click="props.expand = !props.expand" icon="content_copy" /> -->
-              </q-td>
-            </q-tr>
-          </template>
-        </q-table>
+    <div class="row q-col-gutter-md">
+      <div class="col-sm-5 col-md-5 col-lg-4">
+        <dialog-package-deital
+          :show="dialogPackage"
+          @close="dialogPackage = !dialogPackage"
+          @savePackage="savePackage"
+        />
+      </div>
+      <div class="col-sm-7 col-md-7 col-lg-8 row">
+        <div class="col-12">
+          <q-table
+            dense
+            hide-bottom
+            :title="ucwords($t('newShipment.packages'))"
+            :data="packages"
+            :columns="columns"
+          >
+            <template v-slot:header="props">
+              <q-tr :props="props">
+                <q-th
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
+                >
+                  {{ col.label }}
+                </q-th>
+                <q-th auto-width>
+                  Acciones
+                </q-th>
+              </q-tr>
+            </template>
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td
+                  v-for="col in props.cols"
+                  :key="col.name"
+                  :props="props"
+                >
+                  {{ col.value }}
+                </q-td>
+                <q-td auto-width class="q-gutter-x-sm">
+                  <!-- <q-btn size="13px" color="primary" round dense @click="props.expand = !props.expand" icon="visibility" /> -->
+                  <q-btn size="13px" color="negative" round dense @click="deletePackage(props)" icon="delete" />
+                  <!-- <q-btn size="13px" color="positive" round dense @click="props.expand = !props.expand" icon="content_copy" /> -->
+                </q-td>
+              </q-tr>
+            </template>
+          </q-table>
+        </div>
+        <div class="col-7">
+          <q-btn
+            v-for="payment in paymentTypesAll"
+            :key="payment.id"
+            :label="`${payment.name} (${payment.symbol})`"
+            color="negative"
+          />
+          <!-- <q-select
+              label="Tipos de pago"
+              dense
+              v-model="paymentType"
+              :options="paymentTypesAll"
+              @input="selectedPaymnetType"
+            >
+              <template v-if="paymentType" v-slot:append>
+                <q-icon name="add_circle" color="teal" @click.stop="selectedPaymnetType(paymentType)" class="cursor-pointer">
+                  <q-tooltip
+                    anchor="center left"
+                    self="center right"
+                    :offset="[10, 10]"
+                  >
+                    <strong>Agregar {{ paymentType.label }}</strong>
+                  </q-tooltip>
+                </q-icon>
+              </template>
+          </q-select> -->
+        </div>
       </div>
     </div>
-    <dialog-package-deital
-      :show="dialogPackage"
-      @close="dialogPackage = !dialogPackage"
-      @savePackage="savePackage"
-    />
     <q-dialog
       v-model="dialogSender"
       full-height
@@ -127,10 +152,9 @@
     <q-dialog
       v-model="dialogPayment"
       persistent
-      full-height
     >
       <q-card style="width: 900px; max-width: 80vw;">
-        <q-card-section class="row items-center q-pb-md bg-primary">
+        <q-card-section class="row items-center q-pb-md bg-primary text-white">
           <div class="text-h6">Pagar factura</div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
@@ -259,7 +283,7 @@ export default {
   data () {
     return {
       contentStyle: {
-        backgroundColor: 'rgba(0,0,0,0.02)',
+        backgroundColor: 'white',
         color: '#555'
       },
 
@@ -351,6 +375,8 @@ export default {
      */
     deletePayment (index) {
       this.paymentTypes.splice(index, 1)
+      this.paymentType[`reference-${index}`] = null
+      this.paymentType[`amount-${index}`] = null
     },
     /**
      * Set payment method selected
@@ -607,12 +633,7 @@ export default {
      */
     async getAllPaymentTypes () {
       const { res } = await this.$services.getData(['payment-types'], { paginated: false })
-      this.paymentTypesAll = res.data.map(paymentType => {
-        return {
-          label: paymentType.name,
-          value: paymentType.id
-        }
-      })
+      this.paymentTypesAll = res.data
     },
     /**
      * Get Senders all
