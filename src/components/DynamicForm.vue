@@ -469,12 +469,12 @@ export default {
               'thumb-style': {
                 right: '2px',
                 borderRadius: '5px',
-                backgroundColor: '#02718D',
+                backgroundColor: 'white',
                 width: '7px',
                 opacity: 1
               },
               'content-style': {
-                backgroundColor: 'rgba(0,0,0,0.02)',
+                backgroundColor: 'white',
                 color: '#555'
               },
               'content-active-style': {
@@ -498,7 +498,8 @@ export default {
                     class: {
                       row: true,
                       'justify-evenly': true,
-                      'q-gutter-sm': true
+                      'q-gutter-sm': true,
+                      'bg-white': true
                     }
                   },
                   [
