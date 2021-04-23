@@ -8,18 +8,17 @@
       </q-card-section>
       <q-card-section class="q-pa-none" style="min-height: 420px;'">
         <q-scroll-area
-            :thumb-style="thumbStyle"
-            :content-style="contentStyle"
-            :content-active-style="contentActiveStyle"
-            style="height: 72vh;"
-          >
+          :thumb-style="thumbStyle"
+          :content-style="contentStyle"
+          :content-active-style="contentActiveStyle"
+          style="height: 80vh;"
+        >
           <q-stepper
             ref="stepper"
             color="primary"
             animated
-            header-nav
-            v-model="step"
             alternative-labels
+            v-model="step"
             :vertical="$q.screen.lt.md"
             style="border-style: none !important; border-width: 0px; !important"
           >
@@ -28,9 +27,10 @@
               icon="settings"
               :name="1"
               :done="step > 1"
+              :error="!errorRate"
             >
               <q-card class="row">
-                <!-- <q-form ref="myForm" class="row"> -->
+                <q-form ref="myForm" class="row">
                   <q-card-section
                     class="col-12"
                     v-for="(rate, index) in rates"
@@ -41,6 +41,7 @@
                       v-model="rateValue[rate.id]"
                       type="number"
                       :autofocus="index === 0"
+                      :rules="[val => !!val || 'El campo es requerido']"
                       :label="`${rate.name} (${rate.unit_of_measurement.acronym})`"
                     />
                   </q-card-section>
@@ -51,67 +52,75 @@
                         dense
                         v-model="rateValue.amount"
                         type="number"
+                        :rules="[val => !!val || 'El campo es requerido']"
                         label="Costo del paquete"
                       />
                   </q-card-section>
-                <!-- </q-form> -->
+                </q-form>
               </q-card>
-              </q-step>
-              <q-step
-                title="Dirección de envio"
-                icon="create_new_folder"
-                :name="2"
-                :done="step > 2"
-              >
-                <q-card class="row">
-                  <!-- <q-form ref="step2" class="row"> -->
-                    <q-card-section class="col-12">
-                      <q-select
-                        v-model="deliveryType"
-                        :options="options"
-                        label="Tipo de entrega"
-                        dense
-                        :rules="[ val => val && val.length > 0 || `El campo tipo de entrega es requerido` ]"
-                      />
-                      </q-card-section>
-                      <q-card-section class="col-12" v-if="deliveryType === 'Sucursal'">
-                        <q-select
-                          v-model="branchOffice"
-                          dense
-                          label="Sucursales"
-                          :options="branchOffices"
-                        />
-                      </q-card-section>
-                      <q-card-section class="col-12 q-pt-none row q-col-gutter-md" v-else>
-                        <q-select
-                          v-model="destination"
-                          :options="destinations"
-                          label="Destino"
-                          dense
-                          class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
-                        />
-                        <q-input
-                          dense
-                          v-model="referencePoin"
-                          label="Punto de referencia"
-                          class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
-                        />
-                        <q-input
-                          dense
-                          v-model="address"
-                          label="Dirección"
-                          type="textarea"
-                        />
-                      </q-card-section>
-                  <!-- </q-form> -->
-                </q-card>
-              </q-step>
-              <q-step
-                :name="3"
-                title="Datos del destinatario"
-                icon="add_comment"
-              >
-                <q-card class="row">
+            </q-step>
+            <q-step
+              title="Dirección de envio"
+              icon="create_new_folder"
+              :name="2"
+              :done="step > 2"
+              :error="!errorDirection"
+            >
+              <q-card>
+                <q-form ref="step2" class="row">
+                  <q-card-section class="col-12">
+                    <q-select
+                      v-model="deliveryType"
+                      :options="options"
+                      label="Tipo de entrega"
+                      dense
+                    />
+                  </q-card-section>
+                  <q-card-section class="col-12" v-if="deliveryType === 'Sucursal'">
+                    <q-select
+                      v-model="branchOffice"
+                      dense
+                      label="Sucursales"
+                      :options="branchOffices"
+                      :rules="[myRule]"
+                    />
+                  </q-card-section>
+                  <q-card-section class="col-12 q-pt-none row q-col-gutter-md" v-else>
+                    <q-select
+                      v-model="destination"
+                      :options="destinations"
+                      label="Destino"
+                      dense
+                      class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                      :rules="[myRule]"
+                    />
+                    <q-input
+                      dense
+                      v-model="referencePoin"
+                      label="Punto de referencia"
+                      class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                      :rules="[ val => val && val.length > 0 || `El campo es requerido` ]"
+                    />
+                    <q-input
+                      dense
+                      v-model="address"
+                      label="Dirección"
+                      type="textarea"
+                      style="width: 100%"
+                      :rules="[ val => val && val.length > 0 || `El campo es requerido` ]"
+                    />
+                  </q-card-section>
+                </q-form>
+              </q-card>
+            </q-step>
+            <q-step
+              title="Datos del destinatario"
+              icon="add_comment"
+              :name="3"
+              :error="!errorAddress"
+            >
+              <q-card class="row">
+                <q-form ref="step3" class="row">
                   <q-card-section class="col-12">
                     <q-input
                       autofocus
@@ -119,6 +128,7 @@
                       v-model="documetntNumber"
                       label="Número de documento"
                       @blur="getAddress"
+                      :rules="[val => !!val || 'El campo es requerido']"
                     />
                   </q-card-section>
                   <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -126,6 +136,7 @@
                       dense
                       v-model="addressee.name"
                       label="Nombre"
+                      :rules="[val => !!val || 'El campo es requerido']"
                     />
                   </q-card-section>
                   <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -133,6 +144,7 @@
                       dense
                       v-model="addressee.last_name"
                       label="Apellido"
+                      :rules="[val => !!val || 'El campo es requerido']"
                     />
                   </q-card-section>
                   <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -140,6 +152,7 @@
                       dense
                       v-model="addressee.phone_number"
                       label="Telefono"
+                      :rules="[val => !!val || 'El campo es requerido']"
                     />
                   </q-card-section>
                   <q-card-section class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -149,8 +162,9 @@
                       label="Email"
                     />
                   </q-card-section>
-                </q-card>
-              </q-step>
+                </q-form>
+              </q-card>
+            </q-step>
           </q-stepper>
         </q-scroll-area>
       </q-card-section>
@@ -167,12 +181,12 @@
           icon="navigate_next"
           color="primary"
           v-if="step < 3"
-          @click="$refs.stepper.next()"
+          @click="nextAndBack"
         />
         <q-btn
           label="Guardar"
           color="primary"
-          @click="saveDataPackage"
+          @click="nextAndBack"
           v-else
         />
       </q-card-actions>
@@ -181,10 +195,17 @@
 </template>
 
 <script>
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
+import { mixins } from '../mixins'
 export default {
   name: 'DialogPackageDeital',
+  mixins: [mixins.containerMixin],
   data () {
     return {
+      userSession: null,
+      branchOfficeSession: null,
+      errorAddress: true,
       errorRate: true,
       errorDirection: true,
       contentStyle: {
@@ -197,7 +218,7 @@ export default {
       thumbStyle: {
         right: '1px',
         borderRadius: '5px',
-        backgroundColor: '#02718D',
+        backgroundColor: 'white',
         width: '7px',
         opacity: 1
       },
@@ -235,40 +256,70 @@ export default {
       default: false
     }
   },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
+  },
   created () {
     this.getAllRates()
     this.getAllBranchOffices()
     this.getAllDestinations()
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOfficeSession = this[GETTERS.GET_BRANCH_OFFICE]
   },
   methods: {
-    // async nextAndBack () {
-    //   if (this.step === 1) {
-    //     await this.validateRate()
-    //     if (this.errorRate) {
-    //       this.$refs.stepper.next()
-    //     }
-    //   }
-    //   if (this.step === 2) {
-    //     await this.validateBranchOffice()
-    //     if (this.errorDirection) {
-    //       this.$refs.stepper.next()
-    //     }
-    //   }
-    // },
-    // validateRate () {
-    //   if (this.$refs.myForm) {
-    //     this.$refs.myForm.validate().then(success => {
-    //       this.errorRate = success
-    //     })
-    //   }
-    // },
-    // validateBranchOffice () {
-    //   if (this.$refs.step2) {
-    //     this.$refs.step2.validate().then(success => {
-    //       this.errorDirection = success
-    //     })
-    //   }
-    // },
+    myRule (val) {
+      if (val === null) {
+        return 'El campo de es requerido'
+      }
+    },
+    async nextAndBack () {
+      switch (this.step) {
+        case 1:
+          await this.validateRate()
+          if (this.errorRate) {
+            this.step = 2
+          }
+          break
+        case 2:
+          await this.validateBranchOffice()
+          if (this.errorDirection) {
+            this.step = 3
+          }
+          break
+        case 3:
+          await this.validateAddressee()
+          if (this.errorAddress) {
+            this.saveDataPackage()
+          }
+          break
+        default:
+          break
+      }
+    },
+    validateAddressee () {
+      if (this.$refs.step3) {
+        this.$refs.step3.validate().then(success => {
+          this.errorAddress = success
+        })
+      }
+    },
+    validateRate () {
+      if (this.$refs.myForm) {
+        this.$refs.myForm.validate().then(success => {
+          this.errorRate = success
+        })
+      }
+    },
+    validateBranchOffice () {
+      if (this.$refs.step2) {
+        this.$refs.step2.validate().then(success => {
+          this.errorDirection = success
+        })
+      }
+    },
     /**
      * Save vocuher
      */
@@ -278,10 +329,10 @@ export default {
         rate: this.rateValue,
         addressee: this.addressee,
         destination: {
-          branchOffice: this.branchOffice,
+          branchOffice: this.deliveryType === 'Sucursal' ? this.branchOffice : null,
           referencePoin: this.referencePoin,
           address: this.address,
-          destination: this.destination
+          destination: this.deliveryType === 'Entrega a domicilio' ? this.destination : null
         }
       })
       this.clearForm()
@@ -305,7 +356,7 @@ export default {
      * Save Addresse
      */
     async saveAddresse () {
-      this.addressee.user_created_id = 1
+      this.addressee.user_created_id = this.userSession.id
       this.addressee.document_number = this.documetntNumber
       const { res } = await this.$services.postData(['addressees'], this.addressee)
       this.addressee = res.data

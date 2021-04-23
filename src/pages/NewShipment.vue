@@ -562,8 +562,6 @@ export default {
      * Filter Sender
     */
     filterFn (val, update, abort) {
-      // call abort() at any time if you can't retrieve data somehow
-
       setTimeout(() => {
         update(
           () => {
