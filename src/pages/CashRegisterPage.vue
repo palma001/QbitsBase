@@ -142,24 +142,52 @@
                         {{col.value}}
                         </q-td>
                         <q-td class="text-center">
-                        <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true">
-                            <q-popup-proxy>
+                        <!-- <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true"> -->
+                        <q-btn icon="person" color="primary" round size="sm" @click="alert=true">
+                           <q-popup-proxy>
+                            <div class="q-pa-md">
+                              <q-input
+                                    readonly
+                                    label="Nombre"
+                              />
+                            </div>
+                           </q-popup-proxy>
+                            <!-- <q-popup-proxy>
                             <q-banner>
                                 <div class="row">
-                                <div class="col-12">
+                                  <div class="col-12">
                                     <q-space/>
                                     <q-btn icon="close" flat color="primary" v-close-popup class="float-right"/>
-                                </div>
+                                  </div>
                                 </div>
                                 <div class="row">
-                                <div class="col-12">
-                                    <p class="h4">Datos adicionales</p>
-                                    <q-input label="Cliente" dense/>
-                                    <q-input label="Teléfono" dense/>
-                                    <q-input label="email" dense/>
-                                </div>
+                                  <div class="col-12">
+                                      <p class="h4">Datos adicionales</p>
+                                      <q-input label="Cliente" dense/>
+                                      <q-input label="Teléfono" dense/>
+                                      <q-input label="email" dense/>
+                                  </div>
                                 </div>
                             </q-banner>
+                            </q-popup-proxy> -->
+                            <q-popup-proxy>
+                              <div class="q-pa-md">
+                                <!-- <q-input
+                                  readonly
+                                  label="Nombre"
+                                  :value="props.row.addressee.full_name"
+                                />
+                                <q-input
+                                  readonly
+                                  label="Teléfono"
+                                  :value="props.row.addressee.phone_number"
+                                />
+                                <q-input
+                                  readonly
+                                  label="email"
+                                  :value="props.row.addressee.email"
+                                /> -->
+                              </div>
                             </q-popup-proxy>
                         </q-btn>
                         </q-td>
@@ -374,7 +402,7 @@ export default {
         { name: 'payment_type', align: 'center', label: 'Método de Pago', field: row => row.payment_type.name, sortable: true },
         { name: 'destination', align: 'center', label: 'Destino', field: row => row.payment_type.payment_destination.name, sortable: true },
         { name: 'employee', align: 'center', label: 'Empleado', field: row => row.user.name, sortable: true },
-        { name: 'role', align: 'center', label: 'Cargo', field: row => row.user.name },
+        { name: 'role', align: 'center', label: 'Cargo', field: row => row.user.roles[0].name },
         { name: 'amount', align: 'center', label: 'Monto ($)', field: 'amount' }
       ],
       datat: [
