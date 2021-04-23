@@ -473,10 +473,6 @@ export default {
                 width: '7px',
                 opacity: 1
               },
-              'content-style': {
-                backgroundColor: 'white',
-                color: '#555'
-              },
               'content-active-style': {
                 color: 'black'
               }
@@ -498,8 +494,7 @@ export default {
                     class: {
                       row: true,
                       'justify-evenly': true,
-                      'q-gutter-sm': true,
-                      'bg-white': true
+                      'q-gutter-sm': true
                     }
                   },
                   [

@@ -8,7 +8,7 @@
         :thumb-style="thumbStyle"
         :content-style="contentStyle"
         :content-active-style="contentActiveStyle"
-        style="height: 64vh;"
+        style="height: 70vh;"
       >
         <q-stepper
           ref="stepper"
@@ -53,6 +53,17 @@
                       label="Costo del paquete"
                     />
                 </q-card-section>
+                <q-card-section
+                    class="col-12 q-py-xs"
+                  >
+                    <q-input
+                      dense
+                      v-model="rateValue.cargo_insurance_amount"
+                      type="number"
+                      :rules="[val => !!val || 'El campo es requerido']"
+                      label="Seguro de carga"
+                    />
+                </q-card-section>
               </q-form>
             </q-card>
           </q-step>
@@ -91,14 +102,14 @@
                     :options="destinations"
                     label="Destino"
                     dense
-                    class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12"
                     :rules="[myRule]"
                   />
                   <q-input
                     dense
                     v-model="referencePoin"
                     label="Punto de referencia"
-                    class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12"
                     :rules="[ val => val && val.length > 0 || `El campo es requerido` ]"
                   />
                   <q-input
@@ -178,8 +189,8 @@
         @click="$refs.stepper.previous()"
       />
       <q-btn
-        icon="navigate_next"
         color="primary"
+        :label="step === 1 ? 'Destino' : 'Destinatario'"
         v-if="step < 3"
         @click="nextAndBack"
       />
@@ -291,7 +302,7 @@ export default {
         case 3:
           await this.validateAddressee()
           if (this.errorAddress) {
-            this.saveDataPackage()
+            this.saveAddresse()
           }
           break
         default:
@@ -324,24 +335,18 @@ export default {
      * Save vocuher
      */
     async saveDataPackage () {
-      this.saveAddresse()
-        .then(() => {
-          this.dataPackage.push({
-            rate: this.rateValue,
-            addressee: this.addressee,
-            destination: {
-              branchOffice: this.deliveryType === 'Sucursal' ? this.branchOffice : null,
-              referencePoin: this.referencePoin,
-              address: this.address,
-              destination: this.deliveryType === 'Entrega a domicilio' ? this.destination : null
-            }
-          })
-          this.clearForm()
-          this.$emit('savePackage', this.dataPackage)
-        })
-        .catch(() => {
-          this.notify(this, 'template.error', 'negative', 'warning')
-        })
+      this.dataPackage.push({
+        rate: this.rateValue,
+        addressee: this.addressee,
+        destination: {
+          branchOffice: this.deliveryType === 'Sucursal' ? this.branchOffice : null,
+          referencePoin: this.referencePoin,
+          address: this.address,
+          destination: this.deliveryType === 'Entrega a domicilio' ? this.destination : null
+        }
+      })
+      this.clearForm()
+      this.$emit('savePackage', this.dataPackage)
     },
     /**
      * Clear form
@@ -364,14 +369,13 @@ export default {
       this.addressee.user_created_id = this.userSession.id
       this.addressee.document_number = this.documetntNumber
       this.$services.postData(['addressees'], this.addressee)
-        .then(res => {
+        .then(({ res }) => {
           this.addressee = res.data
+          this.saveDataPackage()
         })
         .catch((err) => {
           console.log(err)
-          if (err) {
-            throw new Error(err)
-          }
+          this.notify(this, 'template.error', 'negative', 'warning')
         })
     },
     /**

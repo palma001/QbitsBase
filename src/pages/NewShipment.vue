@@ -1,130 +1,147 @@
 <template>
   <q-page padding>
-    <div class="row justify-between q-gutter-y-sm">
-      <div class="col-xs-12 col-sm-6 col-lg-4">
-        <q-select
-          v-model="sender"
-          clearable
-          use-input
-          hide-selected
-          fill-input
-          dense
-          ref="sender"
-          :label="ucwords($t('newShipment.sender'))"
-          :options="senderOptions"
-          :rules="[val => !!val || 'El remitente es requerido']"
-          @filter="filterFn"
-        >
-          <template v-slot:append>
-            <q-btn
-              color="primary"
-              text-color="white"
-              size="sm"
-              icon="add"
-              aria-label="add"
-              round
-              @click="dialogSender = !dialogSender"
-            >
-              <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
-                <strong>{{ucwords($t('newShipment.addSender'))}}</strong>
-              </q-tooltip>
-            </q-btn>
-          </template>
-          <template v-slot:no-option>
-            <q-item>
-              <q-item-section class="text-grey">
-                No results
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-select>
-      </div>
-      <div class="col-xs-12 col-sm-6 col-lg-4 text-right">
-        <p class="text-h4 float-right">
-          ${{ total }}
-          <q-tooltip content-class="bg-cyan-10" content-style="font-size: 20px" anchor="bottom left" self="top middle">
-            <q-icon name="change_circle"></q-icon>
-            {{ change }}
-          </q-tooltip>
-        </p>
-        <q-btn
-          icon="fa fa-credit-card"
-          class="q-mr-md q-mt-xs"
-          color="primary"
-          :disable="packages.length <= 0"
-          @click="dialogPayment = !dialogPayment"
-        />
-      </div>
-    </div>
-    <div class="row q-col-gutter-md">
-      <div class="col-sm-5 col-md-5 col-lg-4">
+    <div class="row q-col-gutter-md relative-position">
+      <div class="col-sm-12 col-xs-12 col-md-4 col-lg-4">
         <dialog-package-deital
           :show="dialogPackage"
           @close="dialogPackage = !dialogPackage"
           @savePackage="savePackage"
         />
       </div>
-      <div class="col-sm-7 col-md-7 col-lg-8 row">
-        <div class="col-12">
-          <q-table
-            dense
-            hide-bottom
-            :title="ucwords($t('newShipment.packages'))"
-            :data="packages"
-            :columns="columns"
-          >
-            <template v-slot:header="props">
-              <q-tr :props="props">
-                <q-th
-                  v-for="col in props.cols"
-                  :key="col.name"
-                  :props="props"
-                >
-                  {{ col.label }}
-                </q-th>
-                <q-th auto-width>
-                  Acciones
-                </q-th>
-              </q-tr>
-            </template>
-            <template v-slot:body="props">
-              <q-tr :props="props">
-                <q-td
-                  v-for="col in props.cols"
-                  :key="col.name"
-                  :props="props"
-                >
-                  {{ col.value }}
-                </q-td>
-                <q-td auto-width class="q-gutter-x-sm">
-                  <!-- <q-btn size="13px" color="primary" round dense @click="props.expand = !props.expand" icon="visibility" /> -->
-                  <q-btn size="13px" color="negative" round dense @click="deletePackage(props)" icon="delete" />
-                  <!-- <q-btn size="13px" color="positive" round dense @click="props.expand = !props.expand" icon="content_copy" /> -->
-                </q-td>
-              </q-tr>
-            </template>
-          </q-table>
-        </div>
-        <div class="col-7">
-          <!-- <q-select
-              label="Tipos de pago"
+      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+        <div class="row">
+          <div class="col-xs-5 col-sm-6 col-lg-4 col-md-7">
+            <q-select
+              v-model="sender"
+              clearable
+              use-input
+              hide-selected
+              fill-input
               dense
-              v-model="paymentType"
-              :options="paymentTypesAll"
-              @input="selectedPaymnetType"
+              ref="sender"
+              :label="ucwords($t('newShipment.sender'))"
+              :options="senderOptions"
+              :rules="[val => !!val || 'El remitente es requerido']"
+              @filter="filterFn"
             >
-              <template v-if="paymentType" v-slot:append>
-                <q-icon name="add_circle" color="teal" @click.stop="selectedPaymnetType(paymentType)" class="cursor-pointer">
-                  <q-tooltip
-                    anchor="center left"
-                    self="center right"
-                    :offset="[10, 10]"
-                  >
-                    <strong>Agregar {{ paymentType.label }}</strong>
+              <template v-slot:append>
+                <q-btn
+                  color="primary"
+                  text-color="white"
+                  size="sm"
+                  icon="add"
+                  aria-label="add"
+                  round
+                  @click="dialogSender = !dialogSender"
+                >
+                  <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
+                    <strong>{{ucwords($t('newShipment.addSender'))}}</strong>
                   </q-tooltip>
-                </q-icon>
+                </q-btn>
               </template>
-          </q-select> -->
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-lg-12 col-md-12">
+            <q-table
+              dense
+              hide-bottom
+              virtual-scroll
+              class="my-sticky-dynamic"
+              :title="ucwords($t('newShipment.packages'))"
+              :data="packages"
+              :columns="columns"
+              :virtual-scroll-item-size="48"
+              :virtual-scroll-sticky-size-start="48"
+              :pagination="{ rowsPerPage: 0 }"
+              :rows-per-page-options="[0]"
+            >
+              <template v-slot:header="props">
+                <q-tr :props="props">
+                  <q-th
+                    v-for="col in props.cols"
+                    :key="col.name"
+                    :props="props"
+                  >
+                    {{ col.label }}
+                  </q-th>
+                  <q-th auto-width>
+                    Acciones
+                  </q-th>
+                </q-tr>
+              </template>
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td
+                    v-for="col in props.cols"
+                    :key="col.name"
+                    :props="props"
+                  >
+                    {{ col.value }}
+                  </q-td>
+                  <q-td auto-width class="q-gutter-x-sm">
+                    <!-- <q-btn size="13px" color="primary" round dense @click="props.expand = !props.expand" icon="visibility" /> -->
+                    <q-btn size="13px" color="negative" round dense @click="deletePackage(props)" icon="delete" />
+                    <!-- <q-btn size="13px" color="positive" round dense @click="props.expand = !props.expand" icon="content_copy" /> -->
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+          </div>
+        </div>
+        <div class="col-12 q-mt-sm">
+          <div class="row justify-between">
+            <div class="col-6">
+              <q-btn icon="print" color="orange" @click="print">
+                <q-tooltip content-class="bg-orange" content-style="font-size: 16px" :offset="[10, 10]">
+                  Imprimir comprobantes
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                class="q-ml-sm"
+                icon="fa fa-credit-card"
+                color="primary"
+                :disable="packages.length <= 0"
+                @click="dialogPayment = !dialogPayment"
+              >
+                <q-tooltip content-class="bg-primary" content-style="font-size: 16px" :offset="[10, 10]">
+                  Cobrar Factura
+                </q-tooltip>
+              </q-btn>
+            </div>
+            <div class="col-6 relative-position">
+              <q-list bordered dense separator class="q-pa-none text-h6 float-right" style="width: 400px;">
+                <q-item
+                  clickable
+                  v-ripple
+                  class="text-bold"
+                >
+                  <q-item-section>
+                    Seguro de carga:
+                  </q-item-section>
+                  <q-item-section side>$ {{ account.cargoInsuranceAmount }}</q-item-section>
+                </q-item>
+                <q-item clickable v-ripple class="text-bold">
+                  <q-item-section>
+                    Subtotal
+                  </q-item-section>
+                  <q-item-section side>$ {{ account.subtotal }}</q-item-section>
+                </q-item>
+                <q-item clickable v-ripple class="text-bold" :active="true">
+                  <q-item-section>
+                    Total
+                  </q-item-section>
+                  <q-item-section side>$ {{ account.total }}</q-item-section>
+                </q-item>
+              </q-list>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -331,6 +348,11 @@ export default {
         }
       ],
       packages: [],
+      account: {
+        total: 0,
+        subtotal: 0,
+        cargoInsuranceAmount: 0
+      },
       total: 0,
       tax: 12,
       exchange: 10000,
@@ -363,6 +385,8 @@ export default {
     }
   },
   methods: {
+    print () {
+    },
     /**
      * Delete payment method
      * @param {Number} index index array
@@ -457,7 +481,8 @@ export default {
           coin_id: 1,
           exchange: this.exchange,
           user_created_id: this.userSession.id,
-          rate: this.modelRate(pack.rate)
+          rate: this.modelRate(pack.rate),
+          cargo_insurance_amount: pack.rate.cargo_insurance_amount
         }
       })
     },
@@ -531,10 +556,18 @@ export default {
       */
     calcTotal (data) {
       let total = 0
+      let subtotal = 0
+      let cargoInsuranceAmount = 0
       data.forEach((data) => {
-        total = Number(total) + Number(data.rate.amount)
+        total = Number(total) + Number(data.rate.amount) + Number(data.rate.cargo_insurance_amount)
+        subtotal = Number(subtotal) + Number(data.rate.amount)
+        cargoInsuranceAmount = Number(cargoInsuranceAmount) + Number(data.rate.cargo_insurance_amount)
       })
-      this.total = total
+      this.account = {
+        total: total,
+        subtotal: subtotal,
+        cargoInsuranceAmount: cargoInsuranceAmount
+      }
       this.change = total * this.currencyRate.amount
     },
     /**
@@ -657,3 +690,23 @@ export default {
   }
 }
 </script>
+<style lang="sass">
+.my-sticky-dynamic
+  /* height or max-height is important */
+  height: 330px
+
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th /* bg color is important for th; just specify one */
+    background-color: $primary
+    color: white
+  thead tr th
+    position: sticky
+    z-index: 1
+  /* this will be the loading indicator */
+  thead tr:last-child th
+    /* height of all previous header rows */
+    top: 48px
+  thead tr:first-child th
+    top: 0
+</style>
