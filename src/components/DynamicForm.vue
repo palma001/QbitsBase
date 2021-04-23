@@ -469,7 +469,7 @@ export default {
               'thumb-style': {
                 right: '2px',
                 borderRadius: '5px',
-                backgroundColor: 'white',
+                backgroundColor: 'teal',
                 width: '7px',
                 opacity: 1
               },

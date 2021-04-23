@@ -1,14 +1,14 @@
 <template>
   <q-card class="q-pa-none" flat bordered>
-    <q-card-section class="text-white bg-primary">
-      <div class="text-h6">Datos del paquete</div>
+    <q-card-section class="text-white bg-primary q-pa-xs">
+      <div class="text-h6">Datos del envio</div>
     </q-card-section>
-    <q-card-section class="q-pa-none" style="min-height: 420px;'">
+    <q-card-section class="q-pa-none">
       <q-scroll-area
         :thumb-style="thumbStyle"
         :content-style="contentStyle"
         :content-active-style="contentActiveStyle"
-        style="height: 70vh;"
+        style="height: 64vh;"
       >
         <q-stepper
           ref="stepper"
@@ -29,7 +29,7 @@
             <q-card flat bordered>
               <q-form ref="myForm" class="row">
                 <q-card-section
-                  class="col-12"
+                  class="col-12 q-py-xs"
                   v-for="(rate, index) in rates"
                   :key="rate.id"
                 >
@@ -43,7 +43,7 @@
                   />
                 </q-card-section>
                 <q-card-section
-                    class="col-12"
+                    class="col-12 q-py-xs"
                   >
                     <q-input
                       dense
@@ -65,7 +65,7 @@
           >
             <q-card flat bordered>
               <q-form ref="step2" class="row">
-                <q-card-section class="col-12">
+                <q-card-section class="col-12 q-py-xs">
                   <q-select
                     v-model="deliveryType"
                     :options="options"
@@ -73,7 +73,10 @@
                     dense
                   />
                 </q-card-section>
-                <q-card-section class="col-12" v-if="deliveryType === 'Sucursal'">
+                <q-card-section
+                  class="col-12 q-py-xs"
+                  v-if="deliveryType === 'Sucursal'"
+                >
                   <q-select
                     v-model="branchOffice"
                     dense
@@ -82,7 +85,7 @@
                     :rules="[myRule]"
                   />
                 </q-card-section>
-                <q-card-section class="col-12 q-pt-none row q-col-gutter-md" v-else>
+                <q-card-section class="col-12 q-pt-xs row q-col-gutter-md" v-else>
                   <q-select
                     v-model="destination"
                     :options="destinations"
@@ -118,7 +121,7 @@
           >
             <q-card flat bordered>
               <q-form ref="step3" class="row">
-                <q-card-section class="col-12">
+                <q-card-section class="col-12 q-py-none">
                   <q-input
                     autofocus
                     dense
@@ -128,7 +131,7 @@
                     :rules="[val => !!val || 'El campo es requerido']"
                   />
                 </q-card-section>
-                <q-card-section class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <q-card-section class="col-xl-12 q-py-none col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     dense
                     v-model="addressee.name"
@@ -136,7 +139,7 @@
                     :rules="[val => !!val || 'El campo es requerido']"
                   />
                 </q-card-section>
-                <q-card-section class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <q-card-section class="q-py-none col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     dense
                     v-model="addressee.last_name"
@@ -144,7 +147,7 @@
                     :rules="[val => !!val || 'El campo es requerido']"
                   />
                 </q-card-section>
-                <q-card-section class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <q-card-section class="q-py-none col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     dense
                     v-model="addressee.phone_number"
@@ -152,7 +155,7 @@
                     :rules="[val => !!val || 'El campo es requerido']"
                   />
                 </q-card-section>
-                <q-card-section class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <q-card-section class="q-pt-none q-pb-md col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     dense
                     v-model="addressee.email"
@@ -214,7 +217,7 @@ export default {
       thumbStyle: {
         right: '1px',
         borderRadius: '5px',
-        backgroundColor: 'white',
+        backgroundColor: 'teal',
         width: '7px',
         opacity: 1
       },
@@ -299,6 +302,7 @@ export default {
       if (this.$refs.step3) {
         this.$refs.step3.validate().then(success => {
           this.errorAddress = success
+          return success
         })
       }
     },
@@ -320,19 +324,24 @@ export default {
      * Save vocuher
      */
     async saveDataPackage () {
-      await this.saveAddresse()
-      this.dataPackage.push({
-        rate: this.rateValue,
-        addressee: this.addressee,
-        destination: {
-          branchOffice: this.deliveryType === 'Sucursal' ? this.branchOffice : null,
-          referencePoin: this.referencePoin,
-          address: this.address,
-          destination: this.deliveryType === 'Entrega a domicilio' ? this.destination : null
-        }
-      })
-      this.clearForm()
-      this.$emit('savePackage', this.dataPackage)
+      this.saveAddresse()
+        .then(() => {
+          this.dataPackage.push({
+            rate: this.rateValue,
+            addressee: this.addressee,
+            destination: {
+              branchOffice: this.deliveryType === 'Sucursal' ? this.branchOffice : null,
+              referencePoin: this.referencePoin,
+              address: this.address,
+              destination: this.deliveryType === 'Entrega a domicilio' ? this.destination : null
+            }
+          })
+          this.clearForm()
+          this.$emit('savePackage', this.dataPackage)
+        })
+        .catch(() => {
+          this.notify(this, 'template.error', 'negative', 'warning')
+        })
     },
     /**
      * Clear form
@@ -354,8 +363,16 @@ export default {
     async saveAddresse () {
       this.addressee.user_created_id = this.userSession.id
       this.addressee.document_number = this.documetntNumber
-      const { res } = await this.$services.postData(['addressees'], this.addressee)
-      this.addressee = res.data
+      this.$services.postData(['addressees'], this.addressee)
+        .then(res => {
+          this.addressee = res.data
+        })
+        .catch((err) => {
+          console.log(err)
+          if (err) {
+            throw new Error(err)
+          }
+        })
     },
     /**
      * Get Rate all

@@ -15,7 +15,8 @@ export default {
     stock: 'almacén',
     search: 'buscar',
     actions: 'detalles',
-    noResults: 'sin resultados'
+    noResults: 'sin resultados',
+    error: 'Algo a salido mal, pongase en contacto con el administrador'
   },
   user: {
     add: 'agregar usuario',

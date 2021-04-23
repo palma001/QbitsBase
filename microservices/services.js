@@ -16,10 +16,7 @@ export const getData = function (url, params) {
     }
   }).catch((err) => {
     if (err) {
-      return {
-        status: false,
-        res: err
-      }
+      throw new Error(err)
     }
   })
 }
@@ -32,10 +29,7 @@ export const getOneData = function (url) {
     }
   }).catch((err) => {
     if (err) {
-      return {
-        status: false,
-        res: err
-      }
+      throw new Error(err)
     }
   })
 }
@@ -47,10 +41,7 @@ export const postData = function (url, params) {
     }
   }).catch((err) => {
     if (err) {
-      return {
-        status: false,
-        res: err
-      }
+      throw new Error(err)
     }
   })
 }
@@ -63,10 +54,7 @@ export const putData = function (url, params) {
     }
   }).catch((err) => {
     if (err) {
-      return {
-        status: false,
-        res: err
-      }
+      throw new Error(err)
     }
   })
 }
@@ -78,10 +66,7 @@ export const deleteData = function (url, params) {
     }
   }).catch((err) => {
     if (err) {
-      return {
-        status: false,
-        res: err
-      }
+      throw new Error(err)
     }
   })
 }

@@ -106,12 +106,6 @@
           </q-table>
         </div>
         <div class="col-7">
-          <q-btn
-            v-for="payment in paymentTypesAll"
-            :key="payment.id"
-            :label="`${payment.name} (${payment.symbol})`"
-            color="negative"
-          />
           <!-- <q-select
               label="Tipos de pago"
               dense
@@ -584,6 +578,7 @@ export default {
         })
         .catch(err => {
           console.log(err.message)
+          this.notify(this, 'template.error', 'negative', 'warning')
           this.senderLoadingAdd = false
         })
     },
