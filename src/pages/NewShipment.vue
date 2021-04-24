@@ -198,11 +198,11 @@
           style="height: 42vh"
         >
           <q-card-section
-            class="row q-col-gutter-sm text-center"
+            class="row justify-between"
             v-for="(paymentType, index) in paymentTypes"
               :key="paymentType.id"
             >
-            <div class="col-xs-5 col-sm-5 col-md-5">
+            <div class="col-xs-3 col-sm-3 col-md-3">
               <q-input
                 dense
                 label="Monto"
@@ -212,7 +212,7 @@
                 type="number"
               />
             </div>
-            <div class="col-xs-5 col-sm-5 col-md-5">
+            <div class="col-xs-3 col-sm-3 col-md-3">
               <q-input
                 dense
                 label="Codigo de referencia"
@@ -220,7 +220,17 @@
                 :hint="paymentType.label"
               />
             </div>
-            <div class="col-xs-2 col-sm-2 col-md-2 q-mt-md text-center">
+            <div class="col-xs-3 col-sm-3 col-md-3">
+              <q-input
+                dense
+                label="Cambio"
+                v-if="paymentType.coin === 'BS'"
+                :value="totalChange(paymentType, index)"
+                :hint="paymentType.label"
+                readonly
+              />
+            </div>
+            <div class="col-xs-1 col-sm-1 col-md-1 q-mt-md text-center">
               <q-btn
                 dense
                 icon="delete"
@@ -236,36 +246,35 @@
             </div>
           </q-card-section>
         </q-scroll-area>
-        <q-card-section class="q-py-xs">
-          <q-list bordered separator dense>
+        <q-card-section class="q-py-xs row">
+          <q-list bordered separator dense class="col-7">
             <q-item
               clickable
               v-ripple
               class="text-bold"
-              active-class="text-primary"
               :active="true"
+              v-for="(payment, index) in totalPayments"
+              :key="payment.id"
             >
               <q-item-section>
-                $ {{  total }}
+                {{ index }}
               </q-item-section>
-              <q-item-section side>Cuenta</q-item-section>
+              <q-item-section side>$ {{ payment }}</q-item-section>
             </q-item>
-            <q-item clickable v-ripple class="text-bold">
+          </q-list>
+          <q-list bordered separator dense class="col-3">
+            <q-item
+              clickable
+              v-ripple
+              class="text-bold"
+              :active="true"
+              v-for="(payment, index) in totalPaymentsCoin"
+              :key="payment.id"
+            >
               <q-item-section>
-                $ {{  totalPayment }}
+                {{ index }}
               </q-item-section>
-              <q-item-section side>Aporte</q-item-section>
-            </q-item>
-            <q-item clickable v-ripple class="text-bold">
-              <q-item-section>
-                $ {{  total - totalPayment }}
-              </q-item-section>
-              <q-item-section side v-if="total - totalPayment < 0">
-                Cambio
-              </q-item-section>
-              <q-item-section side v-else>
-                Saldo
-              </q-item-section>
+              <q-item-section side>$ {{ payment }}</q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
@@ -274,30 +283,66 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog
+      v-model="dialogEntregarPaquete"
+      persistent
+    >
+      <q-card style="width: 900px; max-width: 80vw;">
+        <q-card-section>
+          <data-table
+            title="list"
+            module="voucher"
+            :searchable="true"
+            :column="voucherConfig"
+            :data="vouchers"
+            :loading="loadingTable"
+            :optionPagination="optionPagination"
+            @selected="selecedVoucher"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script>
 import { mixins } from '../mixins'
 import DialogPackageDeital from '../components/DialogPackageDeital'
-import { senderConfig, buttonsSender } from '../config-file/sender/senderConfig'
+import { senderConfig, buttonsSender, userServices } from '../config-file/sender/senderConfig'
 import DynamicForm from '../components/DynamicForm'
 import { GETTERS } from '../store/module-login/name.js'
+import { voucherConfig } from '../config-file/voucher/voucherConfig'
 import { mapGetters } from 'vuex'
 import { bill } from './DesignBill'
+import DataTable from '../components/DataTable.vue'
 export default {
   components: {
     DialogPackageDeital,
-    DynamicForm
+    DynamicForm,
+    DataTable
   },
   mixins: [mixins.containerMixin],
   data () {
     return {
+      dialogEntregarPaquete: true,
+      /**
+       * Options pagination
+       * @type {Object}
+       */
+      optionPagination: {
+        rowsPerPage: 200,
+        paginate: true,
+        sortBy: 'id',
+        sortOrder: 'desc'
+      },
+      vouchers: [],
+      loadingTable: false,
+      userServices,
+      voucherConfig,
       contentStyle: {
-        backgroundColor: 'white',
         color: '#555'
       },
-
       contentActiveStyle: {
         color: 'black'
       },
@@ -313,6 +358,7 @@ export default {
       senderConfig,
       senderLoadingAdd: false,
       payments: {},
+      totalPaymentsCoin: {},
       paymentType: null,
       paymentTypes: [],
       dialogPayment: false,
@@ -353,6 +399,7 @@ export default {
         subtotal: 0,
         cargoInsuranceAmount: 0
       },
+      totalPayments: {},
       total: 0,
       tax: 12,
       exchange: 10000,
@@ -372,6 +419,8 @@ export default {
     this.userSession = this[GETTERS.GET_USER]
     this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
     this.getCurrencyRate()
+    this.setRelationalData(this.userServices, [], this)
+    this.getVochers(this.params)
   },
   computed: {
     /**
@@ -381,10 +430,34 @@ export default {
   },
   watch: {
     paymentTypes () {
+      this.totalChange()
       this.calcTotalModalPaid()
     }
   },
   methods: {
+    /**
+     * Get all vouchers
+     */
+    getVochers (params = this.params) {
+      this.loadingTable = true
+      this.$services.getData(['vouchers'], params)
+        .then(({ res }) => {
+          this.vouchers = res.data.data
+          this.optionPagination.rowsNumber = res.data.total
+          this.loadingTable = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.data = []
+          this.loadingTable = false
+        })
+    },
+    totalChange (payment, index) {
+      if (payment) {
+        return payment.coin + ' ' + Number(this.currencyRate.amount) * Number(payment[`amount-${index}`])
+      }
+      return this.currencyRate.amount * this.account.total
+    },
     print () {
       this.$axios.get('http://localhost:5100/print')
     },
@@ -582,6 +655,7 @@ export default {
         }
       })
       this.totalPayment = total
+      this.calTotalPaid()
     },
     /**
      * Save sender
@@ -598,12 +672,13 @@ export default {
         phone_number: data.phone_number,
         document_number: data.document_number,
         document_type: data.document_type.value,
-        branch_office_id: this.branchOffice.id
+        branch_office_id: this.branchOffice.id,
+        document_type_id: data.document_type.value
       })
         .then(({ res }) => {
           this.sender = {
             value: res.data.id,
-            label: `${res.data.full_name} (${res.data.document_type} - ${res.data.document_number})`
+            label: `${res.data.full_name} (${data.document_type.label} - ${res.data.document_number})`
           }
           this.dialogSender = false
           this.senderLoadingAdd = false
@@ -652,7 +727,7 @@ export default {
       const { res } = await this.$services.getData(['senders'], { paginated: false })
       this.senderAll = res.data.map(sender => {
         return {
-          label: `${sender.full_name} (${sender.document_type}-${sender.document_number})`,
+          label: `${sender.full_name} (${sender.document_type.name} - ${sender.document_number})`,
           value: sender.id
         }
       })
@@ -665,7 +740,8 @@ export default {
       this.paymentTypesAll = res.data.map(payment => {
         return {
           label: payment.name,
-          value: payment.id
+          value: payment.id,
+          coin: payment.coin.acronym
         }
       })
     },
@@ -681,7 +757,31 @@ export default {
         }
       })
     },
-
+    calTotalPaid () {
+      const totalPay = {}
+      this.paymentTypesAll.forEach(payAll => {
+        this.paymentTypes.forEach((pay, index) => {
+          totalPay[pay.label] = isNaN(totalPay[pay.label]) ? 0 : totalPay[pay.label]
+          if (payAll.value === pay.value && !isNaN(totalPay[pay.label])) {
+            totalPay[pay.label] = Number(totalPay[pay.label]) + Number(pay[`amount-${index}`])
+          }
+        })
+      })
+      this.totalPayments = totalPay
+      this.calTotalPaidCoin()
+    },
+    calTotalPaidCoin () {
+      const totalPay = {}
+      this.paymentTypesAll.forEach(payAll => {
+        this.paymentTypes.forEach((pay, index) => {
+          totalPay[pay.coin] = isNaN(totalPay[pay.coin]) ? 0 : totalPay[pay.coin]
+          if (payAll.coin === pay.coin && !isNaN(totalPay[pay.coin])) {
+            totalPay[payAll.coin] = Number(totalPay[pay.coin]) + Number(pay[`amount-${index}`])
+          }
+        })
+      })
+      this.totalPaymentsCoin = totalPay
+    },
     /**
      * Get Currency rate all
      */

@@ -53,18 +53,9 @@ export const senderConfig = [
           component: {
             name: 'b-search-select',
             props: {
-              data: [
-                {
-                  label: 'Cédula',
-                  value: 'CI'
-                },
-                {
-                  label: 'Rif',
-                  value: 'RIF'
-                }
-              ],
-              dataValue: 'value',
-              dataLabel: 'label',
+              data: [],
+              dataValue: 'id',
+              dataLabel: 'name',
               behavior: 'menu',
               dense: true,
               clearable: true
@@ -168,7 +159,7 @@ export const senderConfig = [
         actionable: {
           propTag: 'last_name',
           dependentName: 'sender_type',
-          dependentValue: 'JUR',
+          dependentValue: 'NAT',
           addible: true,
           editable: true,
           type: 'text',
@@ -260,7 +251,7 @@ export const senderConfig = [
               {
                 name: 'validate',
                 value: {
-                  required: true
+                  required: false
                 }
               }
             ]
@@ -323,3 +314,78 @@ export const buttonsSender = [
     }
   }
 ]
+
+export const propsPanelEdition = {
+  data: {},
+  buttons: [
+    {
+      name: 'cancel',
+      action: 'cancel',
+      label: false,
+      props: {
+        icon: 'highlight_off',
+        color: 'negative',
+        glossy: true,
+        size: '12px'
+      },
+      tooltip: {
+        text: 'cancel',
+        props: {
+          'content-class': 'bg-negative'
+        }
+      }
+    },
+    {
+      name: 'reset',
+      action: 'reset',
+      label: false,
+      props: {
+        icon: 'restore',
+        color: 'positive',
+        glossy: true,
+        size: '12px'
+      },
+      tooltip: {
+        text: 'reset',
+        props: {
+          'content-class': 'bg-positive'
+        }
+      }
+    },
+    {
+      name: 'update',
+      action: 'update',
+      label: false,
+      props: {
+        color: 'primary',
+        glossy: true,
+        size: '12px',
+        icon: 'edit'
+      },
+      tooltip: {
+        text: 'update',
+        props: {
+          'content-class': 'bg-primary'
+        }
+      }
+    }
+  ]
+}
+
+export const relationalDataConfiguration = [
+  {
+    targetPropTag: 'document_type',
+    entity: 'document_type',
+    services: ['document-types'],
+    propData: 'data',
+    petitionParams: {
+      paginate: false
+    }
+  }
+]
+export const userServices = {
+  props: propsPanelEdition,
+  config: senderConfig,
+  propData: 'data',
+  relationalData: relationalDataConfiguration
+}

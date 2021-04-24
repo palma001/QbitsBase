@@ -20,18 +20,9 @@ export const userConfig = [
           component: {
             name: 'b-search-select',
             props: {
-              data: [
-                {
-                  label: 'Cédula',
-                  value: 'CI'
-                },
-                {
-                  label: 'Rif',
-                  value: 'RIF'
-                }
-              ],
-              dataValue: 'value',
-              dataLabel: 'label',
+              data: [],
+              dataValue: 'id',
+              dataLabel: 'name',
               behavior: 'menu',
               dense: true,
               clearable: true
@@ -56,7 +47,7 @@ export const userConfig = [
         tabulated: {
           name: 'document_number',
           align: 'left',
-          field: row => row.document_type ? `${row.document_type}: ${row.document_number}` : null,
+          field: row => row.document_type ? `${row.document_type.name}: ${row.document_number}` : null,
           sortable: true,
           visible: true
         },
@@ -430,6 +421,15 @@ export const relationalDataConfiguration = [
     targetPropTag: 'roles',
     entity: 'roles',
     services: ['roles'],
+    propData: 'data',
+    petitionParams: {
+      paginate: false
+    }
+  },
+  {
+    targetPropTag: 'document_type',
+    entity: 'document_type',
+    services: ['document-types'],
     propData: 'data',
     petitionParams: {
       paginate: false
