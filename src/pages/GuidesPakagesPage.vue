@@ -58,7 +58,8 @@ export default {
        */
       optionPagination: {
         rowsPerPage: 20,
-        paginate: true,
+        rowsNumber: 20,
+        paginated: true,
         sortBy: 'id',
         sortOrder: 'desc'
       },
@@ -69,10 +70,14 @@ export default {
       params: {
         paginated: true,
         sortBy: 'id',
+        perPage: 1,
         sortOrder: 'desc',
         dataSearch: {
-          name: '',
-          cost: ''
+          id: '',
+          'vehicle.plate': '',
+          'carrier.name': '',
+          'carrier.document_number': '',
+          'destination.name': ''
         }
       },
       /**
@@ -149,8 +154,9 @@ export default {
       this.loadingTable = true
       this.$services.getData(['guides'], this.params)
         .then(({ res }) => {
-          this.data = res.data
+          this.data = res.data.data
           this.loadingTable = false
+          this.optionPagination.rowsNumber = res.data.total
         })
         .catch(err => {
           console.log(err)

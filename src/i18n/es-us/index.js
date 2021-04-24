@@ -12,6 +12,7 @@ export default {
     reception: 'recepción',
     administration: 'administración',
     configuration: 'configuración',
+    'customer-support': 'atención al cliente',
     stock: 'almacén',
     search: 'buscar',
     actions: 'detalles',
@@ -56,6 +57,10 @@ export default {
     'payment-summary': 'resumen de ventas',
     'invoice-summary': 'resumen de facturas',
     'shipment-summary': 'resumen de operaciones',
+    'email-administration': 'email',
+    'email-branchoffice': 'sucursal',
+    'email-contactus': 'contáctanos',
+    'inbox-form': 'buzón de mensajes',
     dashboard: 'tablero',
     geolocation: 'geolocalización',
     transporte: 'transporte',
@@ -150,7 +155,21 @@ export default {
   guide: {
     voucherReceptSuccessfull: 'comprobantes guardados exitosamente',
     voucherEmty: 'Debe seleccionar al menos un comprobante',
-    notFound: 'Guía no encontrada'
+    notFound: 'Guía no encontrada',
+    id: 'número de guia',
+    number_voucher: 'cantidad de paquetes',
+    list: 'Lista de guias',
+    carrier: {
+      document_number: 'identificación del transportista',
+      name: 'nombre del transportista'
+    },
+    vehicle: {
+      plate: 'placa del transporte',
+      brand: 'marca del transporte'
+    },
+    destination: {
+      name: 'destino'
+    }
   },
   paymentMethod: {
     list: 'lista de métodos de pago',

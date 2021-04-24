@@ -35,6 +35,7 @@
                               size="sm"
                               round
                               type="submit"
+                              @click="confirm"
                             >
                               <q-tooltip>
                                   Cerrar caja
@@ -142,24 +143,52 @@
                         {{col.value}}
                         </q-td>
                         <q-td class="text-center">
-                        <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true">
-                            <q-popup-proxy>
+                        <!-- <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true"> -->
+                        <q-btn icon="person" color="primary" round size="sm" @click="alert=true">
+                           <q-popup-proxy>
+                            <div class="q-pa-md">
+                              <q-input
+                                    readonly
+                                    label="Nombre"
+                              />
+                            </div>
+                           </q-popup-proxy>
+                            <!-- <q-popup-proxy>
                             <q-banner>
                                 <div class="row">
-                                <div class="col-12">
+                                  <div class="col-12">
                                     <q-space/>
                                     <q-btn icon="close" flat color="primary" v-close-popup class="float-right"/>
-                                </div>
+                                  </div>
                                 </div>
                                 <div class="row">
-                                <div class="col-12">
-                                    <p class="h4">Datos adicionales</p>
-                                    <q-input label="Cliente" dense/>
-                                    <q-input label="Teléfono" dense/>
-                                    <q-input label="email" dense/>
-                                </div>
+                                  <div class="col-12">
+                                      <p class="h4">Datos adicionales</p>
+                                      <q-input label="Cliente" dense/>
+                                      <q-input label="Teléfono" dense/>
+                                      <q-input label="email" dense/>
+                                  </div>
                                 </div>
                             </q-banner>
+                            </q-popup-proxy> -->
+                            <q-popup-proxy>
+                              <div class="q-pa-md">
+                                <!-- <q-input
+                                  readonly
+                                  label="Nombre"
+                                  :value="props.row.addressee.full_name"
+                                />
+                                <q-input
+                                  readonly
+                                  label="Teléfono"
+                                  :value="props.row.addressee.phone_number"
+                                />
+                                <q-input
+                                  readonly
+                                  label="email"
+                                  :value="props.row.addressee.email"
+                                /> -->
+                              </div>
                             </q-popup-proxy>
                         </q-btn>
                         </q-td>
@@ -174,7 +203,11 @@
 
 <script>
 import { date } from 'quasar'
+import { mixins } from '../mixins'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [mixins.containerMixin],
   data () {
     return {
       splitterModel: 37, // start at 50%
@@ -189,6 +222,8 @@ export default {
       name: '',
       employee: '',
       total: 0,
+      userSession: null,
+      branchOffice: null,
       bills: [],
       detailBillPayments: [],
       sourceDate: [],
@@ -220,7 +255,7 @@ export default {
         { name: 'payment_type', align: 'center', label: 'Método de Pago', field: row => row.payment_type.name, sortable: true },
         { name: 'destination', align: 'center', label: 'Destino', field: row => row.payment_type.payment_destination.name, sortable: true },
         { name: 'employee', align: 'center', label: 'Empleado', field: row => row.user.name, sortable: true },
-        { name: 'role', align: 'center', label: 'Cargo', field: row => row.user.name },
+        { name: 'role', align: 'center', label: 'Cargo', field: row => row.user.roles[0].name },
         { name: 'amount', align: 'center', label: 'Monto ($)', field: 'amount' }
       ]
     }
@@ -229,6 +264,14 @@ export default {
     this.getPaymentType()
     this.getBranchOffice()
     this.getBills()
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
     getPaymentType () {
@@ -251,6 +294,8 @@ export default {
     getBills () {
       this.$services.getData(['bills'], {
         paginated: false,
+        sortBy: 'id',
+        sortOrder: 'desc',
         dateFilter: {
           from: date.formatDate(Date.now(), 'YYYY-MM-DD'),
           to: date.formatDate(Date.now(), 'YYYY-MM-DD'),
@@ -279,6 +324,33 @@ export default {
           this.total += Number(data.amount)
         })
       }
+    },
+    confirm () {
+      this.$q.dialog({
+        title: 'Confirmación',
+        message: '¿Desea cerrar la casa?',
+        cancel: {
+          label: 'Cancelar',
+          color: 'negative'
+        },
+        ok: {
+          label: 'Aceptar',
+          color: 'primary'
+        },
+        persistent: true
+      }).onOk(() => {
+        this.closeCashRegister()
+      })
+    },
+    closeCashRegister () {
+      this.$services.postData(['close-boxs'], {
+        branch_office_id: this.branchOffice.id,
+        user_id: this.userSession.id,
+        user_created_id: this.userSession.id,
+        amount: this.total
+      }).then(res => {
+        this.notify(this, 'Caja cerrada satisfactoriamente', 'positive', 'info')
+      })
     }
   }
 }

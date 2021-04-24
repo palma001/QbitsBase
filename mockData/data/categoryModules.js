@@ -22,7 +22,7 @@ export const categoryModules = [
       {
         name: 'new-shipment',
         route: 'NewShipment',
-        icon: 'safety_divider',
+        icon: 'sync_alt',
         access: ['super_admin'],
         devices: ['mobile', 'desktop']
       },
@@ -100,6 +100,41 @@ export const categoryModules = [
         name: 'shipment-summary',
         route: 'ShipmentSummaryPage',
         icon: 'checklist',
+        devices: ['mobile', 'desktop'],
+        access: ['super_admin']
+      },
+      {
+        name: 'email-administration',
+        route: 'EmailAdmministratio',
+        icon: 'alternate_email',
+        devices: ['mobile', 'desktop'],
+        access: ['super_admin']
+      }
+    ]
+  },
+  {
+    name: 'customer-support',
+    icon: 'support_agent',
+    open: true,
+    modules: [
+      {
+        name: 'email-branchoffice',
+        route: 'EmailBranchOffice',
+        icon: 'alternate_email',
+        devices: ['mobile', 'desktop'],
+        access: ['super_admin']
+      },
+      {
+        name: 'email-contactus',
+        route: 'EmailContactUs',
+        icon: 'alternate_email',
+        devices: ['mobile', 'desktop'],
+        access: ['super_admin']
+      },
+      {
+        name: 'inbox-form',
+        route: 'InboxPage',
+        icon: 'inbox',
         devices: ['mobile', 'desktop'],
         access: ['super_admin']
       }
