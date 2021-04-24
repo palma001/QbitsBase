@@ -43,41 +43,25 @@
               <div class="q-pa-md">
               <div class="text-h6 q-mb-xs">Movilidad de paquetes</div>
                 <div class="row q-col-gutter-xs">
-                    <div class="col-3">
-                        <q-card dark bordered class="bg-blue-grey-9  my-card">
+                    <div class="col-3" v-for="unit in units" :key="unit.id">
+                      <q-card dark bordered class="bg-blue-grey-9  my-card">
                         <q-card-section>
-                            <div class="text-h6">Recibidos</div>
-                            <div class="text-subtitle2">120 Paquetes</div>
-                            <div class="text-subtitle2">2300,30 Kg</div>
+                          <div class="text-h6">
+                            {{ ucwords($t(`voucher.${unit.status}`)) }}
+                          </div>
+                          <div class="text-subtitle2">{{ unit.amountVouchers }} Paquetes</div>
+                          <div class="text-subtitle2">{{ unit.description }} {{ unit.measurement }}</div>
                         </q-card-section>
-                        </q-card>
+                      </q-card>
                     </div>
                     <div class="col-3">
-                    <q-card dark bordered class="bg-blue-grey-9  my-card">
-                        <q-card-section>
-                        <div class="text-h6">En tránsito</div>
-                        <div class="text-subtitle2">34 Paquetes</div>
-                        <div class="text-subtitle2">920,30 Kg</div>
-                        </q-card-section>
-                    </q-card>
-                    </div>
-                    <div class="col-3">
-                        <q-card dark bordered class="bg-blue-grey-9  my-card">
-                        <q-card-section>
-                            <div class="text-h6">Entregados</div>
-                            <div class="text-subtitle2">### Paquetes</div>
-                            <div class="text-subtitle2">####,## Kg</div>
-                        </q-card-section>
-                        </q-card>
-                    </div>
-                    <div class="col-3">
-                        <q-card dark bordered class="bg-cyan-9 my-card">
+                      <q-card dark bordered class="bg-cyan-9 my-card">
                         <q-card-section>
                             <div class="text-h6">Total</div>
-                            <div class="text-subtitle2">## Paquetes</div>
-                            <div class="text-subtitle2">###,## Kg</div>
+                            <div class="text-subtitle2">{{ total.amountVouchers }} Paquetes</div>
+                            <div class="text-subtitle2">{{ total.description }} Kg</div>
                         </q-card-section>
-                        </q-card>
+                      </q-card>
                     </div>
                 </div>
               </div>
@@ -221,6 +205,10 @@ export default {
       options: ['Día', 'Día anterior', 'Mes', 'Mes anterior'],
       loading: false,
       filter: '',
+      units: [],
+      total: {
+        description: 0
+      },
       params: {
         paginated: false,
         dataFilter: {},
@@ -247,218 +235,33 @@ export default {
         { name: 'destination', align: 'center', label: 'Destino', field: row => row.destinable.city ?? row.destinable.name },
         { name: 'status', align: 'center', label: 'Estatus', field: row => this.$t('voucher.' + row.status) },
         { name: 'addressee', align: 'center', label: 'Destinatario', field: row => row.addressee.full_name }
-      ],
-      data: [
-        {
-          id: 1,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Tumeremo',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 2,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Caracas',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 3,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Caracas',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 4,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Puerto La Cruz',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 5,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Píritu',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 6,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'El Tigre',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 7,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'El Callao',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 8,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Santa Elena de Guairén',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 9,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Cumaná',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 10,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Carúpano',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        }
-      ],
-      original: [
-        {
-          id: 1,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Tumeremo',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 2,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Caracas',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 3,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Caracas',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 4,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Puerto La Cruz',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 5,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Píritu',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 6,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'El Tigre',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 7,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'El Callao',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 8,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Santa Elena de Guairén',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 9,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Cumaná',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        },
-        {
-          id: 10,
-          name: '15/04/2021',
-          voucherNumber: '01-0345852',
-          sender: 'Carlos Rodríguez',
-          destination: 'Carúpano',
-          weight: '3,00',
-          status: 'Recibido',
-          addressee: 'Luis Palma'
-        }
       ]
     }
   },
   created () {
     this.getBranchOffice()
     this.getVoucher()
+    this.getUnid(this.params.dateFilter.from, this.params.dateFilter.to)
   },
   methods: {
+    getUnid (desde, hasta) {
+      this.$services.getData(['reports', 'consolidated-packages'], {
+        from: desde,
+        to: hasta
+      })
+        .then(({ res }) => {
+          this.units = res.data
+          this.totalUnit()
+        })
+    },
+    totalUnit () {
+      this.total.description = 0
+      this.total.amountVouchers = 0
+      this.units.map(unit => {
+        this.total.description += unit.description
+        this.total.amountVouchers += unit.amountVouchers
+      })
+    },
     getBranchOffice () {
       this.$services.getData(['branch-offices'], { paginated: false })
         .then(({ res }) => {
@@ -503,6 +306,7 @@ export default {
           }
         }
         this.getVoucher(this.params)
+        this.getUnid(desde, hasta)
       }
     }
   }

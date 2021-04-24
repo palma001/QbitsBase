@@ -35,6 +35,7 @@
                               size="sm"
                               round
                               type="submit"
+                              @click="CloseCashRegister()"
                             >
                               <q-tooltip>
                                   Cerrar caja
@@ -202,7 +203,11 @@
 
 <script>
 import { date } from 'quasar'
+import { mixins } from '../mixins'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [mixins.containerMixin],
   data () {
     return {
       splitterModel: 37, // start at 50%
@@ -217,6 +222,8 @@ export default {
       name: '',
       employee: '',
       total: 0,
+      userSession: null,
+      branchOffice: null,
       bills: [],
       detailBillPayments: [],
       sourceDate: [],
@@ -495,6 +502,14 @@ export default {
     this.getPaymentType()
     this.getBranchOffice()
     this.getBills()
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
     getPaymentType () {
@@ -545,6 +560,16 @@ export default {
           this.total += Number(data.amount)
         })
       }
+    },
+    CloseCashRegister () {
+      this.$services.postData(['close-boxs'], {
+        branch_office_id: this.branchOffice.id,
+        user_id: this.userSession.id,
+        user_created_id: this.userSession.id,
+        amount: this.total
+      }).then(res => {
+        this.notify(this, 'Caja cerrada satisfactoriamente', 'positive', 'info')
+      })
     }
   }
 }
