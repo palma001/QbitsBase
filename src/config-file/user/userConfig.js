@@ -146,9 +146,7 @@ export const userConfig = [
               dataLabel: 'name',
               behavior: 'menu',
               dense: true,
-              clearable: true,
-              multiple: true,
-              'use-chips': true
+              clearable: true
             },
             class: {
               'col-xs-12': true,
@@ -188,9 +186,7 @@ export const userConfig = [
               dataLabel: 'name',
               behavior: 'menu',
               dense: true,
-              clearable: true,
-              multiple: true,
-              'use-chips': true
+              clearable: true
             },
             class: {
               'col-xs-12': true,

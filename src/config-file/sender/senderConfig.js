@@ -167,6 +167,8 @@ export const senderConfig = [
         },
         actionable: {
           propTag: 'last_name',
+          dependentName: 'sender_type',
+          dependentValue: 'JUR',
           addible: true,
           editable: true,
           type: 'text',

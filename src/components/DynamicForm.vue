@@ -310,6 +310,12 @@ export default {
     other (action) {
       this.$emit(action, this.objectToBind)
     },
+    convertData (data) {
+      if (typeof data === 'object') {
+        return data.value
+      }
+      return data
+    },
     /**
      * Description
      */
@@ -319,6 +325,7 @@ export default {
         config.map(confi => {
           inputs.push(
             confi.children.map(prop => {
+              prop.actionable.addible = (this.convertData(self.objectToBind[prop.actionable.dependentName]) === prop.actionable.dependentValue)
               if (prop.actionable && prop.actionable.addible) {
                 const propTag = prop.actionable.propTag
                 prop.actionable.component.props.value = (prop.actionable.component.props.defaultValue) ? prop.actionable.component.props.defaultValue : self.objectToBind[propTag]

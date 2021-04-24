@@ -15,6 +15,7 @@
     :error-message="errorMessageProp"
     :error="error"
     :use-chips="useChips"
+    :max-values="maxValue"
     @filter="filter"
     @input="input"
     @select="select"
@@ -121,6 +122,11 @@ export default {
     useChips: {
       type: Boolean,
       default: false
+    },
+    maxValue: {
+      type: [String, Number],
+      default: 1
+
     }
   },
   data () {
@@ -158,6 +164,8 @@ export default {
             description: data[this.dataDescription],
             icon: data[this.dataIcon]
           }
+        } else if (Array.isArray(data) && !this.multiple) {
+          return this.setModelSelect(data[0])
         } else {
           return data.map(d => {
             return this.setModelSelect(d)
