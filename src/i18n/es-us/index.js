@@ -112,8 +112,13 @@ export default {
     editSuccessfull: 'medida editada exitosamente'
   },
   voucher: {
+    status: 'estado del paquete',
     id: 'Número',
-    addressee: 'destinatario',
+    deliveredSuccessfull: 'paquete entregado exitosamente!',
+    addressee: {
+      name: 'destinatario',
+      document_number: 'Numero de identificación'
+    },
     'branch-offices': 'sucursales',
     destination: 'destino',
     destinations: 'destinos',

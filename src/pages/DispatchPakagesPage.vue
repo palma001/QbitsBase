@@ -257,6 +257,8 @@
 import DataTable from '../components/DataTable.vue'
 import { voucherConfig, buttonsTable } from '../config-file/voucher/voucherConfig'
 import { mixins } from '../mixins'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 import BSearchSelect from '../components/BSearchSelect'
 export default {
   mixins: [mixins.containerMixin],
@@ -266,6 +268,8 @@ export default {
   },
   data () {
     return {
+      branchOfficeSession: null,
+      userSession: null,
       columns: [
         {
           name: 'number',
@@ -339,6 +343,12 @@ export default {
       helper: null
     }
   },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
+  },
   created () {
     this.getVochers()
     this.getFilter(this.shape)
@@ -347,6 +357,8 @@ export default {
     this.getBranchOffices()
     this.$barcodeScanner.init(this.getOneVoucher)
     this.getHelpers()
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOfficeSession = this[GETTERS.GET_BRANCH_OFFICE]
   },
   methods: {
     openDialogGuide () {
@@ -498,9 +510,9 @@ export default {
         return {
           voucher_id: voucher.id,
           steerable_type: 'App\\Models\\BranchOffice',
-          steerable_id: 1,
+          steerable_id: this.branchOfficeSession.id,
           status: 'in_transit',
-          user_created_id: 1
+          user_created_id: this.userSession.id
         }
       })
     },

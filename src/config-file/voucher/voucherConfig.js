@@ -14,10 +14,28 @@ export const voucherConfig = [
       },
       {
         tabulated: {
-          name: 'addressee',
+          name: 'addressee.name',
           align: 'left',
           field: row => row.addressee.full_name,
           sortable: false,
+          visible: true
+        }
+      },
+      {
+        tabulated: {
+          name: 'addressee.document_number',
+          align: 'left',
+          field: row => row.addressee.document_number,
+          sortable: false,
+          visible: true
+        }
+      },
+      {
+        tabulated: {
+          name: 'status',
+          align: 'left',
+          field: row => row.status,
+          sortable: true,
           visible: true
         }
       },

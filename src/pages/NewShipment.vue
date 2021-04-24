@@ -103,6 +103,11 @@
                   Imprimir comprobantes
                 </q-tooltip>
               </q-btn>
+              <q-btn icon="toc" color="positive" @click="dialogEntregarPaquete = true" class="q-ml-sm">
+                <q-tooltip content-class="bg-positive" content-style="font-size: 16px" :offset="[10, 10]">
+                 Entregar paquete
+                </q-tooltip>
+              </q-btn>
               <q-btn
                 class="q-ml-sm"
                 icon="fa fa-credit-card"
@@ -262,7 +267,7 @@
               <q-item-section side>$ {{ payment }}</q-item-section>
             </q-item>
           </q-list>
-          <q-list bordered separator dense class="col-3">
+          <q-list bordered separator dense class="col-5">
             <q-item
               clickable
               v-ripple
@@ -275,6 +280,28 @@
                 {{ index }}
               </q-item-section>
               <q-item-section side>$ {{ payment }}</q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              v-ripple
+              class="text-bold"
+              :active="true"
+            >
+              <q-item-section>
+                Pagado
+              </q-item-section>
+              <q-item-section side>$ {{ totalPayment }}</q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              v-ripple
+              class="text-bold"
+              :active="true"
+            >
+              <q-item-section>
+                Total Factura
+              </q-item-section>
+              <q-item-section side>$ {{ account.total }}</q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
@@ -289,16 +316,24 @@
       persistent
     >
       <q-card style="width: 900px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-md bg-primary text-white">
+          <div class="text-h6">Entregar paquete</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
         <q-card-section>
           <data-table
             title="list"
             module="voucher"
+            action
             :searchable="true"
             :column="voucherConfig"
             :data="vouchers"
             :loading="loadingTable"
             :optionPagination="optionPagination"
-            @selected="selecedVoucher"
+            @view-details="confirm"
+            @search-data="searchData"
+            @on-load-data="loadData"
           />
         </q-card-section>
       </q-card>
@@ -325,7 +360,22 @@ export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
-      dialogEntregarPaquete: true,
+      /**
+       * Params search
+       * @type {Object}
+       */
+      params: {
+        paginated: true,
+        sortBy: 'id',
+        sortOrder: 'desc',
+        perPage: 1,
+        dataSearch: {
+          id: '',
+          'addressee.document_number': '',
+          'addressee.name': ''
+        }
+      },
+      dialogEntregarPaquete: false,
       /**
        * Options pagination
        * @type {Object}
@@ -411,13 +461,13 @@ export default {
     }
   },
   created () {
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
     this.getAllSenders()
     this.getAllRates()
     this.getAllPaymentTypes()
     this.getAllPaymentTypeDestinations()
     this.printBillAndVoucher(bill)
-    this.userSession = this[GETTERS.GET_USER]
-    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
     this.getCurrencyRate()
     this.setRelationalData(this.userServices, [], this)
     this.getVochers(this.params)
@@ -435,14 +485,78 @@ export default {
     }
   },
   methods: {
+    confirm (data) {
+      if (data.status === this.$t('voucher.received')) {
+        this.$q.dialog({
+          title: 'Alert',
+          message: '¿Desea entregar el paquete?',
+          cancel: {
+            label: 'Cancelar',
+            color: 'negative'
+          },
+          persistent: true,
+          ok: {
+            label: 'Aceptar',
+            color: 'primary'
+          }
+        }).onOk(() => {
+          this.viewDetails(data)
+        })
+      } else {
+        this.notify(this, `El paquete esta en estado ${data.status}, no puede realizar esta operación`, 'negative', 'warning')
+      }
+    },
+    viewDetails (data) {
+      const params = [{
+        voucher_id: data.id,
+        steerable_type: 'App\\Models\\BrachOffice',
+        steerable_id: this.branchOffice.id,
+        status: 'delivered',
+        user_created_id: this.userSession.id
+      }]
+      const guide = data.guides[data.guides.length - 1]
+      this.$services.putData(['vouchers', guide.id], {
+        vouchers: params
+      })
+        .then((res) => {
+          this.notify(this, 'voucher.deliveredSuccessfull', 'positive', 'info')
+          this.dialogEntregarPaquete = false
+        })
+    },
+    /**
+     * Search vouchers
+     * @param  {Object}
+     */
+    searchData (data) {
+      for (const dataSearch in this.params.dataSearch) {
+        this.params.dataSearch[dataSearch] = data
+      }
+      this.getVochers(this.params)
+    },
+    /**
+     * Load data sorting
+     * @param  {Object}
+     */
+    loadData (data) {
+      this.params.page = data.page
+      this.params.sortBy = data.sortBy
+      this.params.sortOrder = data.sortOrder
+      this.params.perPage = data.rowsPerPage
+      this.optionPagination = data
+      this.getVochers(this.params)
+    },
     /**
      * Get all vouchers
      */
-    getVochers (params = this.params) {
+    getVochers (params) {
       this.loadingTable = true
+      params.notGuide = true
       this.$services.getData(['vouchers'], params)
         .then(({ res }) => {
-          this.vouchers = res.data.data
+          this.vouchers = res.data.data.map(voucher => {
+            voucher.status = this.$t('voucher.' + voucher.status)
+            return voucher
+          })
           this.optionPagination.rowsNumber = res.data.total
           this.loadingTable = false
         })
@@ -772,13 +886,13 @@ export default {
     },
     calTotalPaidCoin () {
       const totalPay = {}
-      this.paymentTypesAll.forEach(payAll => {
-        this.paymentTypes.forEach((pay, index) => {
+      this.paymentTypes.forEach((pay, index) => {
+        if (pay[`amount-${index}`]) {
           totalPay[pay.coin] = isNaN(totalPay[pay.coin]) ? 0 : totalPay[pay.coin]
-          if (payAll.coin === pay.coin && !isNaN(totalPay[pay.coin])) {
-            totalPay[payAll.coin] = Number(totalPay[pay.coin]) + Number(pay[`amount-${index}`])
+          if (typeof totalPay[pay.coin] === 'number') {
+            totalPay[pay.coin] = Number(totalPay[pay.coin]) + Number(pay[`amount-${index}`])
           }
-        })
+        }
       })
       this.totalPaymentsCoin = totalPay
     },
