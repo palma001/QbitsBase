@@ -149,7 +149,21 @@ export default {
   guide: {
     voucherReceptSuccessfull: 'comprobantes guardados exitosamente',
     voucherEmty: 'Debe seleccionar al menos un comprobante',
-    notFound: 'Guía no encontrada'
+    notFound: 'Guía no encontrada',
+    id: 'número de guia',
+    number_voucher: 'cantidad de paquetes',
+    list: 'Lista de guias',
+    carrier: {
+      document_number: 'identificación del transportista',
+      name: 'nombre del transportista'
+    },
+    vehicle: {
+      plate: 'placa del transporte',
+      brand: 'marca del transporte'
+    },
+    destination: {
+      name: 'destino'
+    }
   },
   paymentMethod: {
     list: 'lista de métodos de pago',

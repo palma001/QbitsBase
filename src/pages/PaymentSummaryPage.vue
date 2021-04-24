@@ -151,10 +151,9 @@
 
         <q-card-section class="q-pt-none">
           <q-table
-            title="Treats"
+            row-key="id"
             :data="paymentDate"
             :columns="transactions"
-            row-key="id"
             :filter="filter"
             :loading="loading"
           >
@@ -243,6 +242,8 @@ export default {
       params: {
         paginated: false,
         dataFilter: {},
+        sortBy: 'id',
+        sortOrder: 'desc',
         dateFilter: {
           field: 'created_at',
           to: date.formatDate(new Date(), 'YYYY-MM-DD'),
@@ -281,7 +282,7 @@ export default {
         },
         { name: 'employee', align: 'center', label: 'Empleado', field: row => row.user.full_name, sortable: true },
         { name: 'role', align: 'center', label: 'Cargo', field: row => row.user.roles[0].name },
-        { name: 'amount', align: 'center', label: 'Monto ($)', field: row => row.amount }
+        { name: 'amount', align: 'center', label: 'Monto ($)', field: row => row.total_day }
       ],
       transactions: [
         {
@@ -338,12 +339,11 @@ export default {
       this.getCloseCashRegister(this.params)
     },
     calcTotalPaymentMethod () {
+      this.total = 0
       if (this.paymentTypes.length > 0) {
         this.paymentTypes.forEach((data) => {
           this.total += Number(data.amount)
         })
-      } else {
-        this.total = 0
       }
     },
     getCloseCashRegister (param = this.params) {
@@ -381,7 +381,7 @@ export default {
       fechaDePago = date.formatDate(fechaDePago, 'YYYY-MM-DD')
       this.$services.getData(['bill-payments'],
         {
-          detaFilter: {
+          dateFilter: {
             to: fechaDePago,
             from: fechaDePago,
             field: 'created_at'

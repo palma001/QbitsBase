@@ -211,6 +211,8 @@ export default {
       },
       params: {
         paginated: false,
+        sortOrder: 'desc',
+        sortBy: 'id',
         dataFilter: {},
         dateFilter: {
           field: 'created_at',
