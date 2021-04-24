@@ -35,7 +35,8 @@ module.exports = function (/* ctx */) {
       'ably',
       'vueBarcodeScanner',
       'VMask',
-      'vueScroll'
+      'vueScroll',
+      'axios'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css

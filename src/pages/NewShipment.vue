@@ -386,6 +386,7 @@ export default {
   },
   methods: {
     print () {
+      this.$axios.get('http://localhost:5100/print')
     },
     /**
      * Delete payment method
@@ -406,7 +407,7 @@ export default {
      * Validate bill
      */
     validBill () {
-      const saldo = this.total - this.totalPayment
+      const saldo = this.account.total - this.totalPayment
       switch (true) {
         case saldo === 0:
           this.saveBill()
@@ -482,7 +483,7 @@ export default {
           exchange: this.exchange,
           user_created_id: this.userSession.id,
           rate: this.modelRate(pack.rate),
-          cargo_insurance_amount: pack.rate.cargo_insurance_amount
+          cargo_insurance_amount: Number(pack.rate.cargo_insurance_amount)
         }
       })
     },
@@ -493,7 +494,7 @@ export default {
     modelRate (rates) {
       const valueReturn = []
       for (const key in rates) {
-        if (Object.hasOwnProperty.call(rates, key) && key !== 'amount') {
+        if (Object.hasOwnProperty.call(rates, key) && key !== 'amount' && key !== 'cargo_insurance_amount') {
           valueReturn.push({
             rate_id: key,
             description: rates[key],
@@ -661,7 +662,12 @@ export default {
      */
     async getAllPaymentTypes () {
       const { res } = await this.$services.getData(['payment-types'], { paginated: false })
-      this.paymentTypesAll = res.data
+      this.paymentTypesAll = res.data.map(payment => {
+        return {
+          label: payment.name,
+          value: payment.id
+        }
+      })
     },
     /**
      * Get Senders all
