@@ -280,12 +280,11 @@
               v-ripple
               class="text-bold text-orange"
               :active="true"
-              v-if="this.currencyRate.amount"
             >
               <q-item-section>
                 Tasa del dia
               </q-item-section>
-              <q-item-section side class="text-orange">{{ exchange }}</q-item-section>
+              <q-item-section side class="text-orange">{{ exchangeVisible }}</q-item-section>
             </q-item>
             <q-item
               clickable
@@ -367,7 +366,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <input v-money="money" v-model.lazy="exchange" type="hidden"/>
+    <input v-money="money" v-model.lazy="exchangeVisible" type="hidden"/>
   </q-page>
 </template>
 
@@ -393,6 +392,7 @@ export default {
   data () {
     return {
       totalBS: 0,
+      exchangeVisible: 0,
       money: {
         decimal: ',',
         thousands: '.',
@@ -953,6 +953,7 @@ export default {
       })
       this.currencyRate = res.data[0]
       this.exchange = res.data[0].amount
+      this.exchangeVisible = res.data[0].amount
     }
   }
 }
