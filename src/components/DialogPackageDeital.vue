@@ -336,7 +336,7 @@ export default {
     async saveDataPackage () {
       this.dataPackage.push({
         rate: this.rateValue,
-        type_of_charge: true,
+        type_of_charge: false,
         addressee: this.addressee,
         destination: {
           branchOffice: this.deliveryType === 'Sucursal' ? this.branchOffice : null,
