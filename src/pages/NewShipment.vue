@@ -450,7 +450,7 @@ export default {
       totalPaymentsCoin: {},
       paymentType: null,
       paymentTypes: [],
-      dialogPayment: true,
+      dialogPayment: false,
       paymentTypesAll: [],
       paymentTypesDestinations: [],
       paymentTypesDestination: null,
