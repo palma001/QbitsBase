@@ -197,13 +197,12 @@ export default {
      * @param  {Object}
      */
     save (data) {
-      data.destination_id = data.destination.value
-      data.in_charge_id = data.in_charge.value
-      data.user_created_id = 1
-      this.loadingForm = true
+      data.user_created_id = this.userSession.id
+      data.roles = this.modelRole(data)
+      // this.loadingForm = true
       this.$services.postData(['users'], data)
         .then(({ res }) => {
-          this.addDialig = false
+          // this.addDialig = false
           this.loadingForm = false
           this.getUsers(this.params)
         })

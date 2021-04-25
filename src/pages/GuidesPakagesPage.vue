@@ -6,7 +6,6 @@
           title="list"
           module="guide"
           searchable
-          action
           :column="guide"
           :data="data"
           :loading="loadingTable"
