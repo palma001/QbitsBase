@@ -811,9 +811,11 @@ export default {
       let subtotal = 0
       let cargoInsuranceAmount = 0
       data.forEach((data) => {
-        total = Number(total) + Number(data.rate.amount) + Number(data.rate.cargo_insurance_amount)
+        if (data.rate.cargo_insurance_amount) {
+          cargoInsuranceAmount = Number(cargoInsuranceAmount) + Number(data.rate.cargo_insurance_amount)
+        }
+        total = Number(total) + Number(data.rate.amount) + Number(cargoInsuranceAmount)
         subtotal = Number(subtotal) + Number(data.rate.amount)
-        cargoInsuranceAmount = Number(cargoInsuranceAmount) + Number(data.rate.cargo_insurance_amount)
       })
       this.account = {
         total: total,
