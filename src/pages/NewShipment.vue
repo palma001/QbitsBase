@@ -692,6 +692,7 @@ export default {
           payment_type_id: payment.value,
           amount: payment[`amount-${index}`],
           reference: payment[`reference-${index}`],
+          exchange: this.exchange,
           user_created_id: this.userSession.id
         }
       })
