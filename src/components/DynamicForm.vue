@@ -325,7 +325,6 @@ export default {
         config.map(confi => {
           inputs.push(
             confi.children.map(prop => {
-              const propTag = prop.actionable.propTag
               if ((prop.actionable && prop.actionable.dependentName) && prop.actionable.dependentVisible) {
                 prop.actionable.addible = (self.convertData(self.objectToBind[prop.actionable.dependentName]) === prop.actionable.dependentValue)
               }
@@ -343,6 +342,7 @@ export default {
               //   }
               // }
               if (prop.actionable && prop.actionable.addible) {
+                const propTag = prop.actionable.propTag
                 prop.actionable.component.props.value = (prop.actionable.component.props.defaultValue) ? prop.actionable.component.props.defaultValue : self.objectToBind[propTag]
                 return createElement(
                   prop.actionable.component.name,
