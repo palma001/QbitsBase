@@ -1,16 +1,9 @@
 <template>
   <q-page padding>
     <div class="row q-col-gutter-md relative-position">
-      <div class="col-sm-12 col-xs-12 col-md-4 col-lg-4">
-        <dialog-package-deital
-          :show="dialogPackage"
-          @close="dialogPackage = !dialogPackage"
-          @savePackage="savePackage"
-        />
-      </div>
-      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+      <div class="col-xs-12 col-sm-5 col-xs-12 col-md-4 col-lg-4">
         <div class="row">
-          <div class="col-xs-5 col-sm-6 col-lg-4 col-md-7">
+          <div class="col-xs-12 col-sm-12 col-lg-12 col-md-12">
             <q-select
               v-model="sender"
               clearable
@@ -48,6 +41,17 @@
               </template>
             </q-select>
           </div>
+          <div class="col-xs-12 col-sm-12 col-lg-12 col-md-12">
+            <dialog-package-deital
+              :show="dialogPackage"
+              @close="dialogPackage = !dialogPackage"
+              @savePackage="savePackage"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-7 col-md-8 col-lg-8">
+        <div class="row">
           <div class="col-xs-12 col-sm-12 col-lg-12 col-md-12">
             <q-table
               dense
@@ -96,8 +100,8 @@
           </div>
         </div>
         <div class="col-12 q-mt-sm">
-          <div class="row justify-between">
-            <div class="col-6">
+          <div class="row justify-between q-col-gutter-sm">
+            <div class="col-xs-6 col-sm-12 col-md-5 col-lg-4">
               <q-btn icon="print" color="orange" @click="print">
                 <q-tooltip content-class="bg-orange" content-style="font-size: 16px" :offset="[10, 10]">
                   Imprimir comprobantes
@@ -120,8 +124,8 @@
                 </q-tooltip>
               </q-btn>
             </div>
-            <div class="col-6 relative-position">
-              <q-list bordered dense separator class="q-pa-none text-h6 float-right" style="width: 400px;">
+            <div class="col-xs-6 col-sm-12 col-md-7 col-lg-6">
+              <q-list bordered dense separator class="q-pa-none text-h6" style="width: 100%">
                 <q-item
                   clickable
                   v-ripple
@@ -913,7 +917,7 @@ export default {
 <style lang="sass">
 .my-sticky-dynamic
   /* height or max-height is important */
-  height: 330px
+  height: 66vh
 
   .q-table__top,
   .q-table__bottom,
