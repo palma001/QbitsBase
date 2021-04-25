@@ -260,7 +260,7 @@ export default {
       this.total.description = 0
       this.total.amountvouchers = 0
       this.units.map(unit => {
-        this.total.description += unit.description
+        this.total.description += Number(unit.description)
         this.total.amountvouchers += unit.amountvouchers
       })
     },
@@ -285,7 +285,7 @@ export default {
     },
     filterVoucher (comprobante) {
       this.params.dataFilter.voucher = comprobante
-      this.getBranchOffice6(this.params)
+      this.getBranchOffice(this.params)
     },
     formatDate (sourceDate) {
       if (sourceDate) {
