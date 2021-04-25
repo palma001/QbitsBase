@@ -4,7 +4,7 @@
       <q-carousel
         animated
         height="100vh"
-        style="margin-top:-98px"
+        style="margin-top:-105px"
         infinite
         navigation-position="bottom"
         navigation
@@ -212,7 +212,7 @@
           ¡Somos Calidad de Servicio!
         </div>
         <div class="col-12 text-h4 flex flex-left flex-center q-mt-lg">
-          info@tranjr.com
+          contacto@tranjr.com
         </div>
         <div class="col-12 text-h5 flex flex-left flex-center q-mt-lg">
           <a href="https://api.whatsapp.com/send/?phone=584143352633&text&app_absent=0" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
@@ -223,7 +223,7 @@
           </a>
         </div>
         <div class="col-12 text-h7 flex flex-left flex-center q-mt-lg">
-          Copyright ©2021 All rights reserved | This website is provided by Qbits Dev
+          Copyright ©2021 All rights reserved | This website is provided by QbitsDev.
         </div>
       </div>
     </footer>

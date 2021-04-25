@@ -1,55 +1,60 @@
 <template>
   <div class="q-pa-none">
     <q-layout view="hHh Lpr lff">
-      <q-header :class="`${classToolbar}`">
+      <q-header :class="`${classToolbar}`" :style="style">
         <q-toolbar class="text-dark">
-          <q-toolbar-title :class="classButton">
+          <q-toolbar-title :class="classButton" class="postion-relative">
+            <q-avatar size="200px" class="fixed-top">
+              <img src="/icons/logo.png"/>
+            </q-avatar>
             <!--<q-btn stretch flat round @click="show = !show" icon="menu" v-if="$q.screen.lt.sm" :class="classButton"/>
             -->
-            Transporte JR&LS
+            <!-- Transporte JR&LS-->
           </q-toolbar-title>
           <q-space />
-          <div v-if="!$q.screen.lt.sm" class="q-gutter-x-md">
+          <div v-if="!$q.screen.lt.sm" class="q-gutter-x-lg q-mt-lg">
             <q-btn stretch flat dense label="Home" :class="classButton" v-scroll-to="'#home'"/>
             <q-btn stretch flat dense label="Servicios" :class="classButton" v-scroll-to="'#services'"/>
             <q-btn stretch flat dense label="Contáctanos" :class="classButton" v-scroll-to="'#contactus'"/>
           </div>
-          <q-btn stretch flat dense icon="person" :class="classButton" v-if="!GET_USER">
-            <q-popup-proxy style="width: 400px;">
-              <q-card class="my-card" style="width: 400px;">
-                <q-card-section>
-                  <div class="text-h6 text-primary">Iniciar Sesión</div>
-                </q-card-section>
-                <q-separator></q-separator>
-                <q-card-section>
-                  <q-input
-                    v-model="email"
-                    label="Usuario"
-                    dense
-                    ref="username"
-                    @keyup.enter.native="login"
-                    :rules="[val => !!val || 'El campo es requerido.']"
-                  />
-                </q-card-section>
-                <q-card-section class="q-pt-none">
-                  <q-input
-                    v-model="password"
-                    label="Clave"
-                    dense
-                    type="password"
-                    ref="password"
-                    @keyup.enter.native="login"
-                    :rules="[val => !!val || 'El campo es requerido.']"
-                  />
-                </q-card-section>
-                <q-card-actions align="around">
-                  <q-btn flat color="negative" class="q-ml-xs">Recuperar Clave</q-btn>
-                  <q-space />
-                  <q-btn flat color="primary" @click="login">Iniciar Sesion</q-btn>
-                </q-card-actions>
-              </q-card>
-            </q-popup-proxy>
-          </q-btn>
+          <div class="q-gutter-x-lg q-mt-lg q-ml-xs q-gutter-x-lg" v-if="!GET_USER">
+            <q-btn stretch flat dense icon="person" :class="classButton">
+              <q-popup-proxy style="width: 400px;">
+                <q-card class="my-card" style="width: 400px;">
+                  <q-card-section>
+                    <div class="text-h6 text-primary">Iniciar Sesión</div>
+                  </q-card-section>
+                  <q-separator></q-separator>
+                  <q-card-section>
+                    <q-input
+                      v-model="email"
+                      label="Usuario"
+                      dense
+                      ref="username"
+                      @keyup.enter.native="login"
+                      :rules="[val => !!val || 'El campo es requerido.']"
+                    />
+                  </q-card-section>
+                  <q-card-section class="q-pt-none">
+                    <q-input
+                      v-model="password"
+                      label="Clave"
+                      dense
+                      type="password"
+                      ref="password"
+                      @keyup.enter.native="login"
+                      :rules="[val => !!val || 'El campo es requerido.']"
+                    />
+                  </q-card-section>
+                  <q-card-actions align="around">
+                    <q-btn flat color="negative" class="q-ml-xs">Recuperar Clave</q-btn>
+                    <q-space />
+                    <q-btn flat color="primary" @click="login">Iniciar Sesion</q-btn>
+                  </q-card-actions>
+                </q-card>
+              </q-popup-proxy>
+            </q-btn>
+          </div>
           <q-btn label="Administrativo" dense stretch flat :class="classButton" @click="$router.push({ 'name': 'NewShipment'})" v-else/>
         </q-toolbar>
       </q-header>
@@ -77,6 +82,7 @@ export default {
       show: false,
       classToolbar: '',
       classButton: '',
+      style: '',
       hoverButtonWork: false,
       hoverButtonContactus: false,
       name: '',
@@ -99,12 +105,14 @@ export default {
     onScroll (data) {
       switch (true) {
         case data.position > 100:
-          this.classToolbar = 'bg-white q-pa-sm'
-          this.classButton = 'text-dark'
+          this.classToolbar = 'q-pa-none'
+          this.style = 'height: 200px; background: rgba(29, 29, 29, 0.6)'
+          this.classButton = 'text-white q-mt-xl q-ml-md'
           break
         case data.position < 100:
           this.classToolbar = 'bg-transparent q-pa-lg'
           this.classButton = 'text-white'
+          this.style = ''
           break
         default:
           break
@@ -141,5 +149,8 @@ export default {
   }
   .q-body--prevent-scroll {
     position: relative !important;
+  }
+  .logo {
+    width: 200px;
   }
 </style>
