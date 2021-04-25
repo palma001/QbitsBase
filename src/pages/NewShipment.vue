@@ -68,6 +68,9 @@
             >
               <template v-slot:header="props">
                 <q-tr :props="props">
+                  <q-th auto-width>
+                   Cobro a destino
+                  </q-th>
                   <q-th
                     v-for="col in props.cols"
                     :key="col.name"
@@ -82,6 +85,12 @@
               </template>
               <template v-slot:body="props">
                 <q-tr :props="props">
+                  <q-td auto-width>
+                    <q-toggle
+                      v-model="props.row.type_of_charge"
+                      color="primary"
+                    />
+                  </q-td>
                   <q-td
                     v-for="col in props.cols"
                     :key="col.name"
@@ -102,14 +111,20 @@
         <div class="col-12 q-mt-sm">
           <div class="row justify-between q-col-gutter-sm">
             <div class="col-xs-6 col-sm-12 col-md-5 col-lg-4">
-              <q-btn icon="print" color="orange" @click="print">
-                <q-tooltip content-class="bg-orange" content-style="font-size: 16px" :offset="[10, 10]">
-                  Imprimir comprobantes
-                </q-tooltip>
-              </q-btn>
               <q-btn icon="toc" color="positive" @click="dialogEntregarPaquete = true" class="q-ml-sm">
                 <q-tooltip content-class="bg-positive" content-style="font-size: 16px" :offset="[10, 10]">
                  Entregar paquete
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                class="q-ml-sm"
+                icon="save"
+                color="orange"
+                :disable="packages.length <= 0"
+                @click="saveBill"
+              >
+                <q-tooltip content-class="bg-primary" content-style="font-size: 16px" :offset="[10, 10]">
+                  Guardar
                 </q-tooltip>
               </q-btn>
               <q-btn
@@ -652,27 +667,30 @@ export default {
      * Save bill
      */
     async saveBill () {
-      this.$refs.sender.validate()
-      const params = {
-        sender_id: this.sender.value,
-        receptionist_id: this[GETTERS.GET_USER].id,
-        branch_office_id: this.branchOffice.id,
-        vouchers: this.modelVoucher(this.packages),
-        billPayments: this.modelPayment(this.paymentTypes),
-        user_created_id: this[GETTERS.GET_USER].id
-      }
-      const { res } = await this.$services.postData(['bills'], params)
-      this.notify(this, 'la factura se guardo exitosamente', 'positive', 'mood')
-      this.paymentTypes = []
-      this.dialogPayment = false
-      this.printBillAndVoucher(res.data)
-      this.packages = []
-      this.total = 0
-      this.sender = null
-      this.account = {
-        total: 0,
-        subtotal: 0,
-        cargoInsuranceAmount: 0
+      if (this.$refs.sender.validate()) {
+        const params = {
+          sender_id: this.sender.value,
+          receptionist_id: this[GETTERS.GET_USER].id,
+          branch_office_id: this.branchOffice.id,
+          vouchers: this.modelVoucher(this.packages),
+          billPayments: this.paymentTypes ? this.modelPayment(this.paymentTypes) : [],
+          user_created_id: this[GETTERS.GET_USER].id
+        }
+        const { res } = await this.$services.postData(['bills'], params)
+        this.notify(this, 'la operacion se guardo exitosamente', 'positive', 'mood')
+        this.paymentTypes = []
+        this.dialogPayment = false
+        this.printBillAndVoucher(res.data)
+        this.packages = []
+        this.total = 0
+        this.sender = null
+        this.account = {
+          total: 0,
+          subtotal: 0,
+          cargoInsuranceAmount: 0
+        }
+      } else {
+        this.notify('Debe seleccionar el campo remitante', 'negative', 'warning')
       }
     },
     /**
@@ -715,6 +733,7 @@ export default {
           exchange: this.exchange,
           user_created_id: this.userSession.id,
           rate: this.modelRate(pack.rate),
+          type_of_charge: pack.type_of_charge,
           cargo_insurance_amount: Number(pack.rate.cargo_insurance_amount)
         }
       })

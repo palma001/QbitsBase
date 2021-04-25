@@ -336,6 +336,7 @@ export default {
     async saveDataPackage () {
       this.dataPackage.push({
         rate: this.rateValue,
+        type_of_charge: true,
         addressee: this.addressee,
         destination: {
           branchOffice: this.deliveryType === 'Sucursal' ? this.branchOffice : null,
@@ -346,7 +347,6 @@ export default {
       })
       this.clearForm()
       this.$emit('savePackage', this.dataPackage)
-      this.dataPackage = []
     },
     /**
      * Clear form
