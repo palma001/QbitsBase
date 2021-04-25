@@ -303,7 +303,7 @@ export default {
             if (elemento[fieldCompare] === valorActual[fieldCompare]) {
               return {
                 ...elemento,
-                amount: elemento[fieldSum] + valorActual[fieldSum]
+                amount: Number(elemento[fieldSum]) + Number(valorActual[fieldSum])
               }
             }
             return elemento
