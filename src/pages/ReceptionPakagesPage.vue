@@ -216,6 +216,10 @@ export default {
   created () {
     this.$barcodeScanner.init(this.getOneGuide)
   },
+  destroyed () {
+    // Remove listener when component is destroyed
+    this.$barcodeScanner.destroy()
+  },
   methods: {
     /**
      * Selected vocher

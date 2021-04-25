@@ -60,7 +60,6 @@
                       dense
                       v-model="rateValue.cargo_insurance_amount"
                       type="number"
-                      :rules="[val => !!val || 'El campo es requerido']"
                       label="Seguro de carga"
                     />
                 </q-card-section>
@@ -347,6 +346,7 @@ export default {
       })
       this.clearForm()
       this.$emit('savePackage', this.dataPackage)
+      this.dataPackage = []
     },
     /**
      * Clear form

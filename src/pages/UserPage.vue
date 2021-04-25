@@ -74,6 +74,8 @@ import DataTable from '../components/DataTable.vue'
 import DynamicFormEdition from '../components/DynamicFormEdition.vue'
 import DynamicForm from '../components/DynamicForm.vue'
 import { userConfig, propsPanelEdition, userServices } from '../config-file/user/userConfig.js'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 import { mixins } from '../mixins'
 export default {
   mixins: [mixins.containerMixin],
@@ -84,6 +86,8 @@ export default {
   },
   data () {
     return {
+      userSession: null,
+      branchOffice: null,
       loadingForm: false,
       /**
        * Selected data
@@ -153,9 +157,17 @@ export default {
       data: []
     }
   },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
+  },
   created () {
     this.getUsers()
     this.setRelationalData(this.userServices, [], this)
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
   },
   methods: {
     /**
@@ -199,14 +211,35 @@ export default {
           this.loadingForm = false
         })
     },
+    modelRole (data) {
+      const roles = {}
+      if (data.branch_offices.value && data.roles.value) {
+        roles.branch_office_id = data.branch_offices.value
+        roles.role_id = data.roles.value
+      }
+
+      if (data.roles.value && !data.branch_offices.value) {
+        roles.role_id = data.roles.value
+        roles.branch_office_id = data.branch_offices[0].id
+      }
+
+      if (!data.roles.value && data.branch_offices.value) {
+        roles.role_id = data.roles[0].id
+        roles.branch_office_id = data.branch_offices.value
+      }
+      if (!data.roles.value && !data.branch_offices.value) {
+        roles.branch_office_id = data.branch_offices[0].id
+        roles.role_id = data.roles[0].id
+      }
+      return roles
+    },
     /**
      * Update Branch Office
      * @param  {Object}
      */
     update (data) {
-      data.destination_id = data.destination.value ?? data.destination.id
-      data.in_charge_id = data.in_charge.value ?? data.in_charge.id
-      data.user_created_id = 1
+      data.user_updated_id = this.userSession.id
+      data.roles = this.modelRole(data)
       this.loadingForm = true
       this.$services.putData(['users', this.selectedData.id], data)
         .then(({ res }) => {
