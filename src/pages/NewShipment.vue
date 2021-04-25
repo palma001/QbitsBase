@@ -87,6 +87,7 @@
                 <q-tr :props="props">
                   <q-td auto-width>
                     <q-toggle
+                      @input="calcTotal(packages)"
                       v-model="props.row.type_of_charge"
                       color="primary"
                     />
@@ -811,11 +812,13 @@ export default {
       let subtotal = 0
       let cargoInsuranceAmount = 0
       data.forEach((data) => {
-        if (data.rate.cargo_insurance_amount) {
-          cargoInsuranceAmount = Number(cargoInsuranceAmount) + Number(data.rate.cargo_insurance_amount)
+        if (!data.type_of_charge) {
+          if (data.rate.cargo_insurance_amount) {
+            cargoInsuranceAmount = Number(cargoInsuranceAmount) + Number(data.rate.cargo_insurance_amount)
+          }
+          total = Number(total) + Number(data.rate.amount) + Number(cargoInsuranceAmount)
+          subtotal = Number(subtotal) + Number(data.rate.amount)
         }
-        total = Number(total) + Number(data.rate.amount) + Number(cargoInsuranceAmount)
-        subtotal = Number(subtotal) + Number(data.rate.amount)
       })
       this.account = {
         total: total,
