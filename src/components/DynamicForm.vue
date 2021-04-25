@@ -329,16 +329,19 @@ export default {
               if ((prop.actionable && prop.actionable.dependentName) && prop.actionable.dependentVisible) {
                 prop.actionable.addible = (self.convertData(self.objectToBind[prop.actionable.dependentName]) === prop.actionable.dependentValue)
               }
-              if ((prop.actionable && prop.actionable.dependentName) && prop.actionable.dependentData) {
-                if (self.objectToBind[prop.actionable.dependentName]) {
-                  prop.actionable.component.props.data.filter(element => {
-                    if (element[prop.actionable.dependeFilterField]) {
-                      return element[prop.actionable.dependeFilterField] === self.objectToBind[prop.actionable.dependentName].value
-                    }
-                  })
-                  console.log(propTag, prop.actionable.component.props.data)
-                }
-              }
+              // if ((prop.actionable && prop.actionable.dependentName) && prop.actionable.dependentData) {
+              //   if (self.objectToBind[prop.actionable.dependentName]) {
+              //     prop.actionable.component.props.data.map(element => {
+              //       if (element[prop.actionable.dependeFilterField]) {
+              //         if (element[prop.actionable.dependeFilterField] === self.objectToBind[prop.actionable.dependentName].value) {
+              //           console.log(element)
+              //           return element
+              //         }
+              //       }
+              //     })
+              //     console.log(propTag, prop.actionable.component.props.data)
+              //   }
+              // }
               if (prop.actionable && prop.actionable.addible) {
                 prop.actionable.component.props.value = (prop.actionable.component.props.defaultValue) ? prop.actionable.component.props.defaultValue : self.objectToBind[propTag]
                 return createElement(
