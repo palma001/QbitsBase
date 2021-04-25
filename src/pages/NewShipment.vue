@@ -298,7 +298,6 @@
             :data="vouchers"
             :loading="loadingTable"
             :optionPagination="optionPagination"
-            @selected="selecedVoucher"
           />
         </q-card-section>
       </q-card>
@@ -325,7 +324,7 @@ export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
-      dialogEntregarPaquete: true,
+      dialogEntregarPaquete: false,
       /**
        * Options pagination
        * @type {Object}

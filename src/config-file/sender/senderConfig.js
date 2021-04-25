@@ -49,6 +49,9 @@ export const senderConfig = [
           propTag: 'document_type',
           addible: true,
           type: 'String',
+          dependentName: 'sender_type',
+          dependeFilterField: 'person_type',
+          dependentData: true,
           visibleLabel: true,
           component: {
             name: 'b-search-select',
@@ -160,6 +163,7 @@ export const senderConfig = [
           propTag: 'last_name',
           dependentName: 'sender_type',
           dependentValue: 'NAT',
+          dependentVisible: true,
           addible: true,
           editable: true,
           type: 'text',
