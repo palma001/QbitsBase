@@ -49,7 +49,7 @@
                           <div class="text-h6">
                             {{ ucwords($t(`voucher.${unit.status}`)) }}
                           </div>
-                          <div class="text-subtitle2">{{ unit.amountVouchers }} Paquetes</div>
+                          <div class="text-subtitle2">{{ unit.amountvouchers }} Paquetes</div>
                           <div class="text-subtitle2">{{ unit.description }} {{ unit.measurement }}</div>
                         </q-card-section>
                       </q-card>
@@ -58,7 +58,7 @@
                       <q-card dark bordered class="bg-cyan-9 my-card">
                         <q-card-section>
                             <div class="text-h6">Total</div>
-                            <div class="text-subtitle2">{{ total.amountVouchers }} Paquetes</div>
+                            <div class="text-subtitle2">{{ total.amountvouchers }} Paquetes</div>
                             <div class="text-subtitle2">{{ total.description }} Kg</div>
                         </q-card-section>
                       </q-card>
@@ -258,10 +258,10 @@ export default {
     },
     totalUnit () {
       this.total.description = 0
-      this.total.amountVouchers = 0
+      this.total.amountvouchers = 0
       this.units.map(unit => {
         this.total.description += unit.description
-        this.total.amountVouchers += unit.amountVouchers
+        this.total.amountvouchers += unit.amountvouchers
       })
     },
     getBranchOffice () {
