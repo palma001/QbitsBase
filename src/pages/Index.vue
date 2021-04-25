@@ -147,7 +147,7 @@
                       <q-item-section avatar>
                         <q-icon name="room" />
                       </q-item-section>
-                      <q-item-section>Anzoátegui - Veneuela</q-item-section>
+                      <q-item-section>Caracas - Veneuela</q-item-section>
                     </q-item>
                   </q-list>
                 </div>

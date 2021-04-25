@@ -17,8 +17,8 @@
             <q-btn stretch flat dense label="Servicios" :class="classButton" v-scroll-to="'#services'"/>
             <q-btn stretch flat dense label="Contáctanos" :class="classButton" v-scroll-to="'#contactus'"/>
           </div>
-          <div class="q-gutter-x-lg q-mt-lg q-ml-xs q-gutter-x-lg" v-if="!GET_USER">
-            <q-btn stretch flat dense icon="person" :class="classButton">
+          <div class="q-gutter-x-lg q-mt-lg q-ml-xs q-gutter-x-lg">
+            <q-btn stretch flat dense icon="person" :class="classButton" v-if="!GET_USER">
               <q-popup-proxy style="width: 400px;">
                 <q-card class="my-card" style="width: 400px;">
                   <q-card-section>
@@ -54,8 +54,8 @@
                 </q-card>
               </q-popup-proxy>
             </q-btn>
+            <q-btn label="Administrativo" dense stretch flat :class="classButton" @click="$router.push({ 'name': 'NewShipment'})" v-else/>
           </div>
-          <q-btn label="Administrativo" dense stretch flat :class="classButton" @click="$router.push({ 'name': 'NewShipment'})" v-else/>
         </q-toolbar>
       </q-header>
       <drawer-landing :show="show" v-if="$q.screen.lt.sm || show"/>
