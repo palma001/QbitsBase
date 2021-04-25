@@ -175,7 +175,9 @@
     >
       <q-card style="width: 900px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-md bg-primary text-white">
-          <div class="text-h6">Pagar factura</div>
+          <div class="text-h6">
+            Pagar factura
+          </div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
@@ -217,7 +219,7 @@
                 label="Monto"
                 v-model="paymentType[`amount-${index}`]"
                 :hint="paymentType.label"
-                @input="calcTotalModalPaid"
+                @input="calcTotalModalPaid(paymentType, index)"
                 type="number"
               />
             </div>
@@ -230,11 +232,12 @@
               />
             </div>
             <div class="col-xs-3 col-sm-3 col-md-3">
+              <input v-money="money" v-model.lazy="paymentType.totalBS" type="hidden"/>
               <q-input
                 dense
                 label="Cambio"
                 v-if="paymentType.coin === 'BS'"
-                :value="totalChange(paymentType, index)"
+                :value="paymentType.totalBS"
                 :hint="paymentType.label"
                 readonly
               />
@@ -275,8 +278,19 @@
             <q-item
               clickable
               v-ripple
-              class="text-bold"
+              class="text-bold text-orange"
               :active="true"
+              v-if="this.currencyRate.amount"
+            >
+              <q-item-section>
+                Tasa del dia
+              </q-item-section>
+              <q-item-section side class="text-orange">{{ exchange }}</q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              v-ripple
+              class="text-bold text-negative"
               v-for="(payment, index) in totalPaymentsCoin"
               :key="payment.id"
             >
@@ -295,6 +309,17 @@
                 Pagado
               </q-item-section>
               <q-item-section side>$ {{ totalPayment }}</q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              v-ripple
+              class="text-bold text-negative"
+              :active="true"
+            >
+              <q-item-section>
+                Saldo
+              </q-item-section>
+              <q-item-section side class="text-bold text-negative">$ {{ account.total - totalPayment }}</q-item-section>
             </q-item>
             <q-item
               clickable
@@ -342,6 +367,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+    <input v-money="money" v-model.lazy="exchange" type="hidden"/>
   </q-page>
 </template>
 
@@ -355,6 +381,7 @@ import { voucherConfig } from '../config-file/voucher/voucherConfig'
 import { mapGetters } from 'vuex'
 import { bill } from './DesignBill'
 import DataTable from '../components/DataTable.vue'
+import { VMoney } from 'v-money'
 export default {
   components: {
     DialogPackageDeital,
@@ -362,8 +389,16 @@ export default {
     DataTable
   },
   mixins: [mixins.containerMixin],
+  directives: { money: VMoney },
   data () {
     return {
+      totalBS: 0,
+      money: {
+        decimal: ',',
+        thousands: '.',
+        precision: 0,
+        masked: false /* doesn't work with directive */
+      },
       /**
        * Params search
        * @type {Object}
@@ -415,7 +450,7 @@ export default {
       totalPaymentsCoin: {},
       paymentType: null,
       paymentTypes: [],
-      dialogPayment: false,
+      dialogPayment: true,
       paymentTypesAll: [],
       paymentTypesDestinations: [],
       paymentTypesDestination: null,
@@ -456,7 +491,7 @@ export default {
       totalPayments: {},
       total: 0,
       tax: 12,
-      exchange: 10000,
+      exchange: 0,
       totalPayment: 0,
       userSession: null,
       branchOffice: null,
@@ -484,7 +519,6 @@ export default {
   },
   watch: {
     paymentTypes () {
-      this.totalChange()
       this.calcTotalModalPaid()
     }
   },
@@ -572,9 +606,10 @@ export default {
     },
     totalChange (payment, index) {
       if (payment) {
-        return payment.coin + ' ' + Number(this.currencyRate.amount) * Number(payment[`amount-${index}`])
+        this.money.prefix = this.currencyRate.acronym
+        console.log(this.currencyRate.amount, payment[`amount-${index}`])
+        payment.totalBS = Number(payment[`amount-${index}`]) * Number(this.currencyRate.amount)
       }
-      return this.currencyRate.amount * this.account.total
     },
     print () {
       this.$axios.get('http://localhost:5100/print')
@@ -634,6 +669,11 @@ export default {
       this.packages = []
       this.total = 0
       this.sender = null
+      this.account = {
+        total: 0,
+        subtotal: 0,
+        cargoInsuranceAmount: 0
+      }
     },
     /**
      * Print Bill
@@ -765,7 +805,7 @@ export default {
     /**
       * Calcula el total
       */
-    calcTotalModalPaid () {
+    calcTotalModalPaid (data = {}, index = 0) {
       let total = 0
       this.paymentTypes.forEach((data, index) => {
         if (data[`amount-${index}`]) {
@@ -774,6 +814,7 @@ export default {
       })
       this.totalPayment = total
       this.calTotalPaid()
+      this.totalChange(data, index)
     },
     /**
      * Save sender
@@ -910,6 +951,7 @@ export default {
         sortOrder: 'desc'
       })
       this.currencyRate = res.data[0]
+      this.exchange = res.data[0].amount
     }
   }
 }

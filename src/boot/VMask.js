@@ -1,11 +1,4 @@
 import Vue from 'vue'
-
-// As a plugin
-import VueMask, { VueMaskDirective, VueMaskFilter } from 'v-mask'
-Vue.use(VueMask)
-
-// Or as a directive
-Vue.directive('mask', VueMaskDirective)
-
-// Or only as a filter
-Vue.filter('VMask', VueMaskFilter)
+import money from 'v-money'
+// register directive v-money and component <money>
+Vue.use(money, { precision: 4 })
