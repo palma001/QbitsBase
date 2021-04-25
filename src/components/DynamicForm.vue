@@ -507,7 +507,7 @@ export default {
                 color: 'black'
               }
             },
-            style: 'height: 72vh'
+            class: 'response'
           },
           [
             createElement('q-card-section',
@@ -565,6 +565,19 @@ export default {
 
     @media (min-width: $breakpoint-xl-min)
       min-width : 450px;
+
     @media (max-width: $breakpoint-xl-max)
       max-width : 450px;
+
+  .response
+    @media (min-width: $breakpoint-xs-max)
+      min-width : 280px;
+    @media (max-width: $breakpoint-xl-max)
+      height  : 86%;
+    @media (max-width: $breakpoint-md-max)
+      height  : 82%;
+    @media (max-width: $breakpoint-sm-max)
+      height  : 80%;
+    @media (max-width: $breakpoint-lg-max)
+      height  : 78%;
 </style>

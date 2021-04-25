@@ -49,7 +49,7 @@ export const actions = {
     const role = JSON.parse(localStorage.getItem('roleSelected'))
     const branchOffice = JSON.parse(localStorage.getItem('branchOffice'))
     // const userActive = localStorage.getItem('session_active')
-    const invalidUser = !user || user === null
+    const invalidUser = !user || user === null || role === null
     if (invalidUser) {
       commit(MUTATIONS.CLEAR_ACCOUNT_STATE)
       return false

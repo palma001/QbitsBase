@@ -14,16 +14,16 @@ export const guide = [
       },
       {
         tabulated: {
-          name: 'document',
+          name: 'carrier.document_number',
           align: 'left',
           field: row => row.carrier.document_number,
-          sortable: false,
+          sortable: true,
           visible: true
         }
       },
       {
         tabulated: {
-          name: 'carrier',
+          name: 'carrier.name',
           align: 'left',
           field: row => row.carrier.full_name,
           sortable: false,
@@ -32,28 +32,28 @@ export const guide = [
       },
       {
         tabulated: {
-          name: 'plate',
+          name: 'vehicle.plate',
           align: 'left',
           field: row => row.vehicle.plate,
-          sortable: false,
+          sortable: true,
           visible: true
         }
       },
       {
         tabulated: {
-          name: 'brand',
+          name: 'vehicle.brand',
           align: 'left',
           field: row => row.vehicle.brand,
-          sortable: false,
+          sortable: true,
           visible: true
         }
       },
       {
         tabulated: {
-          name: 'destination',
+          name: 'destination.name',
           align: 'left',
           field: row => row.destination.name,
-          sortable: false,
+          sortable: true,
           visible: true
         }
       },

@@ -11,7 +11,7 @@
             <div class="text-h5 q-mb-md">Sucursales</div>
               <div class="q-gutter-md q-mt-xs">
                 <q-list bordered padding class="rounded-borders" style="max-width: 350px">
-                  <q-item clickable v-ripple v-for="branchOffice in branchOffices" :key="branchOffice.id">
+                  <q-item clickable v-ripple v-for="branchOffice in branchOffices" :key="branchOffice.id" @click="filterBranchOffice(branchOffice.id)">
                     <q-item-section avatar top>
                       <q-avatar icon="maps_home_work" color="primary" text-color="white" />
                     </q-item-section>
@@ -47,7 +47,7 @@
                     <q-card dark bordered class="bg-blue-grey-9 my-card">
                       <q-card-section>
                         <div class="text-h6">{{paymentType.name}}</div>
-                        <div class="text-subtitle2">$----</div>
+                        <div class="text-subtitle2">${{paymentType.amount}}</div>
                       </q-card-section>
                     </q-card>
                   </div>
@@ -55,7 +55,7 @@
                     <q-card dark bordered class="bg-cyan-9 my-card">
                       <q-card-section>
                         <div class="text-h6">Total</div>
-                        <div class="text-subtitle2">Por Hacer</div>
+                        <div class="text-subtitle2">${{total}}</div>
                       </q-card-section>
                     </q-card>
                   </div>
@@ -70,7 +70,7 @@
                     <div class="col-12">
                       <q-table
                         title="Treats"
-                        :data="data"
+                        :data="closeCashRegister"
                         :columns="columns"
                         row-key="id"
                         :filter="filter"
@@ -86,16 +86,16 @@
                                 <q-radio v-model="shape" val="Del" label="Del" />
                               </div>
                               <div class="col-8">
-                                <q-select v-model="model" :options="options" label="Filtrar" dense/>
+                                <q-select v-model="model" :options="options" label="Filtrar" dense @input="queryTime"/>
                               </div>
                               <div class="col-3 q-pt-sm">
                                 <q-radio v-model="shape" val="Rango" label="Rango" />
                               </div>
                               <div class="col-4">
-                                <q-input type="date" hint="Desde" v-model="desde" dense/>
+                                <q-input type="date" hint="Desde" v-model="desde" dense @input="range(desde, hasta)"/>
                               </div>
                               <div class="col-4">
-                                <q-input type="date" hint="Hasta" v-model="hasta" dense/>
+                                <q-input type="date" hint="Hasta" v-model="hasta" dense @input="range(desde, hasta)"/>
                               </div>
                             </div>
                           </div>
@@ -122,7 +122,8 @@
                               {{col.value}}
                             </q-td>
                             <q-td class="text-center">
-                              <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true">
+                              <q-btn icon="visibility" color="primary" rounded size="sm" @click="viewPaymentsDetail(props.row.created_at)">
+                              <!-- <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true"> -->
                               </q-btn>
                             </q-td>
                           </q-tr>
@@ -150,15 +151,14 @@
 
         <q-card-section class="q-pt-none">
           <q-table
-            title="Treats"
-            :data="datat"
-            :columns="transactions"
             row-key="id"
+            :data="paymentDate"
+            :columns="transactions"
             :filter="filter"
             :loading="loading"
           >
             <template v-slot:top>
-                <div class="row q-col-gutter-x-sm text-left justify-center">
+                <!-- <div class="row q-col-gutter-x-sm text-left justify-center">
                 <div class="col-3 q-pt-sm">
                   <q-radio v-model="shape" val="Del" label="Del" value="true"/>
                 </div>
@@ -174,7 +174,7 @@
                 <div class="col-4">
                   <q-input type="date" hint="Hasta" v-model="hasta" dense/>
                 </div>
-                </div>
+                </div> -->
                 <q-space />
                 <q-input dense debounce="300" color="primary" v-model="filter" label="Buscar">
                   <template v-slot:append>
@@ -198,7 +198,8 @@
                   {{col.value}}
                 </q-td>
                 <q-td class="text-center">
-                  <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true">
+                  <!-- <q-btn icon="visibility" color="primary" rounded size="sm" @click="alert=true"> -->
+                  <q-btn icon="visibility" color="primary" rounded size="sm">
                     <q-popup-proxy>
                       <q-banner>
                          <div class="row">
@@ -229,182 +230,59 @@
 </template>
 
 <script>
+import { date } from 'quasar'
+import { mixins } from '../mixins'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [mixins.containerMixin],
   data () {
     return {
+      shape: 'Del',
+      params: {
+        paginated: false,
+        dataFilter: {},
+        sortBy: 'id',
+        sortOrder: 'desc',
+        dateFilter: {
+          field: 'created_at',
+          to: date.formatDate(new Date(), 'YYYY-MM-DD'),
+          from: date.formatDate(new Date(), 'YYYY-MM-DD')
+        }
+      },
+      desde: null,
+      hasta: null,
+      model: null,
       splitterModel: 16, // start at 50%
       insideModel: 32,
       alert: false,
       address: '',
       paymentTypes: [],
       branchOffices: [],
-      desde: null,
-      hasta: null,
-      shape: 'line',
-      model: null,
+      closeCashRegister: [],
+      paymentDate: [],
       options: ['Día', 'Día anterior', 'Mes', 'Mes anterior'],
       loading: false,
       filter: '',
       rowCount: 10,
       name: '',
       employee: '',
+      total: 0,
+      userSession: null,
+      branchOffice: null,
       columns: [
         {
-          name: 'date',
+          name: 'create_at',
           required: true,
           label: 'Fecha',
           align: 'left',
-          field: row => row.name,
+          field: row => this.formatDate(row.created_at),
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'employee', align: 'center', label: 'Empleado', field: 'employee', sortable: true },
-        { name: 'role', align: 'center', label: 'Cargo', field: 'role' },
-        { name: 'amount', align: 'center', label: 'Monto ($)', field: 'amount' }
-      ],
-      data: [
-        {
-          id: 1,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '1078,00'
-        },
-        {
-          id: 2,
-          name: '16/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '340,00'
-        },
-        {
-          id: 3,
-          name: '17/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120,00'
-        },
-        {
-          id: 4,
-          name: '18/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$287,00'
-        },
-        {
-          id: 5,
-          name: '19/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$545,23'
-        },
-        {
-          id: 6,
-          name: '20/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$124,00'
-        },
-        {
-          id: 7,
-          name: '21/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$478,00'
-        },
-        {
-          id: 8,
-          name: '22/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$130,00'
-        },
-        {
-          id: 9,
-          name: '23/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$279,00'
-        },
-        {
-          id: 10,
-          name: '24/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$780,00'
-        }
-      ],
-      original: [
-        {
-          id: 1,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        },
-        {
-          id: 2,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        },
-        {
-          id: 3,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        },
-        {
-          id: 4,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        },
-        {
-          id: 5,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        },
-        {
-          id: 6,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        },
-        {
-          id: 7,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        },
-        {
-          id: 8,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        },
-        {
-          id: 9,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        },
-        {
-          id: 10,
-          name: '15/04/2021',
-          employee: 'Carlos Rodríguez',
-          role: 'Cajero (a)',
-          amount: '$120.00'
-        }
+        { name: 'employee', align: 'center', label: 'Empleado', field: row => row.user.full_name, sortable: true },
+        { name: 'role', align: 'center', label: 'Cargo', field: row => row.user.roles[0].name },
+        { name: 'amount', align: 'center', label: 'Monto ($)', field: row => row.total_day }
       ],
       transactions: [
         {
@@ -412,237 +290,105 @@ export default {
           required: true,
           label: 'Fecha',
           align: 'left',
-          field: row => row.name,
+          field: row => this.formatDate(row.created_at),
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'reference', align: 'center', label: 'Referencia', field: 'reference', sortable: true },
-        { name: 'paymentMethod', align: 'center', label: 'Método de Pago', field: 'paymentMethod', sortable: true },
-        { name: 'destination', align: 'center', label: 'Destino', field: 'destination', sortable: true },
-        { name: 'employee', align: 'center', label: 'Empleado', field: 'employee', sortable: true },
-        { name: 'role', align: 'center', label: 'Cargo', field: 'role' },
-        { name: 'amount', align: 'center', label: 'Monto ($)', field: 'amount' }
-      ],
-      datat: [
-        {
-          id: 1,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Zelle',
-          destination: 'Bank Of America',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '348.25'
-        },
-        {
-          id: 2,
-          name: '15/04/2021',
-          reference: '1424248',
-          destination: 'Banesco',
-          paymentMethod: 'Pago Móvil',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '120.00'
-        },
-        {
-          id: 3,
-          name: '15/04/2021',
-          reference: '142459',
-          destination: 'Banco de Venezuela',
-          paymentMethod: 'Tarjeta de Crédito',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '85.00'
-        },
-        {
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Tarjeta de Débito',
-          destination: 'Banco de Venezuela',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '45.00'
-        },
-        {
-          id: 5,
-          name: '15/04/2021',
-          reference: '-',
-          paymentMethod: 'Divisa',
-          destination: 'Caja',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '20.00'
-        },
-        {
-          id: 6,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Zelle',
-          destination: 'Chase',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '70.00'
-        },
-        {
-          id: 7,
-          name: '15/04/2021',
-          reference: '458729',
-          paymentMethod: 'Transferencia',
-          destination: 'Banco de Venezuela',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '15.00'
-        },
-        {
-          id: 8,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Efectivo',
-          destination: 'Caja',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '2.40'
-        },
-        {
-          id: 9,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Zelle',
-          destination: 'Chase',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '90.00'
-        },
-        {
-          id: 10,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Transferencia',
-          destination: 'Banco de Venezuela',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '280.00'
-        }
-      ],
-      originalt: [
-        {
-          id: 1,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Zelle',
-          destination: 'Bank Of America',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '348.25'
-        },
-        {
-          id: 2,
-          name: '15/04/2021',
-          reference: '1424248',
-          destination: 'Banesco',
-          paymentMethod: 'Pago Móvil',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '120.00'
-        },
-        {
-          id: 3,
-          name: '15/04/2021',
-          reference: '142459',
-          destination: 'Banco de Venezuela',
-          paymentMethod: 'Tarjeta de Crédito',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '85.00'
-        },
-        {
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Tarjeta de Débito',
-          destination: 'Banco de Venezuela',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '45.00'
-        },
-        {
-          id: 5,
-          name: '15/04/2021',
-          reference: '-',
-          paymentMethod: 'Divisa',
-          destination: 'Caja',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '20.00'
-        },
-        {
-          id: 6,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Zelle',
-          destination: 'Chase',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '70.00'
-        },
-        {
-          id: 7,
-          name: '15/04/2021',
-          reference: '458729',
-          paymentMethod: 'Transferencia',
-          destination: 'Banco de Venezuela',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '15.00'
-        },
-        {
-          id: 8,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Efectivo',
-          destination: 'Caja',
-          employee: 'María Salazar',
-          role: 'Cajero (a)',
-          amount: '2.40'
-        },
-        {
-          id: 9,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Zelle',
-          destination: 'Chase',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '90.00'
-        },
-        {
-          id: 10,
-          name: '15/04/2021',
-          reference: '142459',
-          paymentMethod: 'Transferencia',
-          destination: 'Banco de Venezuela',
-          employee: 'Juan Martínez',
-          role: 'Supervisor (a)',
-          amount: '280.00'
-        }
+        { name: 'reference', align: 'center', label: 'Referencia', field: row => row.reference, sortable: true },
+        { name: 'paymentMethod', align: 'center', label: 'Método de Pago', field: row => row.payment_type.name, sortable: true },
+        { name: 'destination', align: 'center', label: 'Destino', field: row => row.payment_type.payment_destination.name, sortable: true },
+        { name: 'employee', align: 'center', label: 'Empleado', field: row => row.user.full_name, sortable: true },
+        { name: 'role', align: 'center', label: 'Cargo', field: row => row.user.roles[0].name },
+        { name: 'amount', align: 'center', label: 'Monto ($)', field: row => row.amount }
       ]
     }
   },
   created () {
-    this.getPaymentType()
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
+    this.getPaymentType(this.params.dateFilter.from, this.params.dateFilter.to)
     this.getBranchOffice()
+    this.getCloseCashRegister(this.params)
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
-    getPaymentType () {
-      this.$services.getData(['payment-types'], { paginated: false })
+    getPaymentType (desde, hasta) {
+      this.$services.getData(['reports', 'consolidated-payment-types'], {
+        from: desde,
+        to: hasta
+      })
         .then(({ res }) => {
-          // console.log(res)
           this.paymentTypes = res.data
+          this.calcTotalPaymentMethod()
         })
     },
     getBranchOffice () {
       this.$services.getData(['branch-offices'], { paginated: false })
         .then(({ res }) => {
           this.branchOffices = res.data
+          // this.filterBranchOffice(this.branchOffices[0].id)
+        })
+    },
+    filterBranchOffice (sucursal) {
+      this.params.dataFilter.branch_office_id = sucursal
+      this.getCloseCashRegister(this.params)
+    },
+    calcTotalPaymentMethod () {
+      this.total = 0
+      if (this.paymentTypes.length > 0) {
+        this.paymentTypes.forEach((data) => {
+          this.total += Number(data.amount)
+        })
+      }
+    },
+    getCloseCashRegister (param = this.params) {
+      this.$services.getData(['close-boxs'], param)
+        .then(({ res }) => {
+          this.closeCashRegister = res.data
+        })
+    },
+    formatDate (sourceDate) {
+      const timeStamp = date.extractDate(sourceDate, 'YYYY-MM-DD')
+      return date.formatDate(timeStamp, 'DD-MM-YYYY')
+    },
+    queryTime () {
+      const queryTime = this.unitTime(this.model)
+      this.range(queryTime.from, queryTime.to)
+    },
+    range (desde, hasta) {
+      if (desde && hasta) {
+        this.params = {
+          dataFilter: {
+            branch_office_id: this.params.dataFilter.branch_office_id
+          },
+          dateFilter: {
+            field: 'created_at',
+            from: desde,
+            to: hasta
+          }
+        }
+        this.getCloseCashRegister(this.params)
+        this.getPaymentType(desde, hasta)
+      }
+    },
+    viewPaymentsDetail (fechaDePago) {
+      this.alert = true
+      fechaDePago = date.formatDate(fechaDePago, 'YYYY-MM-DD')
+      this.$services.getData(['bill-payments'],
+        {
+          dateFilter: {
+            to: fechaDePago,
+            from: fechaDePago,
+            field: 'created_at'
+          }
+        })
+        .then(({ res }) => {
+          this.paymentDate = res.data
         })
     }
   }
