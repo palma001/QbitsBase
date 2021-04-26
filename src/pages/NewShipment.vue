@@ -197,6 +197,46 @@
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
+        <q-card-section>
+          <div class="col-xs-12 col-sm-12 col-lg-12 col-md-12" v-if="senderDelivered">
+            <q-select
+              v-model="sender"
+              clearable
+              use-input
+              hide-selected
+              fill-input
+              dense
+              ref="sender"
+              :label="ucwords($t('newShipment.sender'))"
+              :options="senderOptions"
+              :rules="[val => !!val || 'El remitente es requerido']"
+              @filter="filterFn"
+            >
+              <template v-slot:append>
+                <q-btn
+                  color="primary"
+                  text-color="white"
+                  size="sm"
+                  icon="add"
+                  aria-label="add"
+                  round
+                  @click="dialogSender = !dialogSender"
+                >
+                  <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
+                    <strong>{{ucwords($t('newShipment.addSender'))}}</strong>
+                  </q-tooltip>
+                </q-btn>
+              </template>
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+        </q-card-section>
         <q-card-section class="q-pt-md">
           <q-select
             label="Tipos de pago"
@@ -359,7 +399,7 @@
       v-model="dialogEntregarPaquete"
       persistent
     >
-      <q-card style="width: 900px; max-width: 80vw;">
+      <q-card style="width: 1200px; max-width: 90vw;">
         <q-card-section class="row items-center q-pb-md bg-primary text-white">
           <div class="text-h6">Entregar paquete</div>
           <q-space />
@@ -374,6 +414,7 @@
             :column="voucherConfig"
             :data="vouchers"
             :loading="loadingTable"
+            :buttonsActions="buttonsTable"
             :optionPagination="optionPagination"
             @view-details="confirm"
             @search-data="searchData"
@@ -392,7 +433,7 @@ import DialogPackageDeital from '../components/DialogPackageDeital'
 import { senderConfig, buttonsSender, userServices } from '../config-file/sender/senderConfig'
 import DynamicForm from '../components/DynamicForm'
 import { GETTERS } from '../store/module-login/name.js'
-import { voucherConfig } from '../config-file/voucher/voucherConfig'
+import { voucherConfig, buttonsTable } from '../config-file/voucher/voucherDeliveryConfig'
 import { mapGetters } from 'vuex'
 import { bill } from './DesignBill'
 import DataTable from '../components/DataTable.vue'
@@ -407,6 +448,9 @@ export default {
   directives: { money: VMoney },
   data () {
     return {
+      buttonsTable,
+      addVoucher: true,
+      senderDelivered: false,
       totalBS: 0,
       exchangeVisible: 0,
       money: {
@@ -512,7 +556,8 @@ export default {
       userSession: null,
       branchOffice: null,
       change: 0,
-      currencyRate: null
+      currencyRate: null,
+      voucherSelected: null
     }
   },
   created () {
@@ -539,6 +584,23 @@ export default {
     }
   },
   methods: {
+    validateTypeVoucher (data) {
+      if (data.status_paid) {
+        this.viewDetails(data)
+      } else {
+        this.calcTotal([{
+          rate: {
+            amount: data.amount,
+            cargo_insurance_amount: data.cargo_insurance_amount,
+            type_of_charge: false
+          }
+        }])
+        this.addVoucher = false
+        this.dialogPayment = true
+        this.senderDelivered = true
+        this.voucherSelected = data
+      }
+    },
     confirm (data) {
       if (data.status === this.$t('voucher.received')) {
         this.$q.dialog({
@@ -554,7 +616,7 @@ export default {
             color: 'primary'
           }
         }).onOk(() => {
-          this.viewDetails(data)
+          this.validateTypeVoucher(data)
         })
       } else {
         this.notify(this, `El paquete esta en estado ${data.status}, no puede realizar esta operación`, 'negative', 'warning')
@@ -566,7 +628,8 @@ export default {
         steerable_type: 'App\\Models\\BrachOffice',
         steerable_id: this.branchOffice.id,
         status: 'delivered',
-        user_created_id: this.userSession.id
+        user_created_id: this.userSession.id,
+        bill_id: data.bill_id
       }]
       const guide = data.guides[data.guides.length - 1]
       this.$services.putData(['vouchers', guide.id], {
@@ -609,6 +672,8 @@ export default {
         .then(({ res }) => {
           this.vouchers = res.data.data.map(voucher => {
             voucher.status = this.$t('voucher.' + voucher.status)
+            voucher.type_of_charge_status = voucher.type_of_charge ? this.ucwords(this.$t('voucher.paidDestination')) : this.ucwords(this.$t('voucher.paidOrigin'))
+            voucher.status_paid_status = voucher.status_paid ? this.ucwords(this.$t('voucher.paid')) : this.ucwords(this.$t('voucher.toPaid'))
             return voucher
           })
           this.optionPagination.rowsNumber = res.data.total
@@ -620,13 +685,18 @@ export default {
           this.loadingTable = false
         })
     },
+    /**
+     * Total change
+     */
     totalChange (payment, index) {
       if (payment) {
         this.money.prefix = this.currencyRate.acronym
-        console.log(this.currencyRate.amount, payment[`amount-${index}`])
         payment.totalBS = Number(payment[`amount-${index}`]) * Number(this.currencyRate.amount)
       }
     },
+    /**
+     * Print bill
+     */
     print () {
       this.$axios.get('http://localhost:5100/print')
     },
@@ -675,23 +745,24 @@ export default {
           branch_office_id: this.branchOffice.id,
           vouchers: this.modelVoucher(this.packages),
           billPayments: this.paymentTypes ? this.modelPayment(this.paymentTypes) : [],
-          user_created_id: this[GETTERS.GET_USER].id
+          user_created_id: this[GETTERS.GET_USER].id,
+          addVoucher: this.addVoucher
         }
         const { res } = await this.$services.postData(['bills'], params)
         this.notify(this, 'la operacion se guardo exitosamente', 'positive', 'mood')
         this.paymentTypes = []
         this.dialogPayment = false
-        this.printBillAndVoucher(res.data)
+        this.voucherSelected.bill_id = res.data.id
+        this.viewDetails(this.voucherSelected)
+        // this.printBillAndVoucher(res.data)
         this.packages = []
         this.total = 0
         this.sender = null
-        this.account = {
-          total: 0,
-          subtotal: 0,
-          cargoInsuranceAmount: 0
-        }
+        this.account = { total: 0, subtotal: 0, cargoInsuranceAmount: 0 }
+        this.addVoucher = true
+        this.senderDelivered = false
       } else {
-        this.notify('Debe seleccionar el campo remitante', 'negative', 'warning')
+        this.notify(this, 'Debe seleccionar el campo remitante', 'negative', 'warning')
       }
     },
     /**
@@ -735,6 +806,8 @@ export default {
           user_created_id: this.userSession.id,
           rate: this.modelRate(pack.rate),
           type_of_charge: pack.type_of_charge,
+          status_paid: !pack.type_of_charge,
+          sender_id: this.sender.value,
           cargo_insurance_amount: Number(pack.rate.cargo_insurance_amount)
         }
       })
@@ -778,8 +851,8 @@ export default {
      * @param {Array} data package
     */
     savePackage (data) {
-      this.packages = data
-      this.calcTotal(data)
+      this.packages.push(data)
+      this.calcTotal(this.packages)
       this.dialogPackage = false
     },
     /**

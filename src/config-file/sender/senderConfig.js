@@ -153,45 +153,6 @@ export const senderConfig = [
       },
       {
         tabulated: {
-          name: 'last_name',
-          align: 'left',
-          field: row => row.last_name,
-          sortable: true,
-          visible: true
-        },
-        actionable: {
-          propTag: 'last_name',
-          dependentName: 'sender_type',
-          dependentValue: 'NAT',
-          dependentVisible: true,
-          addible: true,
-          editable: true,
-          type: 'text',
-          visibleLabel: true,
-          component: {
-            name: 'b-input',
-            props: {
-              type: 'text',
-              dense: true
-            },
-            class: {
-              'col-xs-12': true,
-              'col-sm-12': true,
-              'col-md-12': true
-            },
-            directives: [
-              {
-                name: 'validate',
-                value: {
-                  required: false
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
-        tabulated: {
           name: 'phone_number',
           align: 'left',
           field: row => row.phone_number,
@@ -393,3 +354,43 @@ export const userServices = {
   propData: 'data',
   relationalData: relationalDataConfiguration
 }
+
+// {
+//   tabulated: {
+//     name: 'last_name',
+//     align: 'left',
+//     field: row => row.last_name,
+//     sortable: true,
+//     visible: true
+//   },
+//   actionable: {
+//     propTag: 'last_name',
+//     dependentName: 'sender_type',
+//     dependentValue: 'NAT',
+//     dependentVisible: true,
+//     addible: true,
+//     editable: true,
+//     type: 'text',
+//     visibleLabel: true,
+//     component: {
+//       name: 'b-input',
+//       props: {
+//         type: 'text',
+//         dense: true
+//       },
+//       class: {
+//         'col-xs-12': true,
+//         'col-sm-12': true,
+//         'col-md-12': true
+//       },
+//       directives: [
+//         {
+//           name: 'validate',
+//           value: {
+//             required: false
+//           }
+//         }
+//       ]
+//     }
+//   }
+// }

@@ -541,19 +541,18 @@ export default {
       this.$services.postData(['guides'], {
         vehicle_id: this.vehicle.value,
         destination_id: this.branchOffice.value,
-        branch_office_id: 1,
+        branch_office_id: this.branchOfficeSession.id,
         carrier_id: this.carrier.value,
         helper_id: this.helper.value,
         vouchers: this.modelVoucher(this.voucherSelected),
         seals: this.seals,
-        user_created_id: 1
+        user_created_id: this.userSession.id
       })
         .then(({ res }) => {
           this.notify(this, 'Guia guardad exitosamente', 'primary', 'mood')
-          this.getVochers()
           this.clearInputs()
+          this.getVochers()
           this.prompt = false
-          this.voucherSelected = []
         })
     },
     /**
