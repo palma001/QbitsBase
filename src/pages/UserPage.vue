@@ -114,9 +114,7 @@ export default {
         dataSearch: {
           name: '',
           phone_number: '',
-          phone_number_two: '',
-          address: '',
-          description: ''
+          document_number: ''
         }
       },
       /**
