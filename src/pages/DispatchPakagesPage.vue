@@ -498,8 +498,12 @@ export default {
      * Selected voucher
      * @param {Array} selected vouchers selected
     */
-    selected (selected) {
-      this.voucherSelected = selected
+    selected (selectedAll, selectedOne) {
+      if (selectedOne) {
+        this.voucherSelected.push(selectedOne)
+      } else {
+        this.voucherSelected = selectedAll
+      }
     },
     /**
      * Model voucher

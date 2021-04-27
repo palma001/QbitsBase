@@ -752,8 +752,10 @@ export default {
         this.notify(this, 'la operacion se guardo exitosamente', 'positive', 'mood')
         this.paymentTypes = []
         this.dialogPayment = false
-        this.voucherSelected.bill_id = res.data.id
-        this.viewDetails(this.voucherSelected)
+        if (!this.addVoucher) {
+          this.voucherSelected.bill_id = res.data.id
+          this.viewDetails(this.voucherSelected)
+        }
         // this.printBillAndVoucher(res.data)
         this.packages = []
         this.total = 0
