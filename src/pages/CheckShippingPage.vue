@@ -115,9 +115,9 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'sender', align: 'center', label: 'Remitente', field: row => row.bill.sender.full_name, sortable: true },
-        { name: 'phoneNumberSender', align: 'center', label: 'Teléfono', field: row => row.bill.sender.phone_number },
-        { name: 'source', align: 'center', label: 'Origen', field: row => row.bill.branch_office.name },
+        { name: 'sender', align: 'center', label: 'Remitente', field: row => row.sender.full_name, sortable: true },
+        { name: 'phoneNumberSender', align: 'center', label: 'Teléfono', field: row => row.sender.phone_number },
+        // { name: 'source', align: 'center', label: 'Origen', field: row => row.bill.branch_office.name },
         { name: 'destination', align: 'center', label: 'Destino', field: row => row.destinable.city ?? row.destinable.name },
         { name: 'addressee', align: 'center', label: 'Destinatario', field: row => row.addressee.full_name },
         { name: 'phoneNumberAddressee', align: 'center', label: 'Teléfono', field: row => row.addressee.phone_number },
