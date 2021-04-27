@@ -38,24 +38,38 @@
               <template v-slot:before>
                 <div class="q-pa-md">
                 <div class="text-h6 q-mb-xs">Métodos de pagos</div>
-                  <div class="row q-col-gutter-xs">
-                    <div class="col-3" v-for="paymentType in paymentTypes" :key="paymentType.id">
-                      <q-card dark bordered class="bg-blue-grey-9 my-card">
-                        <q-card-section>
-                          <div class="text-h6">{{paymentType.name}}</div>
-                          <div class="text-subtitle2">${{paymentType.amount}}</div>
-                        </q-card-section>
-                      </q-card>
+            <div class="row q-col-gutter-xs q-mt-md">
+              <div class="col-3"
+                v-for="paymentType in paymentTypes"
+                :key="paymentType.id"
+              >
+                <q-card dark bordered class="bg-blue-grey-9 my-card" style="height: 83px;">
+                  <q-card-section>
+                    <div class="text-h6">
+                      {{ paymentType.name }}
                     </div>
-                    <div class="col-3">
-                      <q-card dark bordered class="bg-cyan-9 my-card">
-                        <q-card-section>
-                          <div class="text-h6">Total</div>
-                          <div class="text-subtitle2">${{total}}</div>
-                        </q-card-section>
-                      </q-card>
+                    <div class="text-subtitle2">
+                      {{ paymentType.acronym }} {{ paymentType.amount }}
+                      <input v-money="money" v-model.lazy="paymentType.amount" type="hidden"/>
                     </div>
-                  </div>
+                  </q-card-section>
+                  <q-tooltip v-if="paymentType.acronym === 'BS'">
+                    <div class="text-subtitle2">
+                      USD {{paymentType.amountds}}
+                    </div>
+                  </q-tooltip>
+                </q-card>
+              </div>
+              <div class="col-3" v-for="(total) in totals" :key="total.id">
+                <q-card dark bordered class="bg-cyan-9 my-card" style="height: 83px;">
+                  <q-card-section class="row q-pr-xs">
+                    <div class="text-h6 col-12 text-bold">Total {{total.acronym}}</div>
+                    <div class="text-subtitle2 col-10">{{total.amount}}</div>
+                    <input v-money="money" v-model.lazy="total.amount" type="hidden"/>
+                  </q-card-section>
+                </q-card>
+              </div>
+            </div>
                 </div>
               </template>
 
@@ -229,10 +243,12 @@ import { date } from 'quasar'
 import { mixins } from '../mixins'
 import { GETTERS } from '../store/module-login/name.js'
 import { mapGetters } from 'vuex'
+import { VMoney } from 'v-money'
 export default {
   mixins: [mixins.containerMixin],
   data () {
     return {
+      irectives: { money: VMoney },
       shape: 'Del',
       params: {
         paginated: false,
@@ -265,6 +281,12 @@ export default {
       total: 0,
       userSession: null,
       branchOffice: null,
+      money: {
+        decimal: ',',
+        thousands: '.',
+        precision: 0,
+        masked: false /* doesn't work with directive */
+      },
       columns: [
         {
           name: 'create_at',
@@ -279,6 +301,7 @@ export default {
         { name: 'role', align: 'center', label: 'Cargo', field: row => row.user.roles[0].name },
         { name: 'amount', align: 'center', label: 'Monto ($)', field: row => row.total_day }
       ],
+      totals: [],
       transactions: [
         {
           name: 'date',
@@ -312,13 +335,42 @@ export default {
     ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   methods: {
+    calcutate (exchange, value) {
+      return Number(exchange) * Number(value)
+    },
+    sumValues (data, fieldCompare, fieldSum) {
+      return data.reduce((acumulador, valorActual) => {
+        const elementoYaExiste = acumulador.find(elemento => elemento[fieldCompare] === valorActual[fieldCompare])
+        if (elementoYaExiste) {
+          return acumulador.map((elemento) => {
+            if (elemento[fieldCompare] === valorActual[fieldCompare]) {
+              return {
+                ...elemento,
+                amount: Number(elemento[fieldSum]) + Number(valorActual[fieldSum])
+              }
+            }
+            return elemento
+          })
+        }
+        return [...acumulador, valorActual]
+      }, [])
+    },
     getPaymentType (desde, hasta) {
       this.$services.getData(['reports', 'consolidated-payment-types'], {
         from: desde,
         to: hasta
       })
         .then(({ res }) => {
-          this.paymentTypes = res.data
+          const totalForName = this.sumValues(res.data, 'name', 'amount').map(element => {
+            if (element.acronym === 'BS') {
+              element.amountds = element.amount
+              element.amount = this.calcutate(element.exchange, element.amount)
+              return element
+            }
+            return element
+          })
+          this.paymentTypes = totalForName
+          this.totals = this.sumValues(totalForName, 'acronym', 'amount')
           this.calcTotalPaymentMethod()
         })
     },
