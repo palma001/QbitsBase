@@ -91,6 +91,8 @@ export default {
     return {
       shape: 'Del',
       params: {
+        sortBy: 'id',
+        sortOrder: 'desc',
         paginated: false,
         dateFilter: {
           field: 'updated_at',
