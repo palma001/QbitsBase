@@ -785,24 +785,22 @@ export default {
      */
     modelVoucher (packages) {
       return packages.map(pack => {
-        if (!pack.type_of_charge) {
-          return {
-            addressee_id: pack.addressee.id,
-            destinable_type: pack.destination.branchOffice ? 'App\\Models\\BranchOffice' : 'App\\Models\\Destination',
-            destinable_id: pack.destination.branchOffice ? pack.destination.branchOffice.value : pack.destination.destination.value,
-            address: pack.destination.address,
-            reference_point: pack.destination.referencePoin,
-            amount: pack.rate.amount,
-            tax: this.tax,
-            coin_id: 1,
-            exchange: this.exchange,
-            user_created_id: this.userSession.id,
-            rate: this.modelRate(pack.rate),
-            type_of_charge: pack.type_of_charge,
-            status_paid: !pack.type_of_charge,
-            sender_id: this.sender.value,
-            cargo_insurance_amount: Number(pack.rate.cargo_insurance_amount)
-          }
+        return {
+          addressee_id: pack.addressee.id,
+          destinable_type: pack.destination.branchOffice ? 'App\\Models\\BranchOffice' : 'App\\Models\\Destination',
+          destinable_id: pack.destination.branchOffice ? pack.destination.branchOffice.value : pack.destination.destination.value,
+          address: pack.destination.address,
+          reference_point: pack.destination.referencePoin,
+          amount: pack.rate.amount,
+          tax: this.tax,
+          coin_id: 1,
+          exchange: this.exchange,
+          user_created_id: this.userSession.id,
+          rate: this.modelRate(pack.rate),
+          type_of_charge: pack.type_of_charge,
+          status_paid: !pack.type_of_charge,
+          sender_id: this.sender.value,
+          cargo_insurance_amount: Number(pack.rate.cargo_insurance_amount)
         }
       })
     },
