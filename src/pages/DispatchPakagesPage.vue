@@ -495,12 +495,23 @@ export default {
       this.getVochers(this.params)
     },
     /**
+     * Validate array in voucher table
+     * @param {Array} data the voucher table
+     * @param {Object} index voucher table index
+     */
+    validateArray (data, index) {
+      const validDate = data.find((voucher) => voucher.id === index.id)
+      return validDate ? null : true
+    },
+    /**
      * Selected voucher
      * @param {Array} selected vouchers selected
     */
     selected (selectedAll, selectedOne) {
       if (selectedOne) {
-        this.voucherSelected.push(selectedOne)
+        if (this.validateArray(this.voucherSelected, selectedOne)) {
+          this.voucherSelected.push(selectedOne)
+        }
       } else {
         this.voucherSelected = selectedAll
       }
@@ -527,7 +538,10 @@ export default {
       this.loadingTable = true
       this.$services.getData(['vouchers'], params)
         .then(({ res }) => {
-          this.data = res.data.data
+          this.data = res.data.data.map(voucher => {
+            voucher.status = this.ucwords(this.$t('voucher.' + voucher.status))
+            return voucher
+          })
           this.optionPagination.rowsNumber = res.data.total
           this.loadingTable = false
         })

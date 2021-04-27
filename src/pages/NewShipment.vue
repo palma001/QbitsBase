@@ -197,45 +197,13 @@
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
-        <q-card-section>
-          <div class="col-xs-12 col-sm-12 col-lg-12 col-md-12" v-if="senderDelivered">
-            <q-select
-              v-model="sender"
-              clearable
-              use-input
-              hide-selected
-              fill-input
-              dense
-              ref="sender"
-              :label="ucwords($t('newShipment.sender'))"
-              :options="senderOptions"
-              :rules="[val => !!val || 'El remitente es requerido']"
-              @filter="filterFn"
-            >
-              <template v-slot:append>
-                <q-btn
-                  color="primary"
-                  text-color="white"
-                  size="sm"
-                  icon="add"
-                  aria-label="add"
-                  round
-                  @click="dialogSender = !dialogSender"
-                >
-                  <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
-                    <strong>{{ucwords($t('newShipment.addSender'))}}</strong>
-                  </q-tooltip>
-                </q-btn>
-              </template>
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No results
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
+        <q-card-section v-if="senderDelivered">
+          <q-select
+            readonly
+            v-model="sender"
+            :options="[this.sender]"
+            label="Destinatario"
+          />
         </q-card-section>
         <q-card-section class="q-pt-md">
           <q-select
@@ -398,6 +366,7 @@
     <q-dialog
       v-model="dialogEntregarPaquete"
       persistent
+      full-height
     >
       <q-card style="width: 1200px; max-width: 90vw;">
         <q-card-section class="row items-center q-pb-md bg-primary text-white">
@@ -406,6 +375,12 @@
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section>
+        <q-scroll-area
+          :thumb-style="thumbStyle"
+          :content-style="contentStyle"
+          :content-active-style="contentActiveStyle"
+          style="height: 75vh"
+        >
           <data-table
             title="list"
             module="voucher"
@@ -420,6 +395,7 @@
             @search-data="searchData"
             @on-load-data="loadData"
           />
+        </q-scroll-area>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -599,6 +575,10 @@ export default {
         this.dialogPayment = true
         this.senderDelivered = true
         this.voucherSelected = data
+        this.sender = {
+          label: data.addressee.full_name,
+          value: data.id
+        }
       }
     },
     confirm (data) {
@@ -623,17 +603,20 @@ export default {
       }
     },
     viewDetails (data) {
-      const params = [{
-        voucher_id: data.id,
-        steerable_type: 'App\\Models\\BrachOffice',
-        steerable_id: this.branchOffice.id,
-        status: 'delivered',
-        user_created_id: this.userSession.id,
-        bill_id: data.bill_id
-      }]
+      const params = [
+        {
+          voucher_id: data.id,
+          steerable_type: 'App\\Models\\BrachOffice',
+          steerable_id: this.branchOffice.id,
+          status: 'delivered',
+          user_created_id: this.userSession.id,
+          bill_id: data.bill_id
+        }
+      ]
       const guide = data.guides[data.guides.length - 1]
       this.$services.putData(['vouchers', guide.id], {
-        vouchers: params
+        vouchers: params,
+        status_paid: data.status_paid
       })
         .then((res) => {
           this.notify(this, 'voucher.deliveredSuccessfull', 'positive', 'info')
@@ -671,7 +654,7 @@ export default {
       this.$services.getData(['vouchers'], params)
         .then(({ res }) => {
           this.vouchers = res.data.data.map(voucher => {
-            voucher.status = this.$t('voucher.' + voucher.status)
+            voucher.status = this.ucwords(this.$t('voucher.' + voucher.status))
             voucher.type_of_charge_status = voucher.type_of_charge ? this.ucwords(this.$t('voucher.paidDestination')) : this.ucwords(this.$t('voucher.paidOrigin'))
             voucher.status_paid_status = voucher.status_paid ? this.ucwords(this.$t('voucher.paid')) : this.ucwords(this.$t('voucher.toPaid'))
             return voucher
@@ -751,6 +734,7 @@ export default {
         const { res } = await this.$services.postData(['bills'], params)
         this.notify(this, 'la operacion se guardo exitosamente', 'positive', 'mood')
         this.paymentTypes = []
+        this.paymentType = {}
         this.dialogPayment = false
         if (!this.addVoucher) {
           this.voucherSelected.bill_id = res.data.id

@@ -217,6 +217,7 @@ export default {
   },
   created () {
     this.setHeaders()
+    this.paginationConfig = this.optionPagination
   },
   methods: {
     /**
