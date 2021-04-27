@@ -27,7 +27,6 @@
           selection="multiple"
           searchable
           action
-          toggable
           :column="userConfig"
           :data="data"
           :loading="loadingTable"
@@ -198,8 +197,9 @@ export default {
      */
     save (data) {
       data.user_created_id = this.userSession.id
+      data.document_type_id = data.document_type.value
       data.roles = this.modelRole(data)
-      // this.loadingForm = true
+      this.loadingForm = true
       this.$services.postData(['users'], data)
         .then(({ res }) => {
           // this.addDialig = false
@@ -239,6 +239,7 @@ export default {
      */
     update (data) {
       data.user_updated_id = this.userSession.id
+      data.document_type_id = data.document_type.value ?? data.document_type_id
       data.roles = this.modelRole(data)
       this.loadingForm = true
       this.$services.putData(['users', this.selectedData.id], data)
