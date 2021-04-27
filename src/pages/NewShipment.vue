@@ -188,24 +188,28 @@
     <q-dialog
       v-model="dialogPayment"
       persistent
+      full-height
+      transition-show="slide-up"
+      transition-hide="slide-down"
     >
-      <q-card style="width: 900px; max-width: 80vw;">
-        <q-card-section class="row items-center q-pb-md bg-primary text-white">
+      <q-card style="width: 1000px; max-width: 90vw;">
+        <q-card-section class="row items-center q-pa-sm bg-primary text-white">
           <div class="text-h6">
             Pagar factura
           </div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
-        <q-card-section v-if="senderDelivered">
+        <q-card-section v-if="senderDelivered" class="q-py-xs">
           <q-select
+            dense
             readonly
             v-model="sender"
             :options="[this.sender]"
             label="Destinatario"
           />
         </q-card-section>
-        <q-card-section class="q-pt-md">
+        <q-card-section class="q-py-xs">
           <q-select
             label="Tipos de pago"
             dense
@@ -233,7 +237,7 @@
           style="height: 42vh"
         >
           <q-card-section
-            class="row justify-between"
+            class="row justify-between q-py-xs"
             v-for="(paymentType, index) in paymentTypes"
               :key="paymentType.id"
             >
@@ -621,7 +625,8 @@ export default {
       })
         .then((res) => {
           this.notify(this, 'voucher.deliveredSuccessfull', 'positive', 'info')
-          this.dialogEntregarPaquete = false
+          // this.dialogEntregarPaquete = false
+          this.getVochers(this.params)
         })
     },
     /**
@@ -780,22 +785,24 @@ export default {
      */
     modelVoucher (packages) {
       return packages.map(pack => {
-        return {
-          addressee_id: pack.addressee.id,
-          destinable_type: pack.destination.branchOffice ? 'App\\Models\\BranchOffice' : 'App\\Models\\Destination',
-          destinable_id: pack.destination.branchOffice ? pack.destination.branchOffice.value : pack.destination.destination.value,
-          address: pack.destination.address,
-          reference_point: pack.destination.referencePoin,
-          amount: pack.rate.amount,
-          tax: this.tax,
-          coin_id: 1,
-          exchange: this.exchange,
-          user_created_id: this.userSession.id,
-          rate: this.modelRate(pack.rate),
-          type_of_charge: pack.type_of_charge,
-          status_paid: !pack.type_of_charge,
-          sender_id: this.sender.value,
-          cargo_insurance_amount: Number(pack.rate.cargo_insurance_amount)
+        if (!pack.type_of_charge) {
+          return {
+            addressee_id: pack.addressee.id,
+            destinable_type: pack.destination.branchOffice ? 'App\\Models\\BranchOffice' : 'App\\Models\\Destination',
+            destinable_id: pack.destination.branchOffice ? pack.destination.branchOffice.value : pack.destination.destination.value,
+            address: pack.destination.address,
+            reference_point: pack.destination.referencePoin,
+            amount: pack.rate.amount,
+            tax: this.tax,
+            coin_id: 1,
+            exchange: this.exchange,
+            user_created_id: this.userSession.id,
+            rate: this.modelRate(pack.rate),
+            type_of_charge: pack.type_of_charge,
+            status_paid: !pack.type_of_charge,
+            sender_id: this.sender.value,
+            cargo_insurance_amount: Number(pack.rate.cargo_insurance_amount)
+          }
         }
       })
     },
