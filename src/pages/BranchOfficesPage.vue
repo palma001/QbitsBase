@@ -161,7 +161,6 @@ export default {
     }
   },
   created () {
-    this.getBanchOffices()
     this.setRelationalData(this.branchOfficeServices, [], this)
     this.userSession = this[GETTERS.GET_USER]
     this.branchOfficeSession = this[GETTERS.GET_BRANCH_OFFICE]
