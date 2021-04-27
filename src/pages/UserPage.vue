@@ -230,7 +230,8 @@ export default {
         roles.branch_office_id = data.branch_offices[0].id
         roles.role_id = data.roles[0].id
       }
-      return roles
+      roles.user_created_id = this.userSession.id
+      return [roles]
     },
     /**
      * Update Branch Office
