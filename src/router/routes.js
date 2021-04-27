@@ -119,6 +119,11 @@ const routes = [
         name: 'ShipmentSummaryPage'
       },
       {
+        path: '/voucher-preview-page',
+        component: () => import('src/pages/VoucherPreviewPage.vue'),
+        name: 'VoucherPreviewPage'
+      },
+      {
         path: 'pruebas',
         component: () => import('pages/Prueba.vue'),
         name: 'Prueba'
