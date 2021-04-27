@@ -350,7 +350,6 @@ export default {
     ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   created () {
-    this.getVochers()
     this.getFilter(this.shape)
     this.getVehicles()
     this.getCarriers()
@@ -427,7 +426,7 @@ export default {
     loadData (data) {
       this.params.page = data.page
       this.params.sortBy = data.sortBy
-      this.params.sortOrder = data.sortOrder
+      this.params.sortOrder = data.sortOrder ?? this.params
       this.params.perPage = data.rowsPerPage
       this.optionPagination = data
       this.getVochers(this.params)
@@ -588,8 +587,12 @@ export default {
       this.codeVoucher = typeof code === 'string' ? code : this.codeVoucher
       this.$services.getOneData(['vouchers', this.codeVoucher])
         .then(({ res }) => {
-          this.voucherSelected.push(res.data)
-          this.codeVoucher = null
+          if (res.data.status === 'received') {
+            this.voucherSelected.push(res.data)
+            this.codeVoucher = null
+          } else {
+            this.notify(this, 'El voucher no puede ser agregar a la guia por que esta' + this.$t(`voucher.${res.data.status}`, 'negative', 'warning'))
+          }
         })
     }
   }

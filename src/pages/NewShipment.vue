@@ -459,7 +459,8 @@ export default {
         rowsPerPage: 200,
         paginate: true,
         sortBy: 'id',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
+        rowsNumber: 20
       },
       vouchers: [],
       loadingTable: false,
@@ -582,7 +583,7 @@ export default {
       }
     },
     confirm (data) {
-      if (data.status === this.$t('voucher.received')) {
+      if (data.status === this.ucwords(this.$t('voucher.received'))) {
         this.$q.dialog({
           title: 'Alert',
           message: '¿Desea entregar el paquete?',
