@@ -657,7 +657,8 @@ export default {
       change: 0,
       currencyRate: null,
       voucherSelected: null,
-      packagesPrint: []
+      packagesPrint: [],
+      voucherPrint: []
     }
   },
   created () {
@@ -840,22 +841,30 @@ export default {
     /**
      * Save bill
      */
-    async saveBill () {
+    saveBill () {
       if (this.$refs.sender.validate()) {
         const params = {
           sender_id: this.sender.value,
           receptionist_id: this[GETTERS.GET_USER].id,
           branch_office_id: this.branchOffice.id,
-          vouchers: this.modelVoucher(this.packages),
           billPayments: this.paymentTypes ? this.modelPayment(this.paymentTypes) : [],
           user_created_id: this[GETTERS.GET_USER].id,
           addVoucher: this.addVoucher
         }
-        const { res } = await this.$services.postData(['bills'], params)
-        if (!this.addVoucher) {
-          this.viewDetails(this.voucherSelected)
-        }
-        this.printVoucher(this.packages, res.data)
+        this.$services.postData(['bills'], params)
+          .then(({ res }) => {
+            if (!this.addVoucher) {
+              this.viewDetails(this.voucherSelected)
+            }
+            this.modelVoucher(this.packages, res.data).map(vocuher => {
+              this.$services.postData(['vouchers'], vocuher)
+                .then(({ res }) => {
+                  this.voucherPrint.push(res.data)
+                  console.log(this.voucherPrint)
+                })
+            })
+            // this.printVoucher(this.packages, res.data)
+          })
       } else {
         this.notify(this, 'Debe seleccionar el campo remitante', 'negative', 'warning')
       }
@@ -902,7 +911,7 @@ export default {
       * Set model vouchers
       * @param {Array} packages data vouchers
      */
-    modelVoucher (packages) {
+    modelVoucher (packages, bill) {
       return packages.map(pack => {
         return {
           addressee_id: pack.addressee.id,
@@ -914,6 +923,7 @@ export default {
           tax: this.tax,
           coin_id: 1,
           exchange: this.exchange,
+          bill_id: pack.type_of_charge ? null : bill.id,
           user_created_id: this.userSession.id,
           rate: this.modelRate(pack.rate),
           type_of_charge: pack.type_of_charge,
