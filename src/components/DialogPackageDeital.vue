@@ -396,7 +396,10 @@ export default {
       this.branchOffices = res.data.map(branchOffice => {
         return {
           label: branchOffice.name,
-          value: branchOffice.id
+          value: branchOffice.id,
+          address: branchOffice.address,
+          email: branchOffice.email,
+          phone_number: branchOffice.phone_number
         }
       })
     },

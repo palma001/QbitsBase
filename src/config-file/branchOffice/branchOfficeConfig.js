@@ -68,7 +68,7 @@ export const branchOffice = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -145,7 +145,7 @@ export const branchOffice = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -181,7 +181,7 @@ export const branchOffice = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -257,7 +257,7 @@ export const branchOffice = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -329,7 +329,7 @@ export const branchOffice = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]

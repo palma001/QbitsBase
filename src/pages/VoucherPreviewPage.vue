@@ -18,8 +18,10 @@ export default {
   methods: {
     print () {
       // Pass the element id here
-      this.$htmlToPaper('printMe', null, () => {
-        console.log('print')
+      setTimeout(() => {
+        this.$htmlToPaper('printMe', null, () => {
+          console.log('print')
+        })
       })
     }
   }

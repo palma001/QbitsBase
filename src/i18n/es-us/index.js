@@ -100,7 +100,9 @@ export default {
     cancel: 'cancelar',
     reset: 'limpiar',
     address: 'dirección',
-    deleteSuccessfull: 'sucursal eliminada exitosamente'
+    deleteSuccessfull: 'sucursal eliminada exitosamente',
+    prefix: 'prefijo',
+    email: 'correo'
   },
   rate: {
     name: 'nombre',

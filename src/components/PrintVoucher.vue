@@ -41,7 +41,7 @@
                 v-for="branchOffice in branchOffices"
                 :key="branchOffice.id"
               >
-                <b>{{branchOffice.name}}. Teléfono:</b> {{branchOffice.phone_number}} <b>email:</b> valencia@tranjr.com<br/>
+                <b>{{branchOffice.name}}. Teléfono:</b> {{branchOffice.phone_number}} <b>email:</b> {{branchOffice.email}}<br/>
               </span>
             </div>
           </div>
@@ -57,126 +57,13 @@
       </div>
       <div class="row">
         <div class="col-4">
-          <div class="row">
-            <div class="col-6" style="font-size: 10px">
-              <span style="font-size: 13px">
-                <b>Remitente</b>
-              </span>
-              <br>
-              <span><b>Nombre:</b></span>
-              <span class="q-ml-sm">Amable Salés</span><br>
-              <span><b>Teléfono:</b></span>
-              <span class="q-ml-sm">0424-8675340</span>
-            </div>
-            <div class="col-6" style="font-size: 10px; margin-top: 18px;">
-              <span>
-                <b>N° de Identificación:</b>
-              </span>
-              <span class="q-ml-sm">C.I. 14685685</span><br>
-              <span><b>Email:</b> amablesales@gmail.com</span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-6" style="font-size: 10px">
-              <span style="font-size: 13px">
-                <b>Costo de envío</b>
-              </span><br>
-              <span>
-                <b>Flete (Bs):</b> 50.000.00,00
-              </span>
-              <br>
-              <span>
-                <b>Subtotal (Bs):</b> 56.500.000,00
-              </span>
-            </div>
-            <div class="col-6" style="font-size: 10px; margin-top: 18px;">
-              <span>
-                <b>Seguro(Bs):</b> 6.500.000,00
-              </span><br>
-              <span>
-                <b>Total (Bs): 56.500.000,00</b>
-              </span>
-            </div>
-          </div>
+          <slot name="left"></slot>
         </div>
         <div class="col-4">
-          <div class="row">
-            <div class="col-6" style="font-size: 10px">
-              <span style="font-size: 13px">
-                <b>Origen</b>
-              </span><br>
-              <span>
-                <b>Sucursal:</b> Puerto La Cruz
-              </span><br>
-              <span>
-                <b>Dirección:</b> Av. Municipal. C.C. Regina. Piso 1 Local P1-2
-              </span>
-            </div>
-            <div class="col-6 q-mt-md" style="font-size: 10px; margin-top: 18px;">
-              <span>
-                <b>Teléfono:</b> 0424-8746413
-              </span><br>
-              <span>
-                <b>Email:</b> plc@tranjr.com
-              </span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-6" style="font-size: 10px">
-              <span style="font-size: 13px"><b>Destino</b></span><br>
-              <span><b>Retiro en:</b></span>
-              <span>Sucursal Caracas</span><br>
-              <span>
-                <b>Dirección:</b> Av. Francisco de Miranda. C.C. Libertador. PB Local PB-7. Chacao
-              </span>
-            </div>
-            <div class="col-6" style="font-size: 10px; margin-top: 18px;">
-              <span><b>Teléfono:</b> 0424-8201215</span><br>
-              <span><b>Email:</b> caracas@tranjr.com</span>
-            </div>
-          </div>
+          <slot name="center"></slot>
         </div>
         <div class="col-4">
-          <div class="row">
-            <div class="col-12">
-              <span style="font-size: 13px">
-                <b>Datos del paquete</b>
-              </span><br>
-            </div>
-            <div class="col-6" style="font-size: 10px">
-              <span class="text-bold">
-                Peso (Kg):
-              </span>
-              <span class="q-ml-xs">
-                2,50
-              </span><br>
-              <span class="text-bold">
-                Largo (cm):
-              </span>
-              <span class="q-ml-xs">
-                20,00
-              </span>
-            </div>
-            <div class="col-6" style="font-size: 10px;">
-              <span class="text-bold"><b>Alto (cm):</b></span>
-              <span class="q-ml-xs">15,00</span><br>
-              <span class="text-bold"><b>Ancho (cm):</b></span>
-              <span class="q-ml-xs">15,00</span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-6" style="font-size: 10px">
-              <span style="font-size: 13px"><b>Destinatario</b></span><br>
-              <span><b>Nombre:</b> Luís Palma</span><br>
-              <span><b>Teléfono:</b> 0412-4575340</span>
-            </div>
-            <div class="col-6" style="font-size: 10px; margin-top: 18px;">
-              <span><b>Recibi conforme:</b></span><br>
-              <hr>
-              <span><b>Firma/Sello: </b></span><br>
-              <span><hr></span>
-            </div>
-          </div>
+          <slot name="right"></slot>
         </div>
       </div>
       <br>

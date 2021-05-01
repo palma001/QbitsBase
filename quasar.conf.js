@@ -32,7 +32,7 @@ module.exports = function (/* ctx */) {
       'google-maps',
       'geolocation',
       'crontab',
-      'ably',
+      // 'ably',
       'vueBarcodeScanner',
       'VMask',
       'vueScroll',
