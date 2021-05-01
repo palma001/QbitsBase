@@ -5,6 +5,42 @@ export const branchOffice = [
     children: [
       {
         tabulated: {
+          name: 'prefix',
+          align: 'left',
+          field: row => row.prefix,
+          sortable: true,
+          visible: true
+        },
+        actionable: {
+          propTag: 'prefix',
+          addible: true,
+          editable: true,
+          type: 'String',
+          visibleLabel: true,
+          component: {
+            name: 'b-input',
+            props: {
+              type: 'text',
+              dense: true
+            },
+            class: {
+              'col-xs-12': true,
+              'col-sm-12': true,
+              'col-md-12': true
+            },
+            directives: [
+              {
+                name: 'validate',
+                value: {
+                  required: true
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        tabulated: {
           name: 'name',
           align: 'left',
           field: row => row.name,
@@ -13,6 +49,42 @@ export const branchOffice = [
         },
         actionable: {
           propTag: 'name',
+          addible: true,
+          editable: true,
+          type: 'String',
+          visibleLabel: true,
+          component: {
+            name: 'b-input',
+            props: {
+              type: 'text',
+              dense: true
+            },
+            class: {
+              'col-xs-12': true,
+              'col-sm-12': true,
+              'col-md-12': true
+            },
+            directives: [
+              {
+                name: 'validate',
+                value: {
+                  required: false
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        tabulated: {
+          name: 'email',
+          align: 'left',
+          field: row => row.email,
+          sortable: true,
+          visible: true
+        },
+        actionable: {
+          propTag: 'email',
           addible: true,
           editable: true,
           type: 'String',

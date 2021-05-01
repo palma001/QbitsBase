@@ -886,22 +886,20 @@ export default {
     */
     filterFn (val, update, abort) {
       setTimeout(() => {
-        update(
-          () => {
-            if (val === '') {
-              this.senderOptions = this.senderAll
-            } else {
-              const needle = val.toLowerCase()
-              this.senderOptions = this.senderAll.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
-            }
-          },
-          ref => {
-            if (val !== '' && ref.options.length > 0) {
-              ref.setOptionIndex(-1) // reset optionIndex in case there is something selected
-              ref.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
-            }
+        update(() => {
+          if (val === '') {
+            this.senderOptions = this.senderAll
+          } else {
+            const needle = val.toLowerCase()
+            this.senderOptions = this.senderAll.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
           }
-        )
+        },
+        ref => {
+          if (val !== '' && ref.options.length > 0) {
+            ref.setOptionIndex(-1) // reset optionIndex in case there is something selected
+            ref.moveOptionSelection(1, true) // focus the first selectable option and do not update the input-value
+          }
+        })
       }, 300)
     },
     /**
