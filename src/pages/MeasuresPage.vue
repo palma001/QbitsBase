@@ -154,7 +154,6 @@ export default {
     }
   },
   created () {
-    this.getRates()
     this.setRelationalData(this.rateServices, [], this)
     this.userSession = this[GETTERS.GET_USER]
     this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]

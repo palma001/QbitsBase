@@ -350,7 +350,6 @@ export default {
     ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   created () {
-    this.getVochers()
     this.getFilter(this.shape)
     this.getVehicles()
     this.getCarriers()
@@ -414,10 +413,8 @@ export default {
      * @param {Object} data value select
      */
     filter (data) {
-      const destination = ['App', 'Models', 'Destination']
-      const branchOffice = ['App', 'Models', 'BranchOffice']
       this.params.dataFilter = {
-        destinable_type: this.shape === 'destinations' ? destination.join('\\') : branchOffice.join('\\'),
+        destinable_type: this.shape === 'destinations' ? 'Destination' : 'BranchOffice',
         destinable_id: data.value
       }
       this.getVochers(this.params)
@@ -429,7 +426,7 @@ export default {
     loadData (data) {
       this.params.page = data.page
       this.params.sortBy = data.sortBy
-      this.params.sortOrder = data.sortOrder
+      this.params.sortOrder = data.sortOrder ?? this.params
       this.params.perPage = data.rowsPerPage
       this.optionPagination = data
       this.getVochers(this.params)
@@ -495,11 +492,26 @@ export default {
       this.getVochers(this.params)
     },
     /**
+     * Validate array in voucher table
+     * @param {Array} data the voucher table
+     * @param {Object} index voucher table index
+     */
+    validateArray (data, index) {
+      const validDate = data.find((voucher) => voucher.id === index.id)
+      return validDate ? null : true
+    },
+    /**
      * Selected voucher
      * @param {Array} selected vouchers selected
     */
-    selected (selected) {
-      this.voucherSelected = selected
+    selected (selectedAll, selectedOne) {
+      if (selectedOne) {
+        if (this.validateArray(this.voucherSelected, selectedOne)) {
+          this.voucherSelected.push(selectedOne)
+        }
+      } else {
+        this.voucherSelected = selectedAll
+      }
     },
     /**
      * Model voucher
@@ -523,7 +535,10 @@ export default {
       this.loadingTable = true
       this.$services.getData(['vouchers'], params)
         .then(({ res }) => {
-          this.data = res.data.data
+          this.data = res.data.data.map(voucher => {
+            voucher.status = this.ucwords(this.$t('voucher.' + voucher.status))
+            return voucher
+          })
           this.optionPagination.rowsNumber = res.data.total
           this.loadingTable = false
         })
@@ -541,19 +556,18 @@ export default {
       this.$services.postData(['guides'], {
         vehicle_id: this.vehicle.value,
         destination_id: this.branchOffice.value,
-        branch_office_id: 1,
+        branch_office_id: this.branchOfficeSession.id,
         carrier_id: this.carrier.value,
         helper_id: this.helper.value,
         vouchers: this.modelVoucher(this.voucherSelected),
         seals: this.seals,
-        user_created_id: 1
+        user_created_id: this.userSession.id
       })
         .then(({ res }) => {
           this.notify(this, 'Guia guardad exitosamente', 'primary', 'mood')
-          this.getVochers()
           this.clearInputs()
+          this.getVochers()
           this.prompt = false
-          this.voucherSelected = []
         })
     },
     /**
@@ -573,8 +587,12 @@ export default {
       this.codeVoucher = typeof code === 'string' ? code : this.codeVoucher
       this.$services.getOneData(['vouchers', this.codeVoucher])
         .then(({ res }) => {
-          this.voucherSelected.push(res.data)
-          this.codeVoucher = null
+          if (res.data.status === 'received') {
+            this.voucherSelected.push(res.data)
+            this.codeVoucher = null
+          } else {
+            this.notify(this, 'El voucher no puede ser agregar a la guia por que esta' + this.$t(`voucher.${res.data.status}`, 'negative', 'warning'))
+          }
         })
     }
   }

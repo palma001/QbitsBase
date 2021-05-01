@@ -27,7 +27,6 @@
           selection="multiple"
           searchable
           action
-          toggable
           :column="userConfig"
           :data="data"
           :loading="loadingTable"
@@ -115,9 +114,7 @@ export default {
         dataSearch: {
           name: '',
           phone_number: '',
-          phone_number_two: '',
-          address: '',
-          description: ''
+          document_number: ''
         }
       },
       /**
@@ -164,7 +161,6 @@ export default {
     ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   created () {
-    this.getUsers()
     this.setRelationalData(this.userServices, [], this)
     this.userSession = this[GETTERS.GET_USER]
     this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
@@ -198,8 +194,9 @@ export default {
      */
     save (data) {
       data.user_created_id = this.userSession.id
+      data.document_type_id = data.document_type.value
       data.roles = this.modelRole(data)
-      // this.loadingForm = true
+      this.loadingForm = true
       this.$services.postData(['users'], data)
         .then(({ res }) => {
           // this.addDialig = false
@@ -230,7 +227,8 @@ export default {
         roles.branch_office_id = data.branch_offices[0].id
         roles.role_id = data.roles[0].id
       }
-      return roles
+      roles.user_created_id = this.userSession.id
+      return [roles]
     },
     /**
      * Update Branch Office
@@ -238,6 +236,7 @@ export default {
      */
     update (data) {
       data.user_updated_id = this.userSession.id
+      data.document_type_id = data.document_type.value ?? data.document_type_id
       data.roles = this.modelRole(data)
       this.loadingForm = true
       this.$services.putData(['users', this.selectedData.id], data)

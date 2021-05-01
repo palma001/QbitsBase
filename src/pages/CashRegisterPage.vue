@@ -329,7 +329,6 @@ export default {
           })
           this.paymentTypes = totalForName
           this.totals = this.sumValues(totalForName, 'acronym', 'amount')
-          console.log(this.totals)
         })
     },
     getBranchOffice () {
@@ -357,7 +356,6 @@ export default {
         })
     },
     viewBillDetail (data) {
-      console.log(data)
       this.alert = true
       this.detailBillPayments = data.bill_payments
     },

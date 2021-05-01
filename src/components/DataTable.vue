@@ -59,8 +59,7 @@
             :props="props">
             {{ col.value ? col.value : '-' }}
           </q-td>
-          <q-td v-if="action" align="center"
-          >
+          <q-td v-if="action" align="center">
             <q-btn
               dense
               round
@@ -71,7 +70,11 @@
               :icon="buttonAction.icon"
               :class="buttonAction.class"
               @click="emitEvent(buttonAction.event, props.row)"
-            />
+            >
+              <q-tooltip v-if="buttonAction.tooltip">
+                {{ ucwords($t(`${module}.${buttonAction.tooltip.text}`)) }}
+              </q-tooltip>
+            </q-btn>
           </q-td>
         </q-tr>
       </template>
@@ -214,6 +217,7 @@ export default {
   },
   created () {
     this.setHeaders()
+    this.paginationConfig = this.optionPagination
   },
   methods: {
     /**

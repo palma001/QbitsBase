@@ -152,7 +152,6 @@ export default {
     }
   },
   created () {
-    this.getVehicles()
     this.userSession = this[GETTERS.GET_USER]
     this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
   },

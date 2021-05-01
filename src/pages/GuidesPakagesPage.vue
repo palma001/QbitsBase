@@ -111,9 +111,6 @@ export default {
       data: []
     }
   },
-  created () {
-    this.getguides()
-  },
   methods: {
     /**
      * Load data sorting

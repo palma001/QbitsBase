@@ -130,7 +130,14 @@ export default {
     list: 'lista de comprobantes',
     received: 'recibido',
     in_transit: 'en tránsito',
-    delivered: 'entregado'
+    delivered: 'entregado',
+    delivery: 'entregar',
+    type_of_charge: 'tipo de cobro',
+    status_paid: 'estatus del pago',
+    paidDestination: 'Pago por destino',
+    paidOrigin: 'Pago por origen',
+    paid: 'pagado',
+    toPaid: 'por pagar'
   },
   vehicle: {
     deleteSuccessfull: 'transporte eliminado exitosamente',

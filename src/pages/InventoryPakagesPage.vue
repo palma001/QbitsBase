@@ -124,7 +124,7 @@
                   :column="voucherConfig"
                   :data="data"
                   :loading="loadingTable"
-                  :optionPagination="optionPagination"
+                  :optionPagination.sync="optionPagination"
                   @search-data="searchData"
                   @on-load-data="loadData"
                   @selected="selected"
@@ -318,7 +318,6 @@ export default {
     ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
   },
   created () {
-    this.getVochers()
     this.getFilter(this.shape)
     this.getVehicles()
     this.getCarriers()
@@ -492,7 +491,7 @@ export default {
       this.$services.getData(['vouchers'], params)
         .then(({ res }) => {
           this.data = res.data.data.map(voucher => {
-            voucher.status = this.$t('voucher.' + voucher.status)
+            voucher.status = this.ucwords(this.$t(`voucher.${voucher.status}`))
             return voucher
           })
           this.optionPagination.rowsNumber = res.data.total

@@ -1,6 +1,6 @@
 <template>
   <q-card class="q-pa-none" flat bordered>
-    <q-card-section class="text-white bg-primary q-pa-xs">
+    <q-card-section class="text-white bg-primary q-pa-sm">
       <div class="text-h6">Datos del envio</div>
     </q-card-section>
     <q-card-section class="q-pa-none">
@@ -8,7 +8,7 @@
         :thumb-style="thumbStyle"
         :content-style="contentStyle"
         :content-active-style="contentActiveStyle"
-        style="height: 70vh;"
+        style="height: 66vh;"
       >
         <q-stepper
           ref="stepper"
@@ -30,14 +30,13 @@
               <q-form ref="myForm" class="row">
                 <q-card-section
                   class="col-12 q-py-xs"
-                  v-for="(rate, index) in rates"
+                  v-for="rate in rates"
                   :key="rate.id"
                 >
                   <q-input
                     dense
                     v-model="rateValue[rate.id]"
                     type="number"
-                    :autofocus="index === 0"
                     :rules="[val => !!val || 'El campo es requerido']"
                     :label="`${rate.name} (${rate.unit_of_measurement.acronym})`"
                   />
@@ -152,14 +151,6 @@
                 <q-card-section class="q-py-none col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     dense
-                    v-model="addressee.last_name"
-                    label="Apellido"
-                    :rules="[val => !!val || 'El campo es requerido']"
-                  />
-                </q-card-section>
-                <q-card-section class="q-py-none col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                  <q-input
-                    dense
                     v-model="addressee.phone_number"
                     label="Telefono"
                     :rules="[val => !!val || 'El campo es requerido']"
@@ -255,8 +246,7 @@ export default {
           label: 'Rif',
           value: 'RIF'
         }
-      ],
-      dataPackage: []
+      ]
     }
   },
   props: {
@@ -334,9 +324,10 @@ export default {
      * Save vocuher
      */
     async saveDataPackage () {
-      this.dataPackage.push({
+      const dataPackage = {
         rate: this.rateValue,
         type_of_charge: false,
+        status_paid: true,
         addressee: this.addressee,
         destination: {
           branchOffice: this.deliveryType === 'Sucursal' ? this.branchOffice : null,
@@ -344,9 +335,9 @@ export default {
           address: this.address,
           destination: this.deliveryType === 'Entrega a domicilio' ? this.destination : null
         }
-      })
+      }
       this.clearForm()
-      this.$emit('savePackage', this.dataPackage)
+      this.$emit('savePackage', dataPackage)
     },
     /**
      * Clear form
@@ -379,14 +370,14 @@ export default {
         })
     },
     /**
-     * Get Rate all
+     * Get All rate
      */
     async getAllRates () {
       const { res } = await this.$services.getData(['rates'], { paginated: false })
       this.rates = res.data
     },
     /**
-     * Get Destinations all
+     * Get all Destinations
      */
     async getAllDestinations () {
       const { res } = await this.$services.getData(['destinations'], { paginated: false })
@@ -410,7 +401,7 @@ export default {
       })
     },
     /**
-     * Get Addresse all
+     * Get all addressee
      */
     async getAddress () {
       if (this.documetntNumber) {
