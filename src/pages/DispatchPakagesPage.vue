@@ -89,9 +89,7 @@
             <q-tab name="mails" label="Escanear código del comprobante" />
             <q-tab name="alarms" label="Lista de comprobantes" />
           </q-tabs>
-
           <q-separator />
-
           <q-tab-panels v-model="tab" animated>
             <q-tab-panel name="mails">
               <div class="row q-gutter-y-md">
@@ -101,6 +99,7 @@
                     dense
                     autofocus
                     v-model="codeVoucher"
+                    mask="XXX-####################"
                     @keyup.native.enter="getOneVoucher"
                   />
                 </div>
@@ -585,13 +584,20 @@ export default {
      */
     getOneVoucher (code) {
       this.codeVoucher = typeof code === 'string' ? code : this.codeVoucher
-      this.$services.getOneData(['vouchers', this.codeVoucher])
+      const prefixAndCode = this.codeVoucher.split('-')
+      this.$services.getData(['vouchers'], {
+        dataFilter: {
+          prefix: prefixAndCode[0],
+          number: Number(prefixAndCode[1])
+        },
+        symbolWhere: '='
+      })
         .then(({ res }) => {
-          if (res.data.status === 'received') {
-            this.voucherSelected.push(res.data)
+          if (res.data[0].status === 'received') {
+            this.voucherSelected.push(res.data[0])
             this.codeVoucher = null
           } else {
-            this.notify(this, 'El voucher no puede ser agregar a la guia por que esta' + this.$t(`voucher.${res.data.status}`, 'negative', 'warning'))
+            this.notify(this, 'El voucher no puede ser agregar a la guia por que esta' + this.$t(`voucher.${res.data[0].status}`, 'negative', 'warning'))
           }
         })
     }

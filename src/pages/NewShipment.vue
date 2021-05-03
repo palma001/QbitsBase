@@ -406,7 +406,10 @@
     <input v-money="money" v-model.lazy="exchangeVisible" type="hidden"/>
     <div id="printMe">
       <div v-for="pack in packagesPrint" :key="pack.id">
-        <print-voucher>
+        <print-voucher :barCodeNumber="`${pack.prefix}-${pack.code}`" :branchOffices="branchOffices">
+          <template slot="date">
+            <b>Fecha: </b> 12:12:00 <b>Hora: </b> 12:10
+          </template>
           <template slot="left">
             <div class="row">
               <div class="col-12" style="font-size: 10px">
@@ -414,9 +417,9 @@
                   <b>Remitente</b>
                 </span>
                 <br>
-                <span><b>Nombre:</b> {{ sender.label }}</span><br>
-                <span><b>Teléfono:</b> {{ sender.phone_number }}</span><br>
-                <span><b>Email:</b> {{ sender.email }}</span>
+                <span><b>Nombre:</b> {{ pack.sender.full_name }}</span><br>
+                <span><b>Teléfono:</b> {{ pack.sender.phone_number }}</span><br>
+                <span><b>Email:</b> {{ pack.sender.email }}</span>
               </div>
             </div>
             <div class="row">
@@ -425,14 +428,14 @@
                   <b>Costo de envío</b>
                 </span><br>
                 <span>
-                  <b>Flete (Bs):</b> {{ pack.rate.amount }}
+                  <b>Flete (Bs):</b> {{ pack.amount }}
                 </span>
                 <br>
                 <span>
-                  <b>Seguro(Bs):</b> {{ pack.rate.cargo_insurance_amount }}
+                  <b>Seguro(Bs):</b> {{ pack.cargo_insurance_amount }}
                 </span><br>
                 <span>
-                  <b>Total (Bs): {{ Number(pack.rate.amount) + Number(pack.rate.cargo_insurance_amount) }}</b>
+                  <b>Total (Bs): {{ Number(pack.amount) + Number(pack.cargo_insurance_amount) }}</b>
                 </span>
               </div>
             </div>
@@ -444,18 +447,18 @@
                   <b>Origen</b>
                 </span><br>
                 <span>
-                  <b>Sucursal:</b> {{ pack.branchOffice.name }}
+                  <b>Sucursal:</b> {{ pack.source.name }}
                 </span><br>
                 <span>
-                  <b>Dirección:</b>{{ pack.branchOffice.address }}
+                  <b>Dirección:</b>{{ pack.source.address }}
                 </span>
               </div>
               <div class="col-6 q-mt-md" style="font-size: 10px; margin-top: 18px;">
                 <span>
-                  <b>Teléfono:</b> {{ pack.branchOffice.phone_number }}
+                  <b>Teléfono:</b> {{ pack.source.phone_number }}
                 </span><br>
                 <span>
-                  <b>Email:</b> {{ pack.branchOffice.email }}
+                  <b>Email:</b> {{ pack.source.email }}
                 </span>
               </div>
             </div>
@@ -464,58 +467,49 @@
                 <span style="font-size: 13px">
                   <b>Destino</b>
                 </span><br>
-                <span>
-                  <b>Retiro en:</b>
+                <span v-if="pack.destinable.name">
+                  <span>
+                    <b>Sucursal</b>: {{ pack.destinable.name }}
+                  </span><br>
+                  <span>
+                    <b>Dirección:</b> {{ pack.destinable.address }}
+                  </span>
                   <br>
                 </span>
-                <span v-if="pack.destination.branchOffice">
-                  <span>
-                    <b>Sucursal</b>: {{ pack.destination.branchOffice.label }}
-                  </span><br>
-                  <b>Dirección:</b> {{ pack.destination.branchOffice.address }}
-                </span>
-                <span v-else>
-                  <b>Ciudad:</b> {{ pack.destination.destination.label }}
-                  <b>Punto de referencia:</b> {{ pack.destination.referencePoin }}
-                  <b>Dirección:</b> {{ pack.destination.address }}
+                <span v-if="pack.destinable.city">
+                  <b>Ciudad:</b> {{ pack.destinable.city }}<br>
+                  <b>Punto de referencia:</b> {{ pack.reference_point }}<br>
+                  <b>Dirección:</b> {{ pack.address }}
                 </span>
               </div>
-              <div class="col-6" style="font-size: 10px; margin-top: 18px;" v-if="pack.destination.branchOffice">
+              <div class="col-6" style="font-size: 10px; margin-top: 18px;" v-if="pack.destinable.name">
                 <span>
-                  <b>Teléfono:</b> {{ pack.destination.branchOffice.phone_number }}
+                  <b>Teléfono:</b> {{ pack.destinable.phone_number }}
                 </span><br>
                 <span>
-                  <b>Email:</b> {{ pack.destination.branchOffice.email }}
+                  <b>Email:</b> {{ pack.destinable.email }}
                 </span>
               </div>
             </div>
           </template>
           <template slot="right">
             <div class="row">
-              <div class="col-12">
+              <div class="col-12" style="margin-left: 10px;">
                 <span style="font-size: 13px">
                   <b>Datos del paquete</b>
                 </span><br>
               </div>
-              <div class="col-12" style="font-size: 10px">
-                <div v-for="column in columns" :key="column.id">
-                  <span v-if="pack.rate[column.name] && column.name !== 'amount' && column.name !== 'cargo_insurance_amount'">
-                    <b>{{ column.label }}:</b>  {{ pack.rate[column.name] }}
-                  </span>
-                </div>
+              <div class="col-6" style="font-size: 10px; margin-left: 10px;" v-for="rate in pack.rates" :key="rate.id">
+                <span>
+                  <b>{{ rate.name }}:</b>  {{ rate.pivot.description }}
+                </span>
               </div>
             </div>
             <div class="row">
-              <div class="col-6" style="font-size: 10px">
+              <div class="col-6" style="font-size: 10px; margin-left: 10px;">
                 <span style="font-size: 13px"><b>Destinatario</b></span><br>
                 <span><b>Nombre:</b> {{ pack.addressee.full_name }}</span><br>
                 <span><b>Teléfono:</b> {{ pack.addressee.phone_number }}</span>
-              </div>
-              <div class="col-6" style="font-size: 10px; margin-top: 18px;">
-                <span><b>Recibi conforme:</b></span><br>
-                <hr>
-                <span><b>Firma/Sello: </b></span><br>
-                <span><hr></span>
               </div>
             </div>
           </template>
@@ -658,7 +652,7 @@ export default {
       currencyRate: null,
       voucherSelected: null,
       packagesPrint: [],
-      voucherPrint: []
+      branchOffices: []
     }
   },
   created () {
@@ -670,6 +664,7 @@ export default {
     this.getCurrencyRate()
     this.setRelationalData(this.userServices, [], this)
     this.getVochers(this.params)
+    this.getBranchOffice()
   },
   computed: {
     /**
@@ -683,6 +678,15 @@ export default {
     }
   },
   methods: {
+    getBranchOffice () {
+      this.$services.getData(['branch-offices'])
+        .then(({ res }) => {
+          this.branchOffices = res.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     validateTypeVoucher (data) {
       if (data.status_paid) {
         this.viewDetails(data)
@@ -852,45 +856,50 @@ export default {
           addVoucher: this.addVoucher
         }
         this.$services.postData(['bills'], params)
-          .then(({ res }) => {
+          .then(async ({ res }) => {
             if (!this.addVoucher) {
               this.viewDetails(this.voucherSelected)
             }
-            this.modelVoucher(this.packages, res.data).map(vocuher => {
-              this.$services.postData(['vouchers'], vocuher)
-                .then(({ res }) => {
-                  this.voucherPrint.push(res.data)
-                  console.log(this.voucherPrint)
-                })
-            })
-            // this.printVoucher(this.packages, res.data)
+            this.saveVoucher(res.data)
           })
       } else {
         this.notify(this, 'Debe seleccionar el campo remitante', 'negative', 'warning')
       }
     },
     /**
+     * Save voucher
+     * @param {Object} data bill saved
+     */
+    saveVoucher (data) {
+      this.modelVoucher(this.packages, data)
+        .forEach(vocuher => {
+          this.$services.postData(['vouchers'], vocuher)
+            .then(({ res }) => {
+              this.packagesPrint.push(res.data)
+              if (this.packages.length === this.packagesPrint.length) {
+                setTimeout(() => {
+                  this.printVoucher()
+                }, 200)
+              }
+            })
+        })
+    },
+    /**
      * Print Bill
      */
-    async printVoucher (data) {
-      this.packagesPrint = data.map(element => {
-        element.branchOffice = this.branchOffice
-        return element
+    async printVoucher () {
+      this.$htmlToPaper('printMe', null, () => {
+        this.packagesPrint = []
+        this.paymentTypes = []
+        this.paymentType = {}
+        this.dialogPayment = false
+        this.packages = []
+        this.sender = null
+        this.account = { total: 0, subtotal: 0, cargoInsuranceAmount: 0 }
+        this.addVoucher = true
+        this.senderDelivered = false
+        this.notify(this, 'la operacion se realizada exitosamente', 'positive', 'mood')
       })
-      setTimeout(() => {
-        this.$htmlToPaper('printMe', null, () => {
-          this.packagesPrint = []
-          this.paymentTypes = []
-          this.paymentType = {}
-          this.dialogPayment = false
-          this.packages = []
-          this.sender = null
-          this.account = { total: 0, subtotal: 0, cargoInsuranceAmount: 0 }
-          this.addVoucher = true
-          this.senderDelivered = false
-          this.notify(this, 'la operacion se guardo exitosamente', 'positive', 'mood')
-        })
-      }, 200)
     },
     /**
       * Set model payment
@@ -930,6 +939,7 @@ export default {
           status_paid: !pack.type_of_charge,
           sender_id: this.sender.value,
           source_id: this.branchOffice.id,
+          prefix: this.branchOffice.prefix,
           cargo_insurance_amount: Number(pack.rate.cargo_insurance_amount)
         }
       })

@@ -1,9 +1,6 @@
 <template>
   <div>
-    <div v-for="i in 3" :key="i" style="position: relative; margin: 15px 10px 0px 10px;">
-      <p style="font-size: 9px; position: absolute; left: 1px; bottom: 10px;">
-        <b>Fecha:</b> 21/04/2021 <b>Hora:</b> 08:23
-      </p>
+    <div v-for="i in 3" :key="i" style="margin: 10px 0px 0px 0px; height: 33.33%;">
       <div class="row">
         <div class="col-1">
           <div align="center">
@@ -46,11 +43,11 @@
             </div>
           </div>
         </div>
-        <div class="col-2">
-          <barcode value="PLC-00011-20210421" width="1" height="30" fontSize="10">
-            PLC-00011-20210421
+        <div class="col-3">
+          <barcode :value="barCodeNumber" width="1" height="30" fontSize="10">
+             {{ barCodeNumber }}
           </barcode>
-          <p style="font-size: 15px; text-align: center;">
+          <p style="font-size: 13px; text-align: center;">
             <b>&nbsp;RIF J-41162476-4</b>
           </p>
         </div>
@@ -66,8 +63,21 @@
           <slot name="right"></slot>
         </div>
       </div>
-      <br>
+      <div class="row">
+        <div class="col-8">
+          <p style="font-size: 9px; margin-top: 20px;">
+            <slot name="date"></slot>
+          </p>
+        </div>
+        <div class="col-4" style="font-size: 9px;">
+          <span><b>Recibi conforme:</b></span><br>
+          <hr>
+          <span><b>Firma/Sello: </b></span><br>
+          <span><hr></span>
+        </div>
+      </div>
       <hr style="border-style: dashed;">
+      <br>
     </div>
   </div>
 </template>
@@ -79,24 +89,17 @@ export default {
   components: {
     barcode: VueBarcode
   },
+  props: {
+    barCodeNumber: {
+      type: [String, Number],
+      require: false
+    },
+    branchOffices: {
+      type: Array
+    }
+  },
   data () {
-    return {
-      branchOffices: []
-    }
-  },
-  created () {
-    this.getBranchOffice()
-  },
-  methods: {
-    getBranchOffice () {
-      this.$services.getData(['branch-offices'])
-        .then(({ res }) => {
-          this.branchOffices = res.data
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    }
+    return {}
   }
 }
 </script>
