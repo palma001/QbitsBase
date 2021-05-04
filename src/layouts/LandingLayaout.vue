@@ -3,21 +3,19 @@
     <q-layout view="hHh Lpr lff">
       <q-header :class="`${classToolbar}`" :style="style">
         <q-toolbar class="text-dark">
-          <q-toolbar-title :class="classButton" class="postion-relative">
-            <q-avatar size="200px" class="fixed-top">
-              <img src="/icons/logo.png"/>
-            </q-avatar>
+          <q-toolbar-title :class="classButton">
+            <img src="/icons/logo-2.png" class="q-mt-sm" style="width: 130px;"/>
             <!--<q-btn stretch flat round @click="show = !show" icon="menu" v-if="$q.screen.lt.sm" :class="classButton"/>
             -->
             <!-- Transporte JR&LS-->
           </q-toolbar-title>
           <q-space />
-          <div v-if="!$q.screen.lt.sm" class="q-gutter-x-lg q-mt-lg">
+          <div v-if="!$q.screen.lt.sm" class="q-gutter-x-lg">
             <q-btn stretch flat dense label="Home" :class="classButton" v-scroll-to="'#home'"/>
             <q-btn stretch flat dense label="Servicios" :class="classButton" v-scroll-to="'#services'"/>
             <q-btn stretch flat dense label="Contáctanos" :class="classButton" v-scroll-to="'#contactus'"/>
           </div>
-          <div class="q-gutter-x-lg q-mt-lg q-ml-xs q-gutter-x-lg">
+          <div class="q-ml-xs q-gutter-x-lg">
             <q-btn stretch flat dense icon="person" :class="classButton" v-if="!GET_USER">
               <q-popup-proxy style="width: 400px;">
                 <q-card class="my-card" style="width: 400px;">
@@ -106,12 +104,12 @@ export default {
       switch (true) {
         case data.position > 100:
           this.classToolbar = 'q-pa-none'
-          this.style = 'height: 200px; background: rgba(29, 29, 29, 0.6)'
-          this.classButton = 'text-white q-mt-xl q-ml-md'
+          this.style = 'background: rgba(29, 29, 29, 0.6)'
+          this.classButton = 'text-white q-ml-md'
           break
         case data.position < 100:
-          this.classToolbar = 'bg-transparent q-pa-lg'
-          this.classButton = 'text-white'
+          this.classToolbar = 'bg-transparent'
+          this.classButton = 'text-white q-ml-md'
           this.style = ''
           break
         default:
