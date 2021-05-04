@@ -118,39 +118,6 @@
                   en el servicio de envíos y encomiendas. ¿Tamaños Imposibles? Para nosotros ninguno lo es.
                   Más que un cliente, eres parte de nuestra familia JR&LS.
                 </div>
-                <div  class="text-h6 q-mt-xl text-justify">
-                  Contáctanos ahora mismo, y conoce las mejores tarifas del mercado.
-                </div>
-                <div class="q-mt-md">
-                  <q-list :bordered="false">
-                    <q-item clickable v-ripple :active="active">
-                      <q-item-section avatar>
-                        <q-icon name="phone" />
-                      </q-item-section>
-                      <q-item-section>+58 424.2649.549</q-item-section>
-                    </q-item>
-                    <q-item clickable v-ripple :active="active">
-                      <q-item-section avatar>
-                        <q-icon name="phone" />
-                      </q-item-section>
-                      <q-item-section>+58 412.852.83.11</q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple :active="active" active-class="text-orange">
-                      <q-item-section avatar>
-                        <q-icon name="email" />
-                      </q-item-section>
-                      <q-item-section>contactus@tranjr.com</q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple :active="active" active-class="bg-teal-1 text-grey-8">
-                      <q-item-section avatar>
-                        <q-icon name="room" />
-                      </q-item-section>
-                      <q-item-section>Caracas - Veneuela</q-item-section>
-                    </q-item>
-                  </q-list>
-                </div>
               </q-intersection>
               <q-intersection once transition="scale" class="col-md-5 col-sm-12 col-xs-12" style="margin-top: 140px;">
                 <q-form
@@ -206,23 +173,43 @@
         </div>
       </q-img>
     </section>
-    <footer class="bg-dark text-white text-center"  style="width: 100%; height: 100%; padding: 40px">
+    <footer class="bg-dark text-white"  style="width: 100%; height: 100%; padding: 40px">
       <div class="row">
-        <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center">
-          ¡Somos Calidad de Servicio!
+        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-4 text-bold text-italic">
+          <q-item v-for="branchOffice in branchOffices" :key="branchOffice.id">
+            <q-item-section>
+              <q-item-label>
+                {{ branchOffice.name }}
+              </q-item-label>
+              <q-item-label>
+                <q-icon name="email"/> {{ branchOffice.email }}
+              </q-item-label>
+              <q-item-label>
+                <q-icon name="phone"/> {{ branchOffice.phone_number }}
+              </q-item-label>
+              <q-item-label>
+                <q-icon name="room"/> {{ branchOffice.address }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
         </div>
-        <div class="col-12 text-h4 flex flex-left flex-center q-mt-lg">
-          contacto@tranjr.com
+        <div class="col-lg-7 col-md-8 col-sm-8 col-xs-8 row text-center">
+          <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center">
+            ¡Somos Calidad de Servicio!
+          </div>
+          <div class="col-12 text-h4 flex flex-left flex-center ">
+            contacto@tranjr.com
+          </div>
+          <div class="col-12 text-h5 flex flex-left flex-center">
+            <a href="https://api.whatsapp.com/send/?phone=584143352633&text&app_absent=0" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
+              <q-icon name="fab fa-whatsapp" size="xl"/>
+            </a>
+            <a href="https://www.instagram.com/transporte.jrls/?hl=es-la" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
+              <q-icon name="fab fa-instagram" class="" size="xl"/>
+            </a>
+          </div>
         </div>
-        <div class="col-12 text-h5 flex flex-left flex-center q-mt-lg">
-          <a href="https://api.whatsapp.com/send/?phone=584143352633&text&app_absent=0" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
-            <q-icon name="fab fa-whatsapp" size="xl"/>
-          </a>
-          <a href="https://www.instagram.com/transporte.jrls/?hl=es-la" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
-            <q-icon name="fab fa-instagram" class="q-ml-lg" size="xl"/>
-          </a>
-        </div>
-        <div class="col-12 text-h7 flex flex-left flex-center q-mt-lg">
+        <div class="col-12 text-h7 flex flex-left flex-center">
           Copyright ©2021 All rights reserved | This website is provided by QbitsDev.
         </div>
       </div>
@@ -243,11 +230,13 @@ export default {
       name: '',
       message: '',
       subject: '',
-      email: ''
+      email: '',
+      branchOffices: []
     }
   },
   created () {
     this.getSliders()
+    this.getBranchOffice()
   },
   computed: {
     /**
@@ -259,6 +248,16 @@ export default {
     async getSliders () {
       const { response } = await this.$mockData.getData('sliders')
       this.sliders = response.data.content
+    },
+    getBranchOffice () {
+      this.$services.getData(['branch-offices'])
+        .then(({ res }) => {
+          console.log(res.data)
+          this.branchOffices = res.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   }
 }
