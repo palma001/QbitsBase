@@ -174,36 +174,37 @@
       </q-img>
     </section>
     <footer class="bg-dark text-white"  style="width: 100%; height: 100%; padding: 40px">
-      <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-4 text-bold text-italic">
-          <q-item v-for="branchOffice in branchOffices" :key="branchOffice.id">
-            <q-item-section>
-              <q-item-label>
-                {{ branchOffice.name }}
-              </q-item-label>
-              <q-item-label>
-                <q-icon name="email"/> {{ branchOffice.email }}
-              </q-item-label>
-              <q-item-label>
-                <q-icon name="phone"/> {{ branchOffice.phone_number }}
-              </q-item-label>
-              <q-item-label>
-                <q-icon name="room"/> {{ branchOffice.address }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
+      <div class="row q-gutter-y-lg">
+        <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center">
+          ¡Somos Calidad de Servicio!
         </div>
-        <div class="col-lg-7 col-md-8 col-sm-8 col-xs-8 row text-center">
-          <div class="col-12 text-h3 text-bold text-italic flex flex-left flex-center">
-            ¡Somos Calidad de Servicio!
-          </div>
-          <div class="col-12 text-h4 flex flex-left flex-center ">
-            contacto@tranjr.com
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 row text-center">
+          <div class="col-12 flex flex-left flex-center row">
+            <div
+              class="col-lg-6 col-md-2 col-sm-4 col-xs-4 text-bold text-italic"
+              v-for="branchOffice in branchOffices" :key="branchOffice.id"
+            >
+              <q-item>
+                <q-item-section>
+                  <q-item-label class="q-mt-sm">
+                    {{ branchOffice.name }}
+                  </q-item-label>
+                  <q-item-label class="q-mt-sm">
+                    <q-icon name="email"/> {{ branchOffice.email }}
+                  </q-item-label>
+                  <a class="q-mt-sm" :href="`https://api.whatsapp.com/send/?phone=${branchOffice.phone_number}&text&app_absent=0`" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
+                    <q-item-label>
+                      <q-icon name="fab fa-whatsapp"/> {{ branchOffice.phone_number }}
+                    </q-item-label>
+                  </a>
+                  <q-item-label>
+                    <q-icon name="room"/> {{ branchOffice.address }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </div>
           </div>
           <div class="col-12 text-h5 flex flex-left flex-center">
-            <a href="https://api.whatsapp.com/send/?phone=584143352633&text&app_absent=0" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
-              <q-icon name="fab fa-whatsapp" size="xl"/>
-            </a>
             <a href="https://www.instagram.com/transporte.jrls/?hl=es-la" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: white;">
               <q-icon name="fab fa-instagram" class="" size="xl"/>
             </a>
