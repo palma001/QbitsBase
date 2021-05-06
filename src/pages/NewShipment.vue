@@ -876,11 +876,12 @@ export default {
           this.$services.postData(['vouchers'], vocuher)
             .then(({ res }) => {
               this.packagesPrint.push(res.data)
-              if (this.packages.length === this.packagesPrint.length) {
-                setTimeout(() => {
+              setTimeout(() => {
+                if (this.packages.length === this.packagesPrint.length) {
+                  console.log('hola')
                   this.printVoucher()
-                }, 200)
-              }
+                }
+              }, 200)
             })
         })
     },

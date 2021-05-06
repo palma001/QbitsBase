@@ -1,77 +1,24 @@
 <template>
   <q-page padding>
-    <div>
     <q-splitter
       v-model="splitterModel"
       style="height: 88vh"
     >
-
       <template v-slot:before>
         <div class="q-pa-md">
-          <div class="text-h4 q-mb-md">Roles</div>
-            <div class="q-pa-none">
-          <q-table
-            title="Treats"
-            :data="data"
-            :columns="columns"
-            row-key="id"
-            :filter="filter"
-            :loading="loading"
-            selection="multiple"
-            :selected.sync="selected"
-            :visible-columns="visibleColumns"
-          >
-            <template v-slot:top>
-              <!-- <q-btn color="primary" :disable="loading" label="Add row" @click="changeTitleForm('Agregar Transporte')" />
-              <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" />
-              <q-space /> -->
-              <q-input dense debounce="300" color="primary" v-model="filter">
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </template>
-            <template v-slot:header="props">
-              <q-tr :props="props">
-                <q-th>
-                  <q-toggle v-model="props.selected" size="xs"/>
-                </q-th>
-                <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.label}}
-                </q-th>
-                <q-th class="text-center">
-                  Acciones
-                </q-th>
-              </q-tr>
-            </template>
-            <template v-slot:body="props">
-              <q-tr :props="props" >
-                <q-td>
-                  <q-toggle v-model="props.selected" size="xs"/>
-                </q-td>
-                <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                  {{col.value}}
-                </q-td>
-                <q-td>
-                  <q-btn icon="edit" color="primary" round size="xs" @click="viewDetail(props.row)">
-                  </q-btn>
-                  <q-btn icon="delete" color="negative" round size="xs" @click="viewDetail(props.row)" class="q-ml-sm">
-                  </q-btn>
-                </q-td>
-              </q-tr>
-            </template>
+          <div class="text-h4 q-mb-md">
+            Roles
+          </div>
+          <div class="q-pa-none">
 
-          </q-table>
-        </div>
+          </div>
         </div>
       </template>
-
       <template v-slot:after>
         <q-splitter
           v-model="insideModel"
           horizontal
         >
-
           <template v-slot:before>
             <div class="q-pa-md">
               <div class="text-h4 q-mb-md">Permisos Habilitados Menú</div>
@@ -160,19 +107,16 @@
                 </div>
             </div>
           </template>
-
           <template v-slot:after>
             <div class="q-pa-md">
-              <div class="text-h4 q-mb-md">Permisos Habilitados Submenu {{submenu}}</div>
-
+              <div class="text-h4 q-mb-md">
+                Permisos Habilitados Submenu {{submenu}}
+              </div>
             </div>
           </template>
-
         </q-splitter>
       </template>
-
     </q-splitter>
-    </div>
   </q-page>
 </template>
 
