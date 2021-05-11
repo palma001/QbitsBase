@@ -10,7 +10,19 @@
             Roles
           </div>
           <div class="q-pa-none">
-
+            <data-table
+              title="list"
+              module="role"
+              searchable
+              action
+              :column="roleConfig"
+              :data="dataRoles"
+              :loading="loadingTable"
+              :optionPagination="optionPagination"
+              @search-data="searchData"
+              @view-details="viewDetails"
+              @on-load-data="loadData"
+            />
           </div>
         </div>
       </template>
@@ -121,9 +133,44 @@
 </template>
 
 <script>
+import DataTable from '../components/DataTable.vue'
+import { mixins } from '../mixins'
+import { roleConfig } from '../config-file/role/roleConfig.js'
+import { GETTERS } from '../store/module-login/name.js'
+import { mapGetters } from 'vuex'
 export default {
+  mixins: [mixins.containerMixin],
+  components: {
+    DataTable
+  },
   data () {
     return {
+      /**
+       * Options pagination
+       * @type {Object}
+       */
+      optionPagination: {
+        rowsPerPage: 20,
+        paginate: true,
+        sortBy: 'id',
+        sortOrder: 'desc',
+        rowsNumber: 20
+      },
+      /**
+       * Params search
+       * @type {Object}
+       */
+      params: {
+        paginated: true,
+        sortBy: 'id',
+        sortOrder: 'desc',
+        dataSearch: {
+          name: ''
+        }
+      },
+      branchOffice: null,
+      userSession: null,
+      roleConfig,
       splitterModel: 24, // start at 50%
       insideModel: 30,
       selected: [],
@@ -133,78 +180,75 @@ export default {
       selected4: true,
       selected5: false,
       submenu: '',
-      visibleColumns: ['rol'],
       loading: false,
-      filter: '',
       rowCount: 10,
-      columns: [
-        {
-          name: 'rol',
-          required: true,
-          label: 'Rol',
-          align: 'left',
-          field: row => row.rol,
-          format: val => `${val}`,
-          sortable: true
-        }
-      ],
-      data: [
-        {
-          id: 1,
-          rol: 'cajero(a)'
-        },
-        {
-          id: 2,
-          rol: 'administrador'
-        },
-        {
-          id: 3,
-          rol: 'transportista'
-        },
-        {
-          id: 4,
-          rol: 'almacenista'
-        },
-        {
-          id: 5,
-          rol: 'administrador'
-        },
-        {
-          id: 6,
-          rol: 'administrador'
-        }
-      ],
-      original: [
-        {
-          id: 1,
-          rol: 'administrador'
-        },
-        {
-          id: 2,
-          rol: 'cajero(a)'
-        },
-        {
-          id: 3,
-          rol: 'transportista'
-        },
-        {
-          id: 4,
-          rol: 'almacenista'
-        },
-        {
-          id: 5,
-          rol: 'administrador'
-        },
-        {
-          id: 6,
-          rol: 'administrador'
-        }
-      ]
+      dataRoles: [],
+      loadingTable: false
     }
+  },
+  computed: {
+    /**
+     * Getters Vuex
+     */
+    ...mapGetters([GETTERS.GET_USER, GETTERS.GET_BRANCH_OFFICE])
+  },
+  created () {
+    this.userSession = this[GETTERS.GET_USER]
+    this.branchOffice = this[GETTERS.GET_BRANCH_OFFICE]
   },
   methods: {
     editarMenu (data) {
       this.submenu = data
+    },
+    /**
+     * Load data sorting
+     * @param  {Object}
+     */
+    loadData (data) {
+      console.log(data)
+      this.params.page = data.page
+      this.params.sortBy = data.sortBy
+      this.params.sortOrder = data.sortOrder
+      this.params.perPage = data.rowsPerPage
+      this.optionPagination = data
+      this.getRoles(this.params)
+    },
+    /**
+     * Search branch offices
+     * @param  {Object}
+     */
+    searchData (data) {
+      for (const dataSearch in this.params.dataSearch) {
+        this.params.dataSearch[dataSearch] = data
+      }
+      this.getRoles()
+    },
+    /**
+     * Set data dialog edition
+     * @param  {Object} data selected
+     */
+    viewDetails (data) {
+      console.log(data)
+      this.selectedData = data
+    },
+    /**
+     * Get all branch offices
+     */
+    getRoles (params = this.params) {
+      this.loadingTable = true
+      this.$services.getData(['roles'], this.params)
+        .then(({ res }) => {
+          console.log(res.data)
+          this.dataRoles = res.data.data
+          this.optionPagination.rowsNumber = res.data.total
+          this.loadingTable = false
+        })
+        .catch(err => {
+          console.log(err)
+          this.dataRoles = []
+          this.loadingTable = false
+          this.optionPagination.rowsNumber = 0
+        })
     }
   }
 }

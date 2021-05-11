@@ -210,14 +210,14 @@ export default {
       selected: []
     }
   },
-  computed: {
-    paginationConfig () {
-      return this.optionPagination
+  watch: {
+    optionPagination () {
+      this.paginationConfig = this.optionPagination
     }
   },
   created () {
-    this.paginationConfig = this.optionPagination
     this.setHeaders()
+    this.paginationConfig = this.optionPagination
   },
   methods: {
     /**

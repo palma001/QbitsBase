@@ -36,7 +36,7 @@ export const userConfig = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -72,7 +72,7 @@ export const userConfig = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -108,7 +108,7 @@ export const userConfig = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -120,7 +120,7 @@ export const userConfig = [
           name: 'roles',
           align: 'left',
           field: row => row.roles.map(rol => rol.name).join('/'),
-          sortable: true,
+          sortable: false,
           visible: true
         },
         actionable: {
@@ -148,7 +148,7 @@ export const userConfig = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -160,7 +160,7 @@ export const userConfig = [
           name: 'branch_offices',
           align: 'left',
           field: row => row.branch_offices.map(branchOffice => branchOffice.name).join('/'),
-          sortable: true,
+          sortable: false,
           visible: true
         },
         actionable: {
@@ -188,43 +188,7 @@ export const userConfig = [
               {
                 name: 'validate',
                 value: {
-                  required: false
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
-        tabulated: {
-          name: 'last_name',
-          align: 'left',
-          field: row => row.last_name,
-          sortable: true,
-          visible: false
-        },
-        actionable: {
-          propTag: 'last_name',
-          addible: true,
-          editable: true,
-          type: 'String',
-          visibleLabel: true,
-          component: {
-            name: 'b-input',
-            props: {
-              type: 'text',
-              dense: true
-            },
-            class: {
-              'col-xs-12': true,
-              'col-sm-12': true,
-              'col-md-12': true
-            },
-            directives: [
-              {
-                name: 'validate',
-                value: {
-                  required: false
+                  required: true
                 }
               }
             ]
@@ -296,7 +260,8 @@ export const userConfig = [
               {
                 name: 'validate',
                 value: {
-                  required: false
+                  required: true,
+                  email: true
                 }
               }
             ]

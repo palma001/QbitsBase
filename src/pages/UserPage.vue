@@ -30,7 +30,7 @@
           :column="userConfig"
           :data="data"
           :loading="loadingTable"
-          :optionPagination="optionPagination"
+          :optionPagination.sync="optionPagination"
           @search-data="searchData"
           @view-details="viewDetails"
           @on-load-data="loadData"
@@ -101,7 +101,8 @@ export default {
         rowsPerPage: 20,
         paginate: true,
         sortBy: 'id',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
+        rowsNumber: 20
       },
       /**
        * Params search
@@ -171,6 +172,7 @@ export default {
      * @param  {Object}
      */
     loadData (data) {
+      console.log(data)
       this.params.page = data.page
       this.params.sortBy = data.sortBy
       this.params.sortOrder = data.sortOrder
@@ -272,12 +274,14 @@ export default {
       this.loadingTable = true
       this.$services.getData(['users'], this.params)
         .then(({ res }) => {
-          this.data = res.data
+          this.data = res.data.data
+          this.optionPagination.rowsNumber = res.data.total
           this.loadingTable = false
         })
         .catch(err => {
           console.log(err)
           this.data = []
+          this.optionPagination.rowsNumber = 0
           this.loadingTable = false
         })
     }
