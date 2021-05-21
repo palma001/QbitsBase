@@ -1,4 +1,4 @@
-import { validationNotSession, validationSession, validationValidation } from './validations-router'
+import { validationNotSession /* validationSession */ } from './validations-router'
 const routes = [
   {
     path: '/login',
@@ -8,50 +8,18 @@ const routes = [
   },
   {
     path: '/',
-    component: () => import('layouts/LandingLayaout.vue'),
-    beforeEnter: validationValidation,
-    children: [
-      {
-        path: '/',
-        component: () => import('pages/Index.vue'),
-        name: 'LandingPage'
-      }
-    ]
+    component: () => import('pages/DashboardPage.vue'),
+    children: []
   },
   {
     path: '/admin',
     component: () => import('layouts/MainLayout.vue'),
-    beforeEnter: validationSession,
+    // beforeEnter: validationSession,
     children: [
-      {
-        path: '/new-shipment',
-        component: () => import('pages/NewShipment.vue'),
-        name: 'NewShipment'
-      },
-      {
-        path: '/cash-register',
-        component: () => import('pages/CashRegisterPage.vue'),
-        name: 'CashRegisterPage'
-      },
-      {
-        path: '/check-shipping',
-        component: () => import('src/pages/CheckShippingPage.vue'),
-        name: 'CheckShippingPage'
-      },
       {
         path: '/user-management',
         component: () => import('src/pages/UserPage.vue'),
         name: 'UserPage'
-      },
-      {
-        path: '/branchoffices-management',
-        component: () => import('src/pages/BranchOfficesPage.vue'),
-        name: 'BranchOfficesPage'
-      },
-      {
-        path: '/transportation-management',
-        component: () => import('src/pages/TransportationPage.vue'),
-        name: 'TransportationPage'
       },
       {
         path: '/roles-management',
@@ -64,11 +32,6 @@ const routes = [
         name: 'RoutesPage'
       },
       {
-        path: '/measures-management',
-        component: () => import('src/pages/MeasuresPage.vue'),
-        name: 'MeasuresPage'
-      },
-      {
         path: '/dashboard',
         component: () => import('src/pages/DashboardPage.vue'),
         name: 'DashboardPage'
@@ -77,56 +40,6 @@ const routes = [
         path: '/payment-method',
         component: () => import('src/pages/PaymentMethodPage.vue'),
         name: 'PaymentMethodPage'
-      },
-      {
-        path: '/reception-pakages',
-        component: () => import('src/pages/ReceptionPakagesPage.vue'),
-        name: 'ReceptionPakagesPage'
-      },
-      {
-        path: '/dispatch-packages',
-        component: () => import('src/pages/DispatchPakagesPage.vue'),
-        name: 'DispatchPakagesPage'
-      },
-      {
-        path: '/guides-management',
-        component: () => import('src/pages/GuidesPakagesPage.vue'),
-        name: 'GuidesPakagesPage'
-      },
-      {
-        path: '/inventory-management',
-        component: () => import('src/pages/InventoryPakagesPage.vue'),
-        name: 'InventoryPakagesPage'
-      },
-      {
-        path: '/payment-summary',
-        component: () => import('src/pages/PaymentSummaryPage.vue'),
-        name: 'PaymentSummaryPage'
-      },
-      {
-        path: 'currency-rate',
-        component: () => import('src/pages/CurrencyRatePage.vue'),
-        name: 'CurrencyRatePage'
-      },
-      {
-        path: '/invoice-summary',
-        component: () => import('src/pages/InvoiceSummaryPage.vue'),
-        name: 'InvoiceSummaryPage'
-      },
-      {
-        path: '/shipment summary',
-        component: () => import('src/pages/ShipmentSummaryPage.vue'),
-        name: 'ShipmentSummaryPage'
-      },
-      {
-        path: '/voucher-preview-page',
-        component: () => import('src/pages/VoucherPreviewPage.vue'),
-        name: 'VoucherPreviewPage'
-      },
-      {
-        path: 'pruebas',
-        component: () => import('pages/Prueba.vue'),
-        name: 'Prueba'
       }
     ]
   },
